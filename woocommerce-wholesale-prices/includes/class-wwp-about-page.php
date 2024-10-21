@@ -85,7 +85,7 @@ if ( ! class_exists( 'WWP_About_Page' ) ) {
                 'manage_woocommerce', // phpcs:ignore
                 'wws-about-page',
                 array( $this, 'view_about_page' ),
-                9
+                10
             );
         }
 

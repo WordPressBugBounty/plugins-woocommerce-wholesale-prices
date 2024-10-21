@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <li><span class="dashicons dashicons-lightbulb"></span><?php esc_html_e( 'Why you need an efficient ordering process', 'woocommerce-wholesale-prices' ); ?></li>
                     <li><span class="dashicons dashicons-lightbulb"></span><?php esc_html_e( 'How to find your ideal wholesale customers & recruit them', 'woocommerce-wholesale-prices' ); ?></li>
                 </ul>
-                <a href="https://wholesalesuiteplugin.com/free-guide/?utm_source=wwp&utm_medium=settings&utm_campaign=generalsettingfreeguidebutton" target="_blank" class="button-green"><?php esc_html_e( 'Get FREE Training Guide', 'woocommerce-wholesale-prices' ); ?></a>
+                <a href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'free-guide', 'wwp', 'settings', 'generalsettingfreeguidebutton' ) ); ?>" target="_blank" class="button-green"><?php esc_html_e( 'Get FREE Training Guide', 'woocommerce-wholesale-prices' ); ?></a>
             </div>
             <div class="right-box">
                 <img id="wws-book-cover" src="<?php echo esc_url( WWP_IMAGES_URL ); ?>book-cover.png" alt="<?php esc_html_e( 'Free Guide', 'woocommerce-wholesale-prices' ); ?>" />

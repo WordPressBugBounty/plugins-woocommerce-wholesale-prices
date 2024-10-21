@@ -90,11 +90,7 @@ if ( ! class_exists( 'WWP_Wholesale_Price_Grouped_Product' ) ) {
                 $has_member_with_wholesale_price = false;
 
                 foreach ( $product->get_children() as $child_id ) {
-
-                    // Get child product object.
-                    $child_product = wc_get_product( $child_id );
-
-                    $child_price           = $child_product->get_meta( '_price', true );
+                    $child_price           = get_post_meta( $child_id, '_price', true );
                     $price_arr             = WWP_Wholesale_Prices::get_product_wholesale_price_on_shop_v3( $child_id, $user_wholesale_role );
                     $child_wholesale_price = $price_arr['wholesale_price_raw'];
 

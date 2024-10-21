@@ -42,7 +42,6 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
 
             // Re-add note after 30 days.
             add_action( 'woocommerce_note_action_features-pricing', array( $this, 're_add_admin_note' ) );
-
         }
 
         /**
@@ -55,7 +54,6 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
             if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
                 wp_schedule_single_event( strtotime( '+7 days' ), self::CRON_HOOK );
             }
-
         }
 
         /**
@@ -92,7 +90,7 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
                     return;
                 }
 
-                $bundle_url = 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=wcinbox&utm_campaign=wcinboxwwsbundleupsell';
+                $bundle_url = esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'wcinbox', 'wcinboxwwsbundleupsell' ) );
 
                 $note_content = __(
                     'Get the #1 rated wholesale solution for WooCommerce. Solve the big 3 problems facing store owners when wholesaling in WooCommerce.',
@@ -112,7 +110,6 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
             } catch ( Exception $e ) {
                 return;
             }
-
         }
 
         /**
@@ -146,7 +143,6 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
                     return;
                 }
             }
-
         }
 
         /**
@@ -157,7 +153,6 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
          */
         public function check_bundled_plugins() {
             return WWP_Helper_Functions::is_wwpp_installed() || WWP_Helper_Functions::is_wwof_installed() || WWP_Helper_Functions::is_wwlc_installed();
-
         }
 
         /**
@@ -169,9 +164,7 @@ if ( ! class_exists( 'WWP_WWS_Bundle' ) ) {
         public function re_add_admin_note() {
             wp_clear_scheduled_hook( self::CRON_HOOK );
             wp_schedule_single_event( strtotime( '+30 days' ), self::CRON_HOOK );
-
         }
-
     }
 
     return new WWP_WWS_Bundle();

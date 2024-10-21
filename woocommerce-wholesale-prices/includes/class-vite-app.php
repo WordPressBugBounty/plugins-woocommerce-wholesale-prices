@@ -293,7 +293,12 @@ if ( ! class_exists( 'Vite_App' ) ) {
             $this->parse_manifest_file();
 
             $this->enqueue_scripts();
-            add_action( 'wp_head', array( $this, 'preload_imports' ), 20 );
+
+            if ( is_admin() ) {
+                add_action( 'admin_head', array( $this, 'preload_imports' ), 20 );
+            } else {
+                add_action( 'wp_head', array( $this, 'preload_imports' ), 20 );
+            }
         }
 
         /**
@@ -362,7 +367,7 @@ if ( ! class_exists( 'Vite_App' ) ) {
                 foreach ( $imports as $import ) {
                     $file_url = $this->base_url . "{$this->manifest[$import]['file']}";
 
-                    printf( '<link rel="modulepreload" href="%s" />', esc_url( $file_url ) );
+                    printf( '<link rel="modulepreload" crossorigin="anonymous" href="%s" />', esc_url( $file_url ) );
 
                     /***************************************************************************
                      * Enqueue styles of directly imported components
@@ -393,7 +398,7 @@ if ( ! class_exists( 'Vite_App' ) ) {
          * @since 2.1.9
          * @return void
          */
-        public function enqueue_scripts( $hook_suffix = null ) {
+        public function enqueue_scripts( $hook_suffix = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 
             /**************************************************************************
              * Enqueue scripts and styles
@@ -492,7 +497,7 @@ if ( ! class_exists( 'Vite_App' ) ) {
                 'wwpObj',
                 array_merge(
                     array(
-                        'pluginDirUrl' => plugins_url( '', WWP_PLUGIN_FILE ),
+                        'pluginDirUrl' => plugins_url( '/', WWP_PLUGIN_FILE ),
                     ),
                     $this->l10n
                 )
@@ -570,7 +575,7 @@ if ( ! class_exists( 'Vite_App' ) ) {
                         $tag
                     );
                 } else {
-                    $integrity = '';
+                    $integrity = 'crossorigin="anonymous" ';
                     if ( apply_filters( 'wwp_enable_subresource_integrity_check', ! defined( 'WWP_ENABLE_SUBRESOURCE_INTEGRITY_CHECK' ) || WWP_ENABLE_SUBRESOURCE_INTEGRITY_CHECK ) ) {
                         $integrity = sprintf(
                             'crossorigin="anonymous" integrity="%s" ',

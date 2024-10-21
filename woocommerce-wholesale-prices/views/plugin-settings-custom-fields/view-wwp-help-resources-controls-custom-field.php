@@ -15,7 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 sprintf(
                     // translators: %1$s: <a> link to knowledge base, %2$s: </a> closing link tag.
                     __( 'Looking for documentation? Please see our growing %1$sKnowledge Base%2$s', 'woocommerce-wholesale-prices' ),
-                    '<a href="https://wholesalesuiteplugin.com/knowledge-base/?utm_source=wwp&utm_medium=kb&utm_campaign=helppagekblink" target="_blank">',
+                    sprintf(
+                        '<a href="%s" target="_blank">',
+                        esc_url( WWP_Helper_Functions::get_utm_url( 'knowledge-base', 'wwp', 'kb', 'helppagekblink' ) )
+                    ),
                     '</a>'
                 )
             );

@@ -1,5 +1,7 @@
-#wpbody {
-    background: #ffffff;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+.wholesale_page_wholesale-payments {
+    background-color: #ffffff;
 }
 #wwp-payments-page {
     display: flex;
@@ -30,24 +32,12 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 24px;
-
 }
 
-.hero #logo #logo-icon {
-    width: 56px;
-    height: 56px;
+.hero #logo #logo-image {
+    max-width: 240px;
+    height: auto;
     flex-shrink: 0;
-}
-
-.hero #logo #logo-text {
-    margin-left: 8px;
-    color: #2E8752;
-    text-align: center;
-    font-family: Lato;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
 }
 
 .hero #title {
@@ -58,7 +48,7 @@
 .hero #title h2 {
     color: #4C4C4C;
     text-align: center;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 24px;
     font-style: normal;
     font-weight: 600;
@@ -66,7 +56,7 @@
 }
 .hero #title #installments {
     color: #2E8752;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 24px;
     font-style: normal;
     font-weight: 600;
@@ -74,9 +64,8 @@
 }
 
 .hero #gift-box {
-    margin-top: 24px;
+    margin-top: 56px;
 }
-
 
 /* Features Section */
 #wwp-payments-page #features {
@@ -108,7 +97,7 @@
     justify-content: center;
     color: #4C4C4C;
     text-align: center;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 11px;
     font-style: normal;
     font-weight: 600;
@@ -130,7 +119,7 @@
 #wwp-payments-page #description h3 {
     color: var(--Colors-Neutral-Text-colorTextSecondary, rgba(0, 0, 0, 0.65));
     text-align: center;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 15px;
     font-style: italic;
     font-weight: 600;
@@ -159,7 +148,7 @@
 
 #wwp-payments-page #steps .step .step-number {
     text-align: center;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -184,8 +173,8 @@
 
 #wwp-payments-page #steps .step .step-title h3 {
     color: #4C4C4C;
-    font-family: Poppins;
-    font-size: 24px;
+    font-family: Poppins, Helvetica, sans-serif;
+    font-size: 20px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
@@ -214,7 +203,7 @@
 
 #wwp-payments-page #steps .step .step-description span {
     color: #4C4C4C;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 11px;
     font-style: normal;
     font-weight: 400;
@@ -234,7 +223,7 @@
 
 #wwp-payments-page #steps .step #actions .step-button {
     display: flex;
-    padding: 10px 45px;
+    padding: 10px 16px;
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -257,7 +246,7 @@
 #wwp-payments-page #steps .step #actions .step-button span {
     color: #ffffff;
     text-align: center;
-    font-family: Poppins;
+    font-family: Poppins, Helvetica, sans-serif;
     font-size: 16px;
     font-style: normal;
     font-weight: 500;

@@ -14,23 +14,20 @@ $activate_plugin_url = wp_nonce_url(
 	sprintf( 'activate-plugin_%s', $wpay_plugin_file )
 );
 
-$wpay_tracking_url = 'https://wholesalesuiteplugin.com/woocommerce-wholesale-payments/?utm_source=wwp&utm_medium=upsell&utm_campaign=wpaypage';
+$wpay_tracking_url = WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-payments', 'wwp', 'upsell', 'wpaypage' );
 
 ?>
 <div id="wwp-payments-page">
 
 	<!-- Hero Section -->
 	<div class="hero" style="background-image: url(<?php echo esc_url_raw( WWP_IMAGES_URL ); ?>payments/background-image.png)">
+
 		<div id="logo">
 			<img
-				id="logo-icon"
-				src="<?php echo esc_url_raw( WWP_IMAGES_URL ); ?>payments/icon.png"
+				id="logo-image"
+				src="<?php echo esc_url_raw( WWP_IMAGES_URL ); ?>/logo.png"
 				alt="<?php esc_attr_e( 'Wholesale Payments Icon', 'woocommerce-wholesale-prices' ); ?>"
 			/>
-
-			<span id="logo-text">
-				<?php esc_html_e( 'Wholesale Payments', 'woocommerce-wholesale-prices' ); ?>
-			</span>
 		</div>
 
 		<div id="title">
@@ -129,7 +126,7 @@ $wpay_tracking_url = 'https://wholesalesuiteplugin.com/woocommerce-wholesale-pay
 			</div>
 
 			<div class="step-title <?php echo $is_wpay_installed ? 'inactive' : 'active'; ?>">
-				<h3><?php esc_html_e( 'Offer Payment Plans', 'woocommerce-wholesale-prices' ); ?></h3>
+				<h3><?php esc_html_e( 'Install Wholesale Payments', 'woocommerce-wholesale-prices' ); ?></h3>
 			</div>
 
 			<hr class="step-divider" />
@@ -146,7 +143,7 @@ $wpay_tracking_url = 'https://wholesalesuiteplugin.com/woocommerce-wholesale-pay
 			</div>
 
 			<div id="actions">
-				<a href="<?php echo $is_wpay_installed ? esc_url_raw( $wpay_tracking_url ) : '#'; ?>" class="step-button <?php echo $is_wpay_installed ? 'inactive disabled' : 'active'; ?>">
+				<a href="<?php echo ! $is_wpay_installed ? esc_url_raw( $wpay_tracking_url ) : '#'; ?>" class="step-button <?php echo $is_wpay_installed ? 'inactive disabled' : 'active'; ?>">
 					<span>
 						<?php esc_html_e( 'Get Wholesale Payments', 'woocommerce-wholesale-prices' ); ?>
 					</span>
@@ -160,7 +157,7 @@ $wpay_tracking_url = 'https://wholesalesuiteplugin.com/woocommerce-wholesale-pay
 			</div>
 
 			<div class="step-title <?php echo ! $is_wpay_active && $is_wpay_installed ? 'active' : 'inactive'; ?>">
-				<h3><?php esc_html_e( 'Configure your payment plans', 'woocommerce-wholesale-prices' ); ?></h3>
+				<h3><?php esc_html_e( 'Configure Payment Plans', 'woocommerce-wholesale-prices' ); ?></h3>
 			</div>
 
 			<hr class="step-divider" />

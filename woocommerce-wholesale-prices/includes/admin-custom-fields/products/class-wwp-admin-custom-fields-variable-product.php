@@ -287,8 +287,9 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Variable_Product' ) ) {
 
             <?php
             } else {
-
-                $wwpp_active = is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ? true : false;
+                // Check if WC Subscription is active.
+                $wc_subscription_active = is_plugin_active( 'woocommerce-subscriptions/woocommerce-subscriptions.php' ) ? true : false;
+                $wwpp_active            = is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ? true : false;
                 ?>
 
                 <div class="wholesale-prices-options-group options-group" style="border-top: 1px solid #DDDDDD;">
@@ -400,6 +401,55 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Variable_Product' ) ) {
                                             ),
                                         )
                                     );
+
+                                    // Add signup fee field if WC Subscription is active.
+                                    if ( $wc_subscription_active && $wwpp_active ) {
+                                        $signup_fee          = $product_variation_object->get_meta( $role_key . '_wholesale_signup_fee', true );
+                                        $field_signup_fee_id = $role_key . '_wholesale_signup_fee[' . $loop . ']';
+                                        /* translators: %1$s: currency symbol */
+                                        $field_signup_fee_label = sprintf( __( 'Wholesale Signup Fee (%1$s)', 'woocommerce-wholesale-prices' ), $currency_symbol );
+                                        /* translators: %1$s: Wholesale role name */
+                                        $field_signup_fee_desc = sprintf( __( 'Wholesale Signup Fee for %1$s customers', 'woocommerce-wholesale-prices' ), str_replace( array( 'Customer', 'Customers' ), '', $role['roleName'] ) );
+
+                                        $signup_fee_discount          = $product_variation_object->get_meta( $role_key . '_wholesale_signup_fee_discount', true );
+                                        $field_signup_fee_discount_id = $role_key . '_wholesale_signup_fee_discount[' . $loop . ']';
+                                        /* translators: %1$s: currency symbol */
+                                        $field_signup_fee_discount_label = __( 'Signup Fee Discount (%)', 'woocommerce-wholesale-prices' );
+                                        /* translators: %1$s: Wholesale role name */
+                                        $field_signup_fee_discount_desc = sprintf( __( 'Wholesale Signup Fee for %1$s customers', 'woocommerce-wholesale-prices' ), str_replace( array( 'Customer', 'Customers' ), '', $role['roleName'] ) );
+
+                                        WWP_Helper_Functions::wwp_woocommerce_wp_text_input(
+                                            array(
+                                                'id'       => $field_signup_fee_discount_id,
+                                                'wrapper_class' => 'form-row form-row-full',
+                                                'class'    => $role_key . '_wholesale_signup_fee_discount wholesale_signup_fee_discount',
+                                                'label'    => $field_signup_fee_discount_label,
+                                                'placeholder' => '',
+                                                'desc_tip' => 'true',
+                                                'description' => __( 'The percentage amount discounted from the Sign-up fee', 'woocommerce-wholesale-prices' ),
+                                                'data_type' => 'price',
+                                                'value'    => $signup_fee_discount,
+                                                'custom_attributes' => array(
+                                                    'data-wholesale_role' => $role_key,
+                                                    'data-loop_id'        => $loop,
+                                                ),
+                                            )
+                                        );
+
+                                        WWP_Helper_Functions::wwp_woocommerce_wp_text_input(
+                                            array(
+                                                'id'       => $field_signup_fee_id,
+                                                'wrapper_class' => 'form-row form-row-full',
+                                                'class'    => $role_key . '_wholesale_signup_fee wholesale_signup_fee wholesale_price',
+                                                'label'    => $field_signup_fee_label,
+                                                'placeholder' => '',
+                                                'desc_tip' => 'true',
+                                                'description' => $field_signup_fee_desc,
+                                                'data_type' => 'price',
+                                                'value'    => $signup_fee,
+                                            )
+                                        );
+                                    }
 
                                     do_action( 'wwp_after_variable_wholesale_price_field', $loop, $variation_data, $variation, $role, $role_key, $currency_symbol, $wholesale_price, $discount_type, $wholesale_percentage_discount );
                                     ?>

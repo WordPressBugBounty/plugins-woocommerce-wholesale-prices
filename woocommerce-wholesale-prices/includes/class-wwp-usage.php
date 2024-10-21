@@ -94,7 +94,43 @@ class WWP_Usage {
         $data['active_plugins'] = $this->_fetch_plugin_data();
 
         // Effectiveness data.
-        $data['effectiveness'] = $this->_fetch_effectiveness_data();
+        $allow = true;
+
+        // Don't track effectiveness data on local sites.
+        if ( defined( 'WP_ENVIRONMENT_TYPE' ) && 'local' === WP_ENVIRONMENT_TYPE ) {
+            $allow = false;
+        } else {
+            $parsed_home = wp_parse_url( get_option( 'home' ) );
+            $host        = $parsed_home['host'];
+
+            $disallowed_tlds = array(
+                '.test',
+                '.loc',
+                '.local',
+            );
+            foreach ( $disallowed_tlds as $tld ) {
+                if ( mb_substr( $host, -strlen( $tld ) ) === $tld ) {
+                    $allow = false;
+                    break;
+                }
+            }
+
+            if ( $allow ) {
+                $disallowed_hosts = array(
+					'localhost',
+					'127.0.0.1',
+				);
+                if ( in_array( $host, $disallowed_hosts, true ) ) {
+                    $allow = false;
+                }
+            }
+        }
+
+        if ( $allow ) {
+            $data['effectiveness'] = $this->_fetch_effectiveness_data();
+        } else {
+            $data['effectiveness'] = array();
+        }
 
         return $data;
     }

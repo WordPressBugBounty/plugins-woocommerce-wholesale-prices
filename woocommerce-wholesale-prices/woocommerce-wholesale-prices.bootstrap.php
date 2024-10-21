@@ -5,13 +5,13 @@
  * Plugin URI:           https://wholesalesuiteplugin.com
  * Description:          WooCommerce Extension to Provide Wholesale Prices Functionality
  * Author:               Rymera Web Co
- * Version:              2.2.0.2
+ * Version:              2.2.1
  * Author URI:           http://rymera.com.au/
  * Text Domain:          woocommerce-wholesale-prices
  * Requires at least:    5.2
  * Tested up to:         6.6
  * WC requires at least: 4.0
- * WC tested up to:      9.1
+ * WC tested up to:      9.3
  */
 
 // This file is the main plugin boot loader.
@@ -113,7 +113,7 @@ if ( WWP_Helper_Functions::is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
                     </p>
                     <p>
                         <?php if ( get_option( WWPP_LICENSE_ACTIVATED ) === 'no' || get_option( WWPP_LICENSE_ACTIVATED ) === false ) : ?>
-                            <a style="padding:10px 20px; background:#d96208; display:flex; width:fit-content; font-size:16px; text-decoration:none; color:#fff; font-weight:700;" href="https://wholesalesuiteplugin.com/my-account/downloads/?utm_source=wwp&utm_medium=notice&utm_campaign=incompatiblewwpp" target="_blank">
+                            <a style="padding:10px 20px; background:#d96208; display:flex; width:fit-content; font-size:16px; text-decoration:none; color:#fff; font-weight:700;" href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'my-account/downloads/', 'wwp', 'notice', 'incompatiblewwpp' ) ); ?>" target="_blank">
                                 <?php esc_html_e( 'Download Latest Version', 'woocommerce-wholesale-prices' ); ?>
                             </a>
                         <?php else : ?>

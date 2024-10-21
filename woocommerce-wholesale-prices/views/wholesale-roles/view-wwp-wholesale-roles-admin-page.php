@@ -92,14 +92,17 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                     each of which can have separate wholesale pricing, shipping and payment mapping, order minimums and more.',
                                     'woocommerce-wholesale-prices'
                                 ),
-                                '<a href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwprolespagelink" target="_blank">',
+                                sprintf(
+                                    '<a href="%s" target="_blank">',
+                                    esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwprolespagelink' ) )
+                                ),
                                 '</a>'
                             )
                         );
                         ?>
                     </p>
                     <p>
-                        <a class="button" href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwprolespagebutton" target="_blank">
+                        <a class="button" href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwprolespagebutton' ) ); ?>" target="_blank">
                             <?php esc_html_e( 'See the full feature list', 'woocommerce-wholesale-prices' ); ?>
                             <span class="dashicons dashicons-arrow-right-alt" style="margin-top: 7px"></span>
                         </a>

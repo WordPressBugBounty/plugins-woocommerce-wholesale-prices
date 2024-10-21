@@ -27,6 +27,7 @@ require_once 'includes/class-wwp-wholesale-payments-page.php';
 require_once 'includes/class-wwp-help-page.php';
 require_once 'includes/class-wwp-advanced-coupons-page.php';
 require_once 'includes/class-wwp-upgrade-to-premium.php';
+require_once 'includes/class-wwp-plugin-installer.php';
 
 require_once 'includes/class-wwp-admin-menu.php';
 require_once 'includes/class-wwp-dashboard.php';
@@ -105,9 +106,10 @@ class WooCommerceWholeSalePrices {
     public $wwp_admin_notice_bar;
     public $wwp_wws_license_manager;
     public $wwp_wpml_compatibility;
+    public $wwp_plugin_installer;
     // phpcs:enable
 
-    const VERSION = '2.2.0.2';
+    const VERSION = '2.2.1';
 
     /**
      * Class Methods
@@ -175,6 +177,7 @@ class WooCommerceWholeSalePrices {
         $this->wwp_upgrade_to_premium_page              = WWP_Upgrade_To_Premium_Page::instance();
         $this->wwp_admin_notice_bar                     = WWP_Notice_Bar::instance( array() );
         $this->wwp_wws_license_manager                  = WWP_WWS_License_Manager::instance();
+        $this->wwp_plugin_installer                     = WWP_Plugin_Installer::instance();
 
         // REST API.
         $this->wwp_rest_api = WWP_REST_API::instance( array() );
@@ -315,6 +318,7 @@ class WooCommerceWholeSalePrices {
         $this->wwp_upgrade_to_premium_page->run();
         $this->wwp_admin_notice_bar->run();
         $this->wwp_wws_license_manager->run();
+        $this->wwp_plugin_installer->run();
 
         // Redirect old wholesale settings.
         add_action( 'admin_init', array( $this, 'admin_old_wholesale_settings_redirect' ) );

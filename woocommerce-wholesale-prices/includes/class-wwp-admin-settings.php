@@ -222,7 +222,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                     foreach ( $options as $option_name => $option_value ) {
                         $setting_value = $option_value;
                         $arr_value     = json_decode( $setting_value, true );
-                        if ( ! empty( $arr_value ) && is_array( $arr_value ) ) {
+                        if ( is_array( $arr_value ) ) {
                             $setting_value = $arr_value;
                         }
 
@@ -373,9 +373,15 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                 ),
                 '<b>',
                 '</b>',
-                '<a target="_blank" href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionwwpplink">',
+                sprintf(
+                    '<a target="_blank" href="%s">',
+                    esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwptaxexemptionwwpplink' ) )
+                ),
                 '</a>',
-                '<a target="_blank" href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionbundlelink">'
+                sprintf(
+                    '<a target="_blank" href="%s">',
+                    esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwptaxexemptionbundlelink' ) )
+                )
             );
             $tax_cls_mapping_dec = sprintf(
             // translators: %1$s link to premium add-on, %2$s </a> tag, %3$s link to wholesale suite bundle.
@@ -383,9 +389,15 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                     'Specify tax classes per wholesale role. <br><br>In the Premium add-on you can map specific wholesale role to specific tax classes. You can also hide those mapped tax classes from your regular customers making it possible to completely separate tax functionality for wholesale customers. <br><br>This feature and more is available in the %1$sPremium add-on%2$s and we also have other wholesale tools available as part of the %3$sWholesale Suite Bundle%2$s.',
                     'woocommerce-wholesale-prices'
                 ),
-                '<a target="_blank" href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionwwpplink"> ',
+                sprintf(
+                    '<a target="_blank" href="%s"> ',
+                    esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwptaxexemptionwwpplink' ) )
+                ),
                 '</a>',
-                '<a target="_blank" href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionbundlelink">'
+                sprintf(
+                    '<a target="_blank" href="%s">',
+                    esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwptaxexemptionbundlelink' ) )
+                )
             );
 
             $settings['wholesale_prices']['child']['tax'] = array(
@@ -428,7 +440,10 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                     'Looking for documentation? Please see our growing %1$sKnowledge Base%2$s.',
                     'woocommerce-wholesale-prices'
                 ),
-                '<a target="_blank" href="https://wholesalesuiteplugin.com/knowledge-base/?utm_source=wwp&utm_medium=kb&utm_campaign=helppagekblink"> ',
+                sprintf(
+                    '<a target="_blank" href="%s"> ',
+                    esc_url( WWP_Helper_Functions::get_utm_url( 'knowledge-base', 'wwp', 'kb', 'helppagekblink' ) )
+                ),
                 '</a>',
             );
 
@@ -537,7 +552,10 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                         'Complete documentation on usage tracking is available %1$shere%2$s.',
                         'woocommerce-wholesale-prices'
                     ),
-                    '<a target="_blank" href="https://wholesalesuiteplugin.com/kb/usage-tracking/?utm_source=wwp&utm_medium=kb&utm_campaign=helppageusagetracking"> ',
+                    sprintf(
+                        '<a target="_blank" href="%s"> ',
+                        esc_url( WWP_Helper_Functions::get_utm_url( 'kb/usage-tracking', 'wwp', 'kb', 'helppageusagetracking' ) )
+                    ),
                     '</a>',
                 );
 
@@ -674,7 +692,10 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                         'To use this option, you must have %1$s<b>WooCommerce Wholesale Order Form</b>%2$s plugin installed and activated.',
                         'woocommerce-wholesale-prices'
                     ),
-                    '<a target="_blank" href="https://wholesalesuiteplugin.com/woocommerce-wholesale-order-form/?utm_source=wwp&utm_medium=upsell&utm_campaign=upgradepagewwoflearnmore"> ',
+                    sprintf(
+                        '<a target="_blank" href="%s"> ',
+                        esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-order-form', 'wwp', 'upsell', 'upgradepagewwoflearnmore' ) )
+                    ),
                     '</a>',
                 );
             }
@@ -878,7 +899,8 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
          * Roles tab controls.
          *
          * @return array
-         * @since   2.2.0 - Added.
+         * @since 2.2.0 - Added.
+         * @since 2.2.1 Remove administrator as option.
          */
         public function admin_roles_tab_controls() {
             $registered_roles = $this->get_registered_roles();
@@ -886,7 +908,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
             /**
              * Administrator and Shop manager allowed by default.
              */
-            $allowed_roles = get_option( 'wwp_roles_allowed_dashboard_access', array( 'administrator', 'shop_manager' ) );
+            $allowed_roles = get_option( 'wwp_roles_allowed_dashboard_access', array( 'shop_manager' ) );
 
             // Roles Options - Section.
             $roles_controls['admin_roles_options'] = array(
@@ -896,7 +918,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                     'id'          => 'wwp_roles_allowed_dashboard_access',
                     'multiple'    => true,
                     'options'     => $registered_roles,
-                    'default'     => $allowed_roles,
+                    'default'     => ! empty( $allowed_roles ) ? $allowed_roles : array(),
                     'description' => __( 'Select the user roles allowed to access the Wholesale admin dashboard. Administrator and Shop manager are allowed by default.', 'woocommerce-wholesale-prices' ),
                 ),
             );
@@ -933,7 +955,10 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                     'Complete documentation on usage tracking is available %1$shere%2$s.',
                     'woocommerce-wholesale-prices'
                 ),
-                '<a target="_blank" href="https://wholesalesuiteplugin.com/kb/usage-tracking/?utm_source=wwp&utm_medium=kb&utm_campaign=helppageusagetracking"> ',
+                sprintf(
+                    '<a target="_blank" href="%s"> ',
+                    esc_url( WWP_Helper_Functions::get_utm_url( 'kb/usage-tracking', 'wwp', 'kb', 'helppageusagetracking' ) )
+                ),
                 '</a>',
             );
 
@@ -1071,7 +1096,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                             'id'           => 'wwp_feature_list_btn',
                             'classes'      => 'wwp-feature-custom-btn',
                             'button_label' => __( 'See the full feature list', 'woocommerce-wholesale-prices' ),
-                            'link'         => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=upgradepagewwppbutton',
+                            'link'         => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'upgradepagewwppbutton' ) ),
                             'external'     => true,
                         ),
                     ),
@@ -1091,7 +1116,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                 'type'         => 'button',
                 'id'           => 'wwp_bundle_link1',
                 'button_label' => __( 'Learn more about Prices Premium', 'woocommerce-wholesale-prices' ),
-                'link'         => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=upgradepagewwpplearnmore',
+                'link'         => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'upgradepagewwpplearnmore' ) ),
                 'external'     => true,
                 'classes'      => 'wwp-package-link',
             );
@@ -1105,7 +1130,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                 'type'         => 'button',
                 'id'           => 'wwp_bundle_link2',
                 'button_label' => __( 'Learn more about Order Form', 'woocommerce-wholesale-prices' ),
-                'link'         => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-order-form/?utm_source=wwp&utm_medium=upsell&utm_campaign=upgradepagewwoflearnmore',
+                'link'         => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-order-form', 'wwp', 'upsell', 'upgradepagewwoflearnmore' ) ),
                 'external'     => true,
                 'classes'      => 'wwp-package-link',
             );
@@ -1119,12 +1144,26 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                 'type'         => 'button',
                 'id'           => 'wwp_bundle_link3',
                 'button_label' => __( 'Learn more about Lead Capture', 'woocommerce-wholesale-prices' ),
-                'link'         => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-lead-capture/?utm_source=wwp&utm_medium=upsell&utm_campaign=upgradepagewwlclearnmore',
+                'link'         => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-lead-capture', 'wwp', 'upsell', 'upgradepagewwlclearnmore' ) ),
                 'external'     => true,
                 'classes'      => 'wwp-package-link',
             );
             if ( $wwp_wwlc_is_active ) {
                 $wwp_wwlc_installed_label = $wws_installed_label;
+            }
+
+            // WPAY is active or not.
+            $wwp_wpay_is_active       = WWP_Helper_Functions::is_wpay_active();
+            $wwp_wpay_installed_label = array(
+                'type'         => 'button',
+                'id'           => 'wwp_bundle_link4',
+                'button_label' => __( 'Learn more about Wholesale Payments', 'woocommerce-wholesale-prices' ),
+                'link'         => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-payments', 'wwp', 'upsell', 'upgradepagewpaylearnmore' ) ),
+                'external'     => true,
+                'classes'      => 'wwp-package-link',
+            );
+            if ( $wwp_wpay_is_active ) {
+                $wwp_wpay_installed_label = $wws_installed_label;
             }
 
             $upgrade_controls['upgrade_options2'] = array(
@@ -1207,6 +1246,26 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                         ),
                         $wwp_wwlc_installed_label,
                         array(
+                            'type'    => 'heading',
+                            'id'      => 'wwp_heading_package4',
+                            'classes' => 'wwp-heading-package4 wwp-heading-package-bundle ' . ( $wwp_wpay_is_active ? 'wwp-package-active' : '' ),
+                            'tag'     => 'h3',
+                            'content' => __( 'WooCommerce Wholesale Payments', 'woocommerce-wholesale-prices' ),
+                        ),
+                        array(
+                            'type'    => 'paragraph',
+                            'id'      => 'wwp_paragraph_package4',
+                            'classes' => 'wwp-paragraph-upgrade wwp-paragraph-package-bundle ' . ( $wwp_wpay_is_active ? 'wwp-package-active' : '' ),
+                            'content' => __( 'Streamline your wholesale payment processes with flexible payment options tailored for wholesale customers. Offer multiple payment gateways, enforce minimum order amounts for specific gateways, and provide payment terms that suit your wholesale business. Improve cash flow management with partial payments, deposits, and custom payment deadlines. Empower your customers with a seamless checkout experience designed for wholesale transactions.', 'woocommerce-wholesale-prices' ),
+                        ),
+                        array(
+                            'type'    => 'image',
+                            'id'      => 'wwp_bundle_image4',
+                            'classes' => 'wwp-bundle-img',
+                            'url'     => esc_url( WWP_IMAGES_URL ) . 'upgrade-page-wpay-box.png',
+                        ),
+                        $wwp_wpay_installed_label,
+                        array(
                             'type'    => 'paragraph',
                             'id'      => 'wwp_paragraph_upgrade2_2',
                             'classes' => 'wwp-paragraph-feature',
@@ -1217,7 +1276,7 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                             'id'           => 'wwp_full_bundle_btn',
                             'classes'      => 'wwp-feature-custom-btn',
                             'button_label' => __( 'See the full bundle now', 'woocommerce-wholesale-prices' ),
-                            'link'         => 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=upgradepagebundlebutton',
+                            'link'         => esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'upgradepagebundlebutton' ) ),
                             'external'     => true,
                         ),
                     ),
@@ -1322,7 +1381,8 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
         /**
          * Get allowed admin roles.
          *
-         * @since  2.2.0
+         * @since 2.2.0
+         * @since 2.2.1 Only allow roles with edit_posts capability.
          * @access public
          * @return array
          */
@@ -1335,7 +1395,11 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                 if ( 'administrator' === $roleKey ) {
                     continue;
                 }
-                $registered_roles[ $roleKey ] = $role['name'];
+
+                // Check capabilities edit_posts.
+                if ( ! empty( $role['capabilities']['edit_posts'] ) ) {
+                    $registered_roles[ $roleKey ] = $role['name'];
+                }
             }
 
             /**

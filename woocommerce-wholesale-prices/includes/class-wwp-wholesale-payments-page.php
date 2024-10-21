@@ -50,11 +50,12 @@ if ( ! class_exists( 'WWP_Wholesale_Payments_Page' ) ) {
 
 			add_submenu_page(
 				'wholesale-suite',
-				__( 'Wholesale Payments', 'woocommerce-wholesale-prices' ),
-				__( 'Wholesale Payments', 'woocommerce-wholesale-prices' ),
+				__( 'Payments', 'woocommerce-wholesale-prices' ),
+				__( 'Payments', 'woocommerce-wholesale-prices' ),
 				'manage_options',
 				'wholesale-payments',
-				array( $this, 'render_page_html' )
+				array( $this, 'render_page_html' ),
+				5
 			);
 		}
 

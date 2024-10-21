@@ -248,17 +248,105 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
         /**
          * Check if WPAY is installed
          *
-         * @version 2.2.0
          * @since   2.2.0 - Added
          *
          * @return bool
+         * @version 2.2.0
          */
         public static function is_wpay_installed() {
 
             $plugin_file = 'woocommerce-wholesale-payments/woocommerce-wholesale-payments.php';
             $wpay_file   = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
 
-            return file_exists( $wpay_file );
+            return file_exists( $wpay_file ) ? true : false;
+        }
+
+        /**
+         * Check if WC Vendors is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_wcvendors_installed() {
+
+            $plugin_file    = 'wc-vendors/class-wc-vendors.php';
+            $wcvendors_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $wcvendors_file );
+        }
+
+        /**
+         * Check if AdTribes is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_adtribes_installed() {
+
+            $plugin_file   = 'woo-product-feed-pro/woocommerce-sea.php';
+            $adtribes_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $adtribes_file );
+        }
+
+        /**
+         * Check if Invoice Gateway is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_invoice_gateway_installed() {
+
+            $plugin_file          = 'invoice-gateway-for-woocommerce/invoice-gateway-for-woocommerce.php';
+            $invoice_gateway_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $invoice_gateway_file );
+        }
+
+        /**
+         * Check if Store Toolkit is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_store_toolkit_installed() {
+
+            $plugin_file        = 'woocommerce-store-toolkit/store-toolkit.php';
+            $store_toolkit_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $store_toolkit_file );
+        }
+
+        /**
+         * Check if Store Exporter is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_store_exporter_installed() {
+
+            $plugin_file         = 'woocommerce-exporter/exporter.php';
+            $store_exporter_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $store_exporter_file );
+        }
+
+        /**
+         * Check if any plugin is installed
+         *
+         * @param string $plugin_name Plugin name.
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_wp_plugin_installed( $plugin_name ) {
+            return file_exists( trailingslashit( WP_PLUGIN_DIR ) . $plugin_name );
         }
 
         /**
@@ -1205,13 +1293,14 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
         /**
          * Check if a submenu slug exists.
          *
-         * @param string $parent_slug Parent slug.
+         * @param string $parent_slug  Parent slug.
          * @param string $submenu_slug Submenu slug.
          *
          * @since 2.2.0
          * @return bool
          */
         public static function is_submenu_slug_exists( $parent_slug, $submenu_slug ) {
+
             global $submenu;
             if ( ! isset( $submenu[ $parent_slug ] ) ) {
                 return false;
@@ -1221,7 +1310,54 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
                     return true;
                 }
             }
+
             return false;
         }
+
+        /**
+         * Get the URL with UTM parameters.
+         *
+         * @param string $url_path     URL path from main.
+         * @param string $utm_source   UTM source.
+         * @param string $utm_medium   UTM medium.
+         * @param string $utm_campaign UTM campaign.
+         * @param string $site_url     URL - defaults to `https://wholesalesuiteplugin.com/`.
+         *
+         * @since 2.2.1
+         * @return string
+         */
+        public static function get_utm_url( $url_path = '', $utm_source = 'wwp', $utm_medium = 'action', $utm_campaign = 'default', $site_url = 'https://wholesalesuiteplugin.com/' ) {
+
+            $utm_content = get_option( 'wwp_installed_by', false );
+            $url         = trailingslashit( $site_url ) . $url_path;
+
+            return add_query_arg(
+                array(
+                    'utm_source'   => $utm_source,
+                    'utm_medium'   => $utm_medium,
+                    'utm_campaign' => $utm_campaign,
+                    'utm_content'  => $utm_content,
+                ),
+                trailingslashit( $url )
+            );
+        }
+
+        /**
+         * Notification dismiss.
+         *
+         * @since 2.2.1
+         * @access public
+         *
+         * @param int    $id  User ID.
+         * @param string $key Notification key.
+         *
+         * @return bool
+         */
+        public static function is_user_wws_notification_dismissed( $id, $key ) {
+			$userdata = get_user_meta( $id, '_wws_notifications_close', true );
+			$userdata = empty( $userdata ) && ! is_array( $userdata ) ? array() : $userdata;
+
+			return in_array( $key, $userdata, true );
+		}
     }
 }

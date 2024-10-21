@@ -100,7 +100,7 @@ if ( ! class_exists( 'WWP_Upgrade_To_Premium_Page' ) ) {
                     foreach ( $submenu['wholesale-suite'] as $key => $menu ) {
                         if ( in_array( 'Upgrade To Premium', $menu, true ) ) {
                             // phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
-                            $submenu['wholesale-suite'][ $key ][2] = 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=menuprolink';
+                            $submenu['wholesale-suite'][ $key ][2] = esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'menuprolink' ) );
                             $submenu['wholesale-suite'][ $key ][4] = 'wwp-upgrade-to-premium wwp-upgrade-link';
                             // phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
                         }

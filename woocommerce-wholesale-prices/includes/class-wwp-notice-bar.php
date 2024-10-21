@@ -64,7 +64,7 @@ if ( ! class_exists( 'WWP_Notice_Bar' ) ) {
                     '</a>'
                 )
             );
-            $this->_upgrade_link = apply_filters( 'wwp_noticebar_lite_upgrade_link', 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=litebar' );
+            $this->_upgrade_link = apply_filters( 'wwp_noticebar_lite_upgrade_link', WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'litebar' ) );
         }
 
         /**

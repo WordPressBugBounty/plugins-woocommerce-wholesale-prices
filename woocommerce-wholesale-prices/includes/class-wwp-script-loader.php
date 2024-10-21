@@ -121,6 +121,24 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             wp_enqueue_style( 'wwp_wcoverrides_css', WWP_CSS_URL . 'wwp-back-end-wcoverrides.css', array(), $this->_wwp_current_version, 'all' );
             wp_enqueue_script( 'wwp_wholesale_main_js', WWP_JS_URL . 'wholesale-main.js', array( 'jquery' ), $this->_wwp_current_version, true );
 
+            $get_wpay_started_url = esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-payments', 'wwp', 'protip', 'wpaygatewaytablefooter' ) );
+            wp_localize_script(
+                'wwp_wholesale_main_js',
+                'wwp_wholesale_main_object',
+                array(
+                    'is_wpay_active'              => WWP_Helper_Functions::is_wpay_active() ?? '',
+                    'i18n_get_wholesale_payments' => sprintf(
+                        // translators: %1$s <a> open tag, %2$s </a> close tag.
+                        __(
+                            'Want to do NET 30/60/90 Invoices for your wholesale customers? %1$sGet Wholesale Payments%2$s.',
+                            'woocommerce-wholesale-prices'
+                        ),
+                        '<a href="' . $get_wpay_started_url . '" target="_blank">',
+                        '</a>'
+                    ),
+                )
+            );
+
             /***********************************************************************************************************
              * Show Review Request Popup
              */
@@ -226,6 +244,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                     array(
 						'wholesale_roles'            => $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles(),
 						'is_aelia_active'            => WWP_ACS_Integration_Helper::aelia_currency_switcher_active(),
+                        'is_wc_subscriptions_active' => is_plugin_active( 'woocommerce-subscriptions/woocommerce-subscriptions.php' ) ? 'yes' : 'no',
 						'decimal_sep'                => get_option( 'woocommerce_price_decimal_sep' ),
 						'decimal_num'                => get_option( 'woocommerce_price_num_decimals' ),
 						'thousand_sep'               => get_option( 'woocommerce_price_thousand_sep' ),
@@ -252,7 +271,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                     by adding more wholesale user roles. Click below for all the details.',
 									'woocommerce-wholesale-prices'
                                 ) . '</p>',
-								'link'  => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwpproducteditadditionalprices',
+								'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwpproducteditadditionalprices' ) ),
 							),
 							'product_visibility'   => array(
 								'title' => '<h4>' . __( 'Upgrade For Product Visibility Features', 'woocommerce-wholesale-prices' ) . '</h4>',
@@ -262,7 +281,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                     the details.',
 									'woocommerce-wholesale-prices'
                                 ) . '</p>',
-								'link'  => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwpproducteditproductvisibility',
+								'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwpproducteditproductvisibility' ) ),
 							),
                             'wholesale_sale_price' => array(
 								'title' => '<h4>' . __( 'Upgrade For Wholesale Sale Price Features', 'woocommerce-wholesale-prices' ) . '</h4>',
@@ -271,7 +290,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                     Click below for all the details.',
 									'woocommerce-wholesale-prices'
                                 ) . '</p>',
-								'link'  => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwpproducteditproductvisibility',
+								'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwpproducteditproductvisibility' ) ),
 							),
 							'button_text'          => __( 'See Features & Pricing', 'woocommerce-wholesale-prices' ),
 							'bonus_text'           => sprintf(
@@ -422,6 +441,16 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
              */
             if ( strpos( $screen->id, 'wws-about-page' ) !== false ) {
                 wp_enqueue_style( 'wwp_about_page_css', WWP_CSS_URL . 'wwp-about-page.css', array(), $this->_wwp_current_version, 'all' );
+                wp_enqueue_script( 'wwp_about_page_js', WWP_JS_URL . 'backend/wwp-about-page.js', array( 'jquery' ), $this->_wwp_current_version, true );
+                wp_localize_script(
+                    'wwp_about_page_js',
+                    'about_page_params',
+                    array(
+						'nonce'               => wp_create_nonce( 'wwp_install_plugin' ),
+                        'i18n_installed_text' => __( 'Installed', 'woocommerce-wholesale-prices' ),
+                        'i18n_install_text'   => __( 'Install Plugin', 'woocommerce-wholesale-prices' ),
+                    )
+                );
             }
 
             /**
@@ -504,7 +533,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                             This can save heaps of time instead of setting wholesale pricing on individual products. Read more about it below.',
 											'woocommerce-wholesale-prices'
                                         ) . '</p>',
-										'link'  => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwppricesettingsalwaysuseregularwwpplink',
+										'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwppricesettingsalwaysuseregularwwpplink' ) ),
 									),
 									'variable_product_price_display' => array(
 										'title' => '<h4>' . __( 'Change How Variable Product Prices Are Displayed', 'woocommerce-wholesale-prices' ) . '</h4>',
@@ -513,7 +542,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                             Access this optimization option and more in the WooCommerce Wholesale Prices Premium plugin.',
 											'woocommerce-wholesale-prices'
                                         ) . '</p>',
-										'link'  => 'https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwppricesettingsvariabledisplaywwpplink',
+										'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwppricesettingsvariabledisplaywwpplink' ) ),
 									),
 									'button_text'       => __( 'See Features & Pricing', 'woocommerce-wholesale-prices' ),
                                 )
@@ -543,12 +572,12 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                             '<p>',
                                             '</p>'
                                         ),
-										'link'  => 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionpopupbutton',
+										'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwptaxexemptionpopupbutton' ) ),
 									),
 									'tax_display'      => array(
 										'title' => '<h4>' . __( 'Upgrade To Wholesale Suite For Advanced Tax Display', 'woocommerce-wholesale-prices' ) . '</h4>',
 										'msg'   => '<p>' . __( 'Wholesale Suite is the #1 best rated wholesale solution for WooCommerce. Prices Premium (one of the three plugins) features in-depth tax display controls.', 'woocommerce-wholesale-prices' ) . '</p>',
-										'link'  => 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxdisplaypopupbutton',
+										'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwptaxdisplaypopupbutton' ) ),
 									),
 									'suffix_overrides' => array(
 										'title' => '<h4>' . __( 'Upgrade To Wholesale Suite For Suffix Overrides', 'woocommerce-wholesale-prices' ) . '</h4>',
@@ -562,7 +591,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                             '<p>',
                                             '</p>'
                                         ),
-										'link'  => 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwppricesuffixpopupbutton',
+										'link'  => esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwppricesuffixpopupbutton' ) ),
 									),
 									'button_text'      => __( 'See Features & Pricing', 'woocommerce-wholesale-prices' ),
                                 )
@@ -617,7 +646,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             // Only display if WWLC is not installed.
             if ( empty( $wwlc_plugin_data ) ) {
 
-                $admin_notice_message = '<a href="https://wholesalesuiteplugin.com/woocommerce-wholesale-lead-capture/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwlcshowtononwholesale" target="_blank">' . __( 'Get WooCommerce Wholesale Lead Capture to unlock this powerful feature + more', 'woocommerce-wholesale-prices' ) . '&rarr;</a>';
+                $admin_notice_message = '<a href="' . esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-lead-capture', 'wwp', 'upsell', 'wwlcshowtononwholesale' ) ) . '" target="_blank">' . __( 'Get WooCommerce Wholesale Lead Capture to unlock this powerful feature + more', 'woocommerce-wholesale-prices' ) . '&rarr;</a>';
 
             }
 
@@ -681,7 +710,10 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                             'woocommerce-wholesale-prices'
                         ),
                         '<div class="notice wwp-wwlc-inactive"><p><i class="fa fa-star checked"></i><strong>',
-                        '<a href="https://wholesalesuiteplugin.com/woocommerce-wholesale-lead-capture/?utm_source=wwp&utm_medium=upsell&utm_campaign=wholesaletoguestwwlcrecommend" target="_blank">',
+                        sprintf(
+                            '<a href="%s" target="_blank">',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-lead-capture', 'wwp', 'upsell', 'wholesaletoguestwwlcrecommend' ) )
+                        ),
                         '</a></strong></p><p>',
                         '</p><p>'
                     ),
@@ -850,7 +882,12 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                                     each of which can have separate wholesale pricing, shipping and payment mapping, order minimums and more.',
                                 'woocommerce-wholesale-prices'
                             ),
-                            '<a href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwprolespagelinkpopup" target="_blank">',
+                            sprintf(
+                                '<a href="%s" target="_blank">',
+                                esc_url(
+                                    WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwprolespagelinkpopup' )
+                                ),
+                            ),
                             '</a>'
                         )
                     );
@@ -858,7 +895,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                 </p>
                 <p>
                     <a class="button"
-                        href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwprolespagebuttonpopup"
+                        href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwprolespagebuttonpopup' ) ); ?>"
                         target="_blank">
                         <?php esc_html_e( 'See the full feature list', 'woocommerce-wholesale-prices' ); ?>
                         <span class="dashicons dashicons-arrow-right-alt" style="margin-top: 7px"></span>
@@ -900,7 +937,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
          */
         public function wchome_wws_upgrade_to_premium() {
             if ( isset( $_GET['page'] ) && 'wchome-wws-upgrade' === $_GET['page'] ) { // phpcs:ignore
-                wp_safe_redirect( 'https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wchomeupgradelink' );
+                wp_safe_redirect( esc_url_raw( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wchomeupgradelink' ) ) );
                 exit;
             }
         }
@@ -930,6 +967,165 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
         }
 
         /**
+         * Add WWP menu in admin bar
+         *
+         * @since 2.2.1
+         * @access public
+         *
+         * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance.
+         */
+        public function add_wwp_menu_in_admin_bar( WP_Admin_Bar $wp_admin_bar ) {
+            $wwp_activation_date     = get_option( 'wwp_activation_date' );
+            $wwp_activation_datetime = $wwp_activation_date ? strtotime( $wwp_activation_date ) : false;
+            $now                     = time();
+
+            // Get date difference in days.
+            $date_diff = $wwp_activation_datetime ? ( $now - $wwp_activation_datetime ) / DAY_IN_SECONDS : false;
+
+            if ( $date_diff < 21 || WWP_Helper_Functions::is_user_wws_notification_dismissed( get_current_user_id(), 'wpay-menu-bar-button' ) ) {
+				return;
+			}
+
+            // Get the current screen object.
+            $current_screen = get_current_screen();
+
+            if ( strpos( $current_screen->id, 'wholesale' ) !== false && ! WWP_Helper_Functions::is_wpay_active() ) {
+                $default_roles = array( 'administrator' );
+                $saved_roles   = (array) get_option( 'wwp_roles_allowed_dashboard_access', array() );
+
+                // Shop manager has access if not disallowed by the admin.
+                if ( empty( $saved_roles ) ) {
+                    $default_roles[] = 'shop_manager';
+                }
+
+                /**
+                 * Filter to allow other roles to access the wholesale dashboard.
+                 * By default, only admin and shop manager can see the top level menu.
+                 *
+                 * @since 2.2.1
+                 *
+                 * @param array $allowed_roles Array of roles allowed to access the wholesale dashboard.
+                 * @param array $default_roles Default roles allowed to access the wholesale dashboard.
+                 * @return array
+                 */
+                $allowed_roles = apply_filters(
+                    'wwp_roles_allowed_dashboard_access',
+                    array_merge( $default_roles, $saved_roles ),
+                );
+
+                $user = wp_get_current_user();
+
+                if ( ! empty( array_intersect( (array) $user->roles, $allowed_roles ) ) ) {
+                    $wws_image_url      = WWP_IMAGES_URL . 'wws-icon.png';
+                    $wpay_toolbar_label = sprintf(
+                        '<span id="wpay_toolbar-container"><img src="%s" alt="%s" style="width: 20px; height: 20px; margin-right: 5px;"><span class="wpay_toolbar-label">%s</span></span>',
+                        esc_url( $wws_image_url ),
+                        esc_attr__( 'Wholesale Payments', 'woocommerce-wholesale-prices' ),
+                        esc_attr__( 'Wholesale Payments', 'woocommerce-wholesale-prices' ),
+                    );
+                    $wp_admin_bar->add_node(
+                        array(
+                            'id'    => 'wpay_toolbar',
+                            'title' => $wpay_toolbar_label,
+                        )
+                    );
+                }
+            }
+        }
+
+        /**
+         * Enqueue wpay pointer
+         *
+         * @since 2.1.3
+         * @access public
+         */
+        public function enqueue_wpay_pointer() {
+            if ( ! WWP_Helper_Functions::is_wpay_active() ) {
+                wp_enqueue_script( 'wp-pointer' );
+			    wp_enqueue_style( 'wp-pointer' );
+            }
+        }
+
+        /**
+         * Load script for wpay pointer
+         *
+         * @since 2.1.3
+         * @access public
+         */
+        public function load_wpay_pointer() {
+            // Check if wpay is not active.
+            if ( ! WWP_Helper_Functions::is_wpay_active() ) {
+                ?>
+                <script>
+                    jQuery(document).ready(function ($) {
+                        const wpayToolBarHTML = '<h3><?php esc_html_e( 'Setup Wholesale Payments (Recommended)', 'woocommerce-wholesale-prices' ); ?></h3><p><?php esc_html_e( 'Use Wholesale Suite Wholesale Payments plugin to create NET 30, 60, or any other invoice payment plan you can think of for your wholesale customers.', 'woocommerce-wholesale-prices' ); ?></p><ul><li> <?php echo esc_html__( 'Turn WooCommerce orders into Stripe Invoices with NET payment terms', 'woocommerce-wholesale-prices' ); ?> </li><li><?php echo esc_html__( 'Add a new "Wholesale Invoice" gateway', 'woocommerce-wholesale-prices' ); ?> </li><li><?php echo esc_html__( 'Restrict to certain wholesale roles or even certain customers only', 'woocommerce-wholesale-prices' ); ?></li><li><?php echo esc_html__( 'Create any kind of delayed payment plan (eg. NET 30, NET 60, % deposits, ...)', 'woocommerce-wholesale-prices' ); ?></li><li><?php echo esc_html__( 'Expert worldwide support', 'woocommerce-wholesale-prices' ); ?></li></ul><a href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-payments', 'wwp', 'upsell', 'upgradepagewpaylearnmore' ) ); ?>" target="_blank" class="button button-primary"><span><?php echo esc_html__( 'Get Wholesale Payments' ); ?></span></a>';
+
+                        $('#wp-admin-bar-wpay_toolbar').pointer({
+                            "content": wpayToolBarHTML,
+                            "buttons": function (event, t) {
+                                var redirectUrl = '<?php echo( admin_url( 'admin-ajax.php?action=wpay_toolbar_dismiss_notice&nkey=wpay-menu-bar-button&nonce=' . wp_create_nonce( 'wp_wpay_toolbar_dismiss_notice' ) . '&redirect=' . basename( $_SERVER['REQUEST_URI'] ) ) ); //phpcs:ignore ?>';
+                                var button = $('<a class="close" href="' + redirectUrl + '"></a>').text(wp.i18n.__('Dismiss Forever'));
+
+                                return button.on('click.pointer', function (e) {
+                                    e.preventDefault();
+                                    jQuery('#wp-admin-bar-wpay_toolbar').remove();
+                                    window.location.href = redirectUrl;
+                                    t.element.pointer('close');
+                                });
+                            },
+                            "position": {"edge": "top", "align": "center"},
+                            "pointerClass": "wpay-bar-tooltip",
+                            "pointerWidth": 350,
+                        }).pointer('open');
+                    });
+                </script>
+                <?php
+            }
+        }
+
+        /**
+         * Dismiss admin notice
+         *
+         * @since 2.1.3
+         * @access public
+         */
+        public function ajax_dismiss_admin_notice() {
+            $notice_key = isset( $_REQUEST['nkey'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['nkey'] ) ) : ''; // phpcs:ignore
+
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX && current_user_can( 'manage_options' ) && $notice_key && isset( $_REQUEST['nonce'] ) && false !== check_ajax_referer( 'wp_wpay_toolbar_dismiss_notice', 'nonce', false ) ) {
+				$userdata   = get_user_meta( get_current_user_id(), '_wws_notifications_close', true );
+				$userdata   = empty( $userdata ) && ! is_array( $userdata ) ? array() : $userdata;
+				$userdata[] = $notice_key;
+
+				update_user_meta( get_current_user_id(), '_wws_notifications_close', array_values( array_unique( $userdata ) ) );
+			}
+			$redirect     = isset( $_REQUEST['redirect'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect'] ) ) : null;
+			$redirect_url = $redirect && strpos( $redirect, '.php' ) ? admin_url( $redirect ) : null;
+			wp_safe_redirect( $redirect_url ?? admin_url( 'admin.php?page=wholesale-suite' ) );
+			exit;
+        }
+
+        /**
+         * Activate plugin.
+         *
+         * @since 2.2.1
+         * @access public
+         */
+        public function wwp_activate() {
+            update_option( 'wwp_activation_date', current_time( 'mysql' ) );
+        }
+
+        /**
+         * Deactivate plugin.
+         *
+         * @since 2.2.1
+         * @access public
+         */
+        public function wwp_deactivate() {
+            delete_option( 'wwp_activation_date' );
+        }
+
+        /**
          * Execute model.
          *
          * @since 1.4.0
@@ -942,6 +1138,13 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             add_action( 'admin_enqueue_scripts', array( $this, 'wwp_store_management_link_script' ), 10 );
             add_action( 'admin_enqueue_scripts', array( $this, 'load_wwp_admin_notice_bar_lite_styles_and_scripts' ), 10 );
             add_action( 'admin_enqueue_scripts', array( $this, 'load_wws_license_upsell_upgrade_to_premium_styles_and_scripts' ), 10 );
+            add_action( 'admin_bar_menu', array( $this, 'add_wwp_menu_in_admin_bar' ), 99 );
+            add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wpay_pointer' ), 10 );
+            add_action( 'admin_print_footer_scripts', array( $this, 'load_wpay_pointer' ), 10 );
+            add_action( 'wp_ajax_wpay_toolbar_dismiss_notice', array( $this, 'ajax_dismiss_admin_notice' ) );
+
+            register_activation_hook( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices' . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices.bootstrap.php', array( $this, 'wwp_activate' ) );
+            register_deactivation_hook( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices' . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices.bootstrap.php', array( $this, 'wwp_deactivate' ) );
         }
     }
 }

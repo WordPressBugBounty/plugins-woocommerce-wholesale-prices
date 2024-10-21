@@ -1,13 +1,17 @@
 @media screen and (max-width: 1023px) {
     #wwp-notice-bar {
-      display: none !important;
+        display: none !important;
     }
+}
+
+#wpcontent {
+    position: relative;
 }
 
 .wwp-notice-bar a {
     color: #00a32a;
 }
-  
+
 .wwp-notice-bar a:hover {
     color: #079460;
 }
@@ -19,9 +23,9 @@
 }
 
 .wwp-notice-bar.notice-warning {
-      border-left: 1px solid #d5d5d5;
+    border-left: 1px solid #d5d5d5;
 }
-  
+
 #wwp-notice-bar {
     background-color: #DDDDDD;
     border-top: 3px solid #00a32a;
@@ -37,22 +41,26 @@
 }
 
 #wwp-notice-bar.top-lite {
-    top: 60px; /* #woocommerce-embedded-root .woocommerce-layout__header .woocommerce-layout__header-heading (60px) = top: 92px */
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding: 7px 0;
 }
-  
+
 #wwp-notice-bar.out {
     opacity: .5;
     max-height: 0;
 }
-  
+
 #wwp-notice-bar a {
     color: #00a32a;
 }
-  
+
 #wwp-notice-bar a:hover {
     color: #079460;
 }
-  
+
 #wwp-notice-bar .wwp-dismiss-button {
     position: absolute;
     top: 0;
@@ -64,7 +72,7 @@
     color: #72777c;
     cursor: pointer;
 }
-  
+
 #wwp-notice-bar .wwp-dismiss-button:before {
     background: 0 0;
     color: #72777c;

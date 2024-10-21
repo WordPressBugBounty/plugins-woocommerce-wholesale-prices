@@ -358,13 +358,12 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
                 array_unshift( $links, $settings_link );
 
                 if ( ! WWP_Helper_Functions::is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ) {
-
-                    $upgrade_link = '<a href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=pluginpagebundlelink" target="_blank"><b>' . __( 'Upgrade To Premium', 'woocommerce-wholesale-prices' ) . '</b></a>';
+                    $upgrade_link = '<a href="' . esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'pluginpagebundlelink' ) ) . '" target="_blank"><b>' . esc_html__( 'Upgrade To Premium', 'woocommerce-wholesale-prices' ) . '</b></a>';
                     array_unshift( $links, $upgrade_link );
 
                 }
 
-                $getting_started          = '<a href="https://wholesalesuiteplugin.com/kb/woocommerce-wholesale-prices-free-plugin-getting-started-guide/?utm_source=wwp&utm_medium=kb&utm_campaign=wwpgettingstarted" target="_blank">' . __( 'Getting Started', 'woocommerce-wholesale-prices' ) . '</a>';
+                $getting_started          = '<a href="' . esc_url( WWP_Helper_Functions::get_utm_url( 'kb/woocommerce-wholesale-prices-free-plugin-getting-started-guide', 'wwp', 'kb', 'wwpgettingstarted' ) ) . '" target="_blank">' . __( 'Getting Started', 'woocommerce-wholesale-prices' ) . '</a>';
                 $links['getting_started'] = $getting_started;
 
             }
@@ -404,7 +403,8 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
                         <p><img src="<?php echo esc_url( WWP_IMAGES_URL ); ?>wholesale-suite-activation-notice-logo.png" alt="" /></p>
                         <p><?php esc_html_e( 'Thank you for choosing Wholesale Suite &#8211; the most complete wholesale solution for building wholesale sales into your existing WooCommerce driven store.', 'woocommerce-wholesale-prices' ); ?>
                         <p><?php esc_html_e( 'The free WooCommerce Wholesale Prices plugin lets you set wholesale pricing for wholesale level customers. Would you like to find out how to drive it?', 'woocommerce-wholesale-prices' ); ?>
-                        <p><a href="https://wholesalesuiteplugin.com/kb/woocommerce-wholesale-prices-free-plugin-getting-started-guide/?utm_source=wwp&utm_medium=kb&utm_campaign=wwpgettingstarted"
+
+                        <p><a href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'kb/woocommerce-wholesale-prices-free-plugin-getting-started-guide', 'wwp', 'kb', 'wwpgettingstarted' ) ); ?>"
                                 target="_blank">
                                 <?php esc_html_e( 'Read the Getting Started guide', 'woocommerce-wholesale-prices' ); ?>
                                 <span class="dashicons dashicons-arrow-right-alt" style="margin-top: 5px"></span>

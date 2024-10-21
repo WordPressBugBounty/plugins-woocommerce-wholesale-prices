@@ -9,6 +9,7 @@ jQuery(document).ready(function ($) {
         $wholesale_roles = Object.keys(JSON.parse(JSON.stringify($options.wholesale_roles))),
         $wholesale_price_old_data_map = new Map(),
         $product_type = $('#product-type').val(),
+        $is_subscriptions_active = $options.is_wc_subscriptions_active,
         $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
 
     /**
@@ -20,6 +21,74 @@ jQuery(document).ready(function ($) {
         'i18n_discount_greater_than_100_percent_error': $options.i18n_discount_greater_than_100_percent_error,
         'i18n_discount_less_than_0_percent_error': $options.i18n_discount_less_than_0_percent_error
     });
+
+    /**
+     * @since 2.2.1
+     */
+    $("body").on("click", ".woocommerce_variation",
+        function (e) {
+            if ($is_subscriptions_active === 'yes' && $product_type === 'variable-subscription') {
+                if (!$(this).hasClass('variation-subscription-open')) {
+                    $(this).addClass('variation-subscription-open');
+                    const variation_parent = $(this);
+                    const selector = $(this).find('.wc_input_subscription_price');
+                    const variationSubscriptionPrice = selector.attr("name").split("_").pop();
+                    const variation_loop_index_id = variationSubscriptionPrice.replace(/^\D+|\D+$/g, "");
+
+                    $wholesale_roles.forEach((role) => {
+                        const discount_type = $('#' + role + '_wholesale_discount_type\\[' + variation_loop_index_id + '\\]');
+                        var percentage_input_field_container = $('.form-field.' + role + '_wholesale_percentage_discount\\[' + variation_loop_index_id + '\\]_field'),
+                            el_wholesale_price_field = $('#' + role + '_wholesale_prices\\[' + variation_loop_index_id + '\\]');
+
+                        // Check if WC Subscriptions is active.
+                        if ($is_subscriptions_active === 'yes') {
+                            var el_wholesale_signup_fee_field_container = $('.form-field.' + role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]_field'),
+                                el_wholesale_signup_fee_discount_field_container = $('.form-field.' + role + '_wholesale_signup_fee_discount\\[' + variation_loop_index_id + '\\]_field'),
+                                el_wholesale_signup_fee = $('#' + role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]');
+
+                            if ($product_type === 'variable-subscription') {
+                                el_wholesale_signup_fee_field_container.show();
+
+                                if (discount_type.val() === 'percentage') {
+                                    el_wholesale_signup_fee_discount_field_container.show();
+                                    el_wholesale_signup_fee.attr('readonly', true);
+                                } else {
+                                    el_wholesale_signup_fee_discount_field_container.hide();
+                                    el_wholesale_signup_fee.attr('readonly', false);
+                                }
+                            }
+                        }
+
+                        if (variation_loop_index_id !== null) {
+
+                            if (el_wholesale_price_field !== null) {
+
+                                el_wholesale_price_field.val(removeTrailingZeros(el_wholesale_price_field.val()));
+                                $wholesale_price_old_data_map.set(role + '_' + variation_loop_index_id, el_wholesale_price_field.val());
+                            }
+
+
+                            if (discount_type.val() === 'fixed') {
+
+                                percentage_input_field_container.hide();
+                                el_wholesale_price_field.attr('readonly', false);
+
+                            } else {
+
+                                percentage_input_field_container.show();
+                                el_wholesale_price_field.attr('readonly', true);
+                            }
+
+                        }
+                    });
+                } else {
+                    if ($(this).hasClass('closed')) {
+                        $(this).removeClass('variation-subscription-open');
+                    }
+                }
+            }
+        }
+    );
 
     /**
      * This block of code runs only on variable product with variations, this will check if we have changes in the variations regular price.
@@ -55,6 +124,90 @@ jQuery(document).ready(function ($) {
     });
 
     /**
+     * This block of code runs for subscription product type.
+     * 
+     * @since 2.2.1 WC Subscriptions compatibility
+     */
+    $('body').on('keyup', '#_subscription_price', function (e) {
+        var regular_price = $(this).val(),
+            id = $(this).attr('id');
+        variation_loop_index_id = '';
+
+        // Check if WC Subscriptions is active.
+        if ($is_subscriptions_active === 'yes') {
+            $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
+
+            if ((id.match('^variable_regular_price') || id.match('^variable_sale_price')) && $variable_product_variations.length > 0) {
+                variation_loop_index_id = id.match(/\d/g).join('');
+            }
+
+            if ($(this).prop('class').indexOf('wholesale_price') < 0 && $(this).prop('class').indexOf('wholesale_discount') < 0 && (id !== '_sale_price' && id !== 'variable_sale_price' + variation_loop_index_id)) {
+
+                getPercentageWholesalePriceByRegularPrice(variation_loop_index_id, regular_price);
+
+            } else {
+
+                if ($(this).prop('class').indexOf('wholesale_discount') < 0) {
+                    $(this).attr('data-fixed_price', regular_price);
+                }
+
+            }
+        }
+    });
+
+    /**
+     * This block of code runs for subscription product type.
+     * 
+     * @since 2.2.1 WC Subscriptions compatibility
+     */
+    $('body').on('keyup', '#_subscription_sign_up_fee', function (e) {
+        var regular_price = $(this).val(),
+            id = $(this).attr('id');
+        variation_loop_index_id = '';
+
+        // Check if WC Subscriptions is active.
+        if ($is_subscriptions_active === 'yes') {
+            $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
+
+            if ((id.match('^variable_regular_price') || id.match('^variable_sale_price')) && $variable_product_variations.length > 0) {
+                variation_loop_index_id = id.match(/\d/g).join('');
+            }
+
+            if ($(this).prop('class').indexOf('wholesale_price') < 0 && $(this).prop('class').indexOf('wholesale_discount') < 0 && (id !== '_sale_price' && id !== 'variable_sale_price' + variation_loop_index_id)) {
+
+                getPercentageWholesaleSignupFeeByRegularPrice(variation_loop_index_id, regular_price);
+
+            } else {
+
+                if ($(this).prop('class').indexOf('wholesale_discount') < 0) {
+                    $(this).attr('data-fixed_price', regular_price);
+                }
+
+            }
+        }
+    });
+
+    /**
+     * This block of code runs for subscription product type.
+     * 
+     * @since 2.2.1 WC Subscriptions compatibility
+     */
+    $('body').on('keyup', '.wholesale_signup_fee_discount', function (e) {
+        $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
+
+        const $discount_element = $(this);
+
+        var role = $(this).data('wholesale_role'),
+            variation_loop_index_id = $variable_product_variations.length > 0 ? $(this).data('loop_id') : '';
+
+        processVariationWholesaleSignupFee(
+            $discount_element,
+            variation_loop_index_id,
+            role
+        );
+    });
+
+    /**
      * Calculate the percentage wholesale price every time we change the value of the discount input field and if the
      * discount input field is not empty. 
      * 
@@ -82,7 +235,6 @@ jQuery(document).ready(function ($) {
 
     });
 
-
     /**
      * Handle the keyup event on the variation regular price fields to calculate the wholesale price every time the regular price is changed.
      *
@@ -92,7 +244,15 @@ jQuery(document).ready(function ($) {
         "keyup",
         ".woocommerce_variation .wc_input_price",
         function (e) {
-            const variationIndex = $(this).attr("id").split("_").pop();
+            var variationIndex = '';
+
+            // Check if WC subscription is active.
+            if ($(this).hasClass('wc_input_subscription_intial_price')) {
+                const variationSubscriptionPrice = $(this).attr("name").split("_").pop();
+                variationIndex = variationSubscriptionPrice.replace(/^\D+|\D+$/g, "");
+            } else {
+                variationIndex = $(this).attr("id").split("_").pop();
+            }
 
             $wholesale_roles.forEach((role) => {
                 const $discount_element = $(
@@ -104,14 +264,75 @@ jQuery(document).ready(function ($) {
                     variationIndex,
                     role
                 );
+
+                // For signup fee.
+                if ($(this).hasClass('wc_input_subscription_intial_price')) {
+                    const $discount_fee_element = $(
+                        `#${role}_wholesale_signup_fee_discount\\[${variationIndex}\\]`
+                    );
+                    processVariationWholesaleSignupFee(
+                        $discount_fee_element,
+                        variationIndex,
+                        role
+                    );
+                }
             });
         }
     );
 
     /**
+     * Calculate the percentage wholesale sale price every time we change the value of the discount input field and if the
+     * discount input field is not empty. 
+     *
+     * @since 2.2.1 WC Subscriptions compatibility
+     */
+    $('body').on('change', '.wholesale_sale_discount', function (e) {
+
+        $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
+
+        var discount = $(this).val(),
+            role = $(this).data('wholesale_role'),
+            variation_loop_index_id = $variable_product_variations.length > 0 ? $(this).data('loop_id') : '';
+
+        var wholesale_price_field_id = $variable_product_variations.length > 0 ? role + '_wholesale_prices\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_price',
+            price = getProductRegularPrice(wholesale_price_field_id),
+            wholesale_sale_price_field_id = $variable_product_variations.length > 0 ? role + '_wholesale_sale_price\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_sale_price',
+            el_wholesale_sale_price_field = $('#' + wholesale_sale_price_field_id);
+
+        discount = (discount !== "" && $options.decimal_sep !== '.') ? discount.toString().replace($options.decimal_sep, '.') : discount;
+
+        if (parseFloat(discount) > 100) {
+
+            $(this).val('');
+            el_wholesale_sale_price_field.val('');
+
+        } else if (parseFloat(discount) == 100) {
+
+            el_wholesale_sale_price_field.val(0);
+
+        } else if (parseFloat(discount) < 0) {
+
+            $(this).val('');
+            el_wholesale_sale_price_field.val('');
+
+        } else if (parseFloat(discount) > 0) {
+
+            var discounted_price = calculateDiscountedPrice(price, discount);
+            discounted_price = removeTrailingZeros(discounted_price);
+
+            el_wholesale_sale_price_field.val(discounted_price);
+
+        } else {
+            el_wholesale_sale_price_field.val('');
+        }
+
+    });
+
+    /**
      * Calculate the percentage wholesale price every time the value is change and if you loss focus in the discount field input or if encounters an error on decimal separator or if the discount input field is greater than 100 or if the discount input field is less than 0.
      * 
      * @since 2.1.1 
+     * @since 2.2.1 WC Subscriptions compatibility
      */
     $('body').on('change', '.wholesale_discount', function (e) {
         $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
@@ -119,9 +340,59 @@ jQuery(document).ready(function ($) {
         var discount = $(this).val(),
             role = $(this).data('wholesale_role'),
             variation_loop_index_id = $variable_product_variations.length > 0 ? $(this).data('loop_id') : '',
-            regular_price_id = $variable_product_variations.length > 0 ? 'variable_regular_price_' + variation_loop_index_id : '_regular_price',
-            price = getProductRegularPrice(regular_price_id),
+            regular_price_id = $variable_product_variations.length > 0 ? 'variable_regular_price_' + variation_loop_index_id : '_regular_price';
+
+        var price = getProductRegularPrice(regular_price_id),
             wholesale_price_field_id = $variable_product_variations.length > 0 ? role + '_wholesale_prices\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_price',
+            el_wholesale_price_field = $('#' + wholesale_price_field_id);
+
+        discount = (discount !== "" && $options.decimal_sep !== '.') ? discount.toString().replace($options.decimal_sep, '.') : discount;
+
+        if (parseFloat(discount) > 100) {
+
+            $(this).val('');
+            el_wholesale_price_field.val('');
+
+        } else if (parseFloat(discount) == 100) {
+
+            el_wholesale_price_field.val(0);
+
+        } else if (parseFloat(discount) < 0) {
+
+            $(this).val('');
+            el_wholesale_price_field.val('');
+
+        } else if (parseFloat(discount) > 0) {
+
+            var discounted_price = calculateDiscountedPrice(price, discount);
+            discounted_price = removeTrailingZeros(discounted_price);
+
+            el_wholesale_price_field.val(discounted_price);
+
+        } else {
+            el_wholesale_price_field.val('');
+        }
+    });
+
+    /**
+     * Calculate the percentage wholesale signup fee every time the value is change and if you loss focus in the discount field input or if encounters an error on decimal separator or if the discount input field is greater than 100 or if the discount input field is less than 0.
+     * 
+     * @since 2.2.1
+     */
+    $('body').on('change', '.wholesale_signup_fee_discount', function (e) {
+        $variable_product_variations = ($product_type === 'simple') ? { length: 0 } : $('#variable_product_options_inner .woocommerce_variations');
+
+        var discount = $(this).val(),
+            role = $(this).data('wholesale_role'),
+            variation_loop_index_id = $variable_product_variations.length > 0 ? $(this).data('loop_id') : '';
+
+        const subscription_price_attr =
+            $variable_product_variations.length > 0
+                ? "variable_subscription_sign_up_fee[" + variation_loop_index_id + "]"
+                : "_subscription_sign_up_fee";
+        const price = $('input[name="' + subscription_price_attr + '"]').val();
+
+        var wholesale_price_field_id = $variable_product_variations.length > 0 ? role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_signup_fee',
             el_wholesale_price_field = $('#' + wholesale_price_field_id);
 
         discount = (discount !== "" && $options.decimal_sep !== '.') ? discount.toString().replace($options.decimal_sep, '.') : discount;
@@ -204,6 +475,33 @@ jQuery(document).ready(function ($) {
             wholesale_price_data_map_key = $variable_product_variations.length > 0 ? role + '_' + variation_loop_index_id : role,
             el_discount_field = $('#' + discount_field_id),
             el_wholesale_price_field = $('#' + wholesale_price_field_id);
+
+        // Check if WC Subscriptions is active.
+        if ($is_subscriptions_active === 'yes') {
+            var wholesale_signup_fee_field_id = $variable_product_variations.length > 0 ? role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_signup_fee',
+                el_wholesale_signup_fee_field = $('#' + wholesale_signup_fee_field_id),
+                signup_discount_field_id = $variable_product_variations.length > 0 ? role + '_wholesale_signup_fee_discount\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_signup_fee_discount',
+                el_signup_discount_field = $('#' + signup_discount_field_id),
+                wholesale_signup_fee_field_container_id = $variable_product_variations.length > 0 ? '.form-field.' + role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]_field' : '.form-field.' + role + '_wholesale_signup_fee_field',
+                el_wholesale_signup_fee_field_container = $(wholesale_signup_fee_field_container_id),
+                wholesale_signup_fee_discount_field_container_id = $variable_product_variations.length > 0 ? '.form-field.' + role + '_wholesale_signup_fee_discount\\[' + variation_loop_index_id + '\\]_field' : '.form-field.' + role + '_wholesale_signup_fee_discount_field',
+                el_wholesale_signup_fee_discount_field_container = $(wholesale_signup_fee_discount_field_container_id);
+
+            if ($product_type === 'subscription' || $product_type === 'variable-subscription') {
+                el_wholesale_signup_fee_field_container.show();
+
+                if (selected_discount_type === 'percentage') {
+                    el_wholesale_signup_fee_field.attr('readonly', true);
+                    el_wholesale_signup_fee_discount_field_container.show();
+                } else {
+                    el_wholesale_signup_fee_field.attr('readonly', false);
+                    el_wholesale_signup_fee_discount_field_container.hide();
+                }
+            } else {
+                el_wholesale_signup_fee_field_container.hide();
+                el_wholesale_signup_fee_discount_field_container.hide();
+            }
+        }
 
         if (selected_discount_type === 'percentage') {
             var regular_price_id = $variable_product_variations.length > 0 ? 'variable_regular_price_' + variation_loop_index_id : '_regular_price',
@@ -313,6 +611,29 @@ jQuery(document).ready(function ($) {
                         percentage_input_field_container = $('.form-field.' + role + '_wholesale_percentage_discount\\[' + variation_loop_index_id + '\\]_field'),
                         el_wholesale_price_field = $('#' + role + '_wholesale_prices\\[' + variation_loop_index_id + '\\]');
 
+                    // Check if WC Subscriptions is active.
+                    if ($is_subscriptions_active === 'yes') {
+                        var wholesale_signup_fee_field_id = role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]',
+                            el_wholesale_signup_fee_field = $('#' + wholesale_signup_fee_field_id),
+                            signup_discount_field_id = role + '_wholesale_signup_fee_discount\\[' + variation_loop_index_id + '\\]',
+                            el_signup_discount_field = $('#' + signup_discount_field_id),
+                            el_wholesale_signup_fee_field_container = $('.form-field.' + role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]_field'),
+                            el_wholesale_signup_fee_discount_field_container = $('.form-field.' + role + '_wholesale_signup_fee_discount\\[' + variation_loop_index_id + '\\]_field');
+
+                        if ($product_type === 'variable-subscription') {
+                            el_wholesale_signup_fee_field_container.show();
+
+                            if ($(this).val() === 'percentage') {
+                                el_wholesale_signup_fee_discount_field_container.show();
+                            } else {
+                                el_wholesale_signup_fee_discount_field_container.hide();
+                            }
+                        } else {
+                            el_wholesale_signup_fee_field_container.hide();
+                            el_wholesale_signup_fee_discount_field_container.hide();
+                        }
+                    }
+
                     if (variation_loop_index_id !== null) {
 
                         if (el_wholesale_price_field !== null) {
@@ -350,6 +671,8 @@ jQuery(document).ready(function ($) {
      * @since 2.1.0
      */
     function processSimpleProducts() {
+        var product_type = $('#product-type').val();
+
         $wholesale_roles.forEach((role) => {
             var select_discount_type_id = role + '_wholesale_discount_type',
                 wholesale_price_field_id = role + '_wholesale_price',
@@ -358,10 +681,40 @@ jQuery(document).ready(function ($) {
                 el_discount_field = $('#' + role + '_wholesale_percentage_discount'),
                 percentage_input_field_container = $('.form-field.' + role + '_wholesale_percentage_discount_field');
 
+            // Check if WC Subscriptions is active.
+            if ($is_subscriptions_active === 'yes') {
+                var wholesale_signup_fee_field_id = role + '_wholesale_signup_fee',
+                    el_wholesale_signup_fee_field = $('#' + wholesale_signup_fee_field_id),
+                    signup_discount_field_id = role + '_wholesale_signup_fee_discount',
+                    el_signup_discount_field = $('#' + signup_discount_field_id),
+                    el_wholesale_signup_fee_field_container = $('.' + role + '_wholesale_signup_fee_field'),
+                    el_wholesale_signup_fee_discount_field_container = $('.' + role + '_wholesale_signup_fee_discount_field');
+
+                if ($product_type === 'subscription' || $product_type === 'variable-subscription') {
+                    el_wholesale_signup_fee_field_container.show();
+
+                    if (el_selected_discount_type.val() === 'percentage') {
+                        el_wholesale_signup_fee_discount_field_container.show();
+                    } else {
+                        el_wholesale_signup_fee_discount_field_container.hide();
+                    }
+                } else {
+                    el_wholesale_signup_fee_field_container.hide();
+                    el_wholesale_signup_fee_discount_field_container.hide();
+                }
+            }
+
             if (el_selected_discount_type !== null) {
                 if ((el_selected_discount_type.val() === 'percentage' && el_discount_field.val() < 100) || (el_selected_discount_type.val() === 'fixed')) {
 
                     el_wholesale_price_field.text(removeTrailingZeros(el_wholesale_price_field.val()));
+                }
+
+                // Check if WC Subscriptions is active.
+                if ($is_subscriptions_active === 'yes' && ($product_type === 'subscription' || $product_type === 'variable-subscription')) {
+                    if ((el_selected_discount_type.val() === 'percentage' && el_signup_discount_field.val() < 100) || (el_selected_discount_type.val() === 'fixed')) {
+                        el_wholesale_signup_fee_field.text(removeTrailingZeros(el_wholesale_signup_fee_field.val()));
+                    }
                 }
 
                 // Set wholesale price old data, this will be use later under selection of discount type
@@ -370,9 +723,19 @@ jQuery(document).ready(function ($) {
                 if (el_selected_discount_type.val() === 'percentage') {
                     el_wholesale_price_field.attr('readonly', true);
                     percentage_input_field_container.show();
+
+                    // Check if WC Subscriptions is active.
+                    if ($is_subscriptions_active === 'yes' && ($product_type === 'subscription' || $product_type === 'variable-subscription')) {
+                        el_wholesale_signup_fee_field.attr('readonly', true);
+                    }
                 } else {
                     el_wholesale_price_field.attr('readonly', false);
                     percentage_input_field_container.hide();
+
+                    // Check if WC Subscriptions is active.
+                    if ($is_subscriptions_active === 'yes' && ($product_type === 'subscription' || $product_type === 'variable-subscription')) {
+                        el_wholesale_signup_fee_field.attr('readonly', false);
+                    }
                 }
             }
         });
@@ -396,6 +759,63 @@ jQuery(document).ready(function ($) {
                     role + '_wholesale_percentage_discount\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_percentage_discount',
                 wholesale_field_id = $variable_product_variations.length > 0 ?
                     role + '_wholesale_prices\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_price',
+                wholesale_price_data_map_key = $variable_product_variations.length > 0 ?
+                    role + '_' + variation_loop_index_id : role,
+
+                el_wholesale_price_field = $('#' + wholesale_field_id),
+                el_discount_field = $('#' + discount_field_id),
+                el_discount_type = $('#' + select_discount_type_id),
+                selected_options = el_discount_type ? el_discount_type.val() : null;
+
+            if (selected_options == null || el_discount_field == null) {
+                return false;
+            };
+
+            var discount = ($options.decimal_sep !== '.') ? el_discount_field.val().replace($options.decimal_sep, '.') : el_discount_field.val();
+
+            if (selected_options === 'percentage' && regular_price !== "" && el_discount_field.val() !== "") {
+                var discounted_price = calculateDiscountedPrice(regular_price, discount);
+
+                if (discount < 100) {
+                    el_wholesale_price_field.val(removeTrailingZeros(discounted_price));
+                } else {
+                    el_wholesale_price_field.val(0);
+                }
+
+            } else if (selected_options === 'fixed') {
+                if (!!el_wholesale_price_field.attr('data-fixed_price')) {
+                    el_wholesale_price_field.val(el_wholesale_price_field.attr('data-fixed_price'));
+                } else {
+                    var old_wholesale_price_value = $wholesale_price_old_data_map.get(wholesale_price_data_map_key);
+                    if (old_wholesale_price_value != '') {
+                        el_wholesale_price_field.val(old_wholesale_price_value);
+                    }
+                }
+            } else {
+                el_wholesale_price_field.val(null);
+            }
+
+        });
+    }
+
+    /**
+     * Get Percentage Wholesale Signup Fee By Subscription Sign-up fee
+     * 
+     * This will get the percentage wholesale price base on Sign-up fee if the discount type is percentage. If the discount type is fixed then we set the wholesale signup fee field text to empty if it has no existing value and vice versa.
+     * 
+     * @param {integer} variation_loop_index_id  This is the index id of variations in a variable product, if we have a total of 4(Four variations) its loop index will be like this "0,1,2,3" like an array index.
+     * @param {float} regular_price This is the products regular price, we will base here our computation for the percentage discount.
+     */
+    function getPercentageWholesaleSignupFeeByRegularPrice(variation_loop_index_id, regular_price) {
+
+        $wholesale_roles.forEach(function (role) {
+
+            var select_discount_type_id = $variable_product_variations.length > 0 ?
+                role + '_wholesale_discount_type\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_discount_type',
+                discount_field_id = $variable_product_variations.length > 0 ?
+                    role + '_wholesale_signup_fee_discount\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_signup_fee_discount',
+                wholesale_field_id = $variable_product_variations.length > 0 ?
+                    role + '_wholesale_signup_fee\\[' + variation_loop_index_id + '\\]' : role + '_wholesale_signup_fee',
                 wholesale_price_data_map_key = $variable_product_variations.length > 0 ?
                     role + '_' + variation_loop_index_id : role,
 
@@ -570,11 +990,20 @@ jQuery(document).ready(function ($) {
                 $variable_product_variations.length > 0
                     ? "variable_regular_price_" + variation_loop_index_id
                     : "_regular_price",
-            price = getProductRegularPrice(regular_price_id),
-            wholesale_price_field_id =
+            price = getProductRegularPrice(regular_price_id);
+
+        if ($is_subscriptions_active === 'yes' && ($product_type === 'subscription' || $product_type === 'variable-subscription')) {
+            const subscription_price_attr =
                 $variable_product_variations.length > 0
-                    ? role + "_wholesale_prices\\[" + variation_loop_index_id + "\\]"
-                    : role + "_wholesale_price",
+                    ? "variable_subscription_price[" + variation_loop_index_id + "]"
+                    : "_subscription_price";
+            price = $('input[name="' + subscription_price_attr + '"]').val();
+        }
+
+        var wholesale_price_field_id =
+            $variable_product_variations.length > 0
+                ? role + "_wholesale_prices\\[" + variation_loop_index_id + "\\]"
+                : role + "_wholesale_price",
             el_wholesale_price_field = $("#" + wholesale_price_field_id),
             wholesale_sale_price_field_id =
                 $variable_product_variations.length > 0
@@ -645,6 +1074,102 @@ jQuery(document).ready(function ($) {
 
                 el_wholesale_sale_price_field.val(discounted_sale_price);
             }
+        } else {
+            $(document.body).triggerHandler("wc_remove_error_tip", [
+                $discount_element,
+                "i18n_discount_less_than_0_percent_error",
+            ]);
+
+            if (discount_type === "percentage") {
+                el_wholesale_price_field.val("");
+            }
+        }
+    }
+
+    /**
+     * Process the variation wholesale singup fee based on the regular price and discount percentage
+     *
+     * @param DOMElemnt $discount_element The product discount element.
+     * @param String variation_loop_index_id The variation loop index id.
+     * @param String role The wholesale customer role.
+     * 
+     * @since 2.2.1
+     */
+    function processVariationWholesaleSignupFee(
+        $discount_element,
+        variation_loop_index_id,
+        role
+    ) {
+        $variable_product_variations =
+            $product_type === "subscription"
+                ? { length: 0 }
+                : $("#variable_product_options_inner .woocommerce_variations");
+
+        var discount = $discount_element.val(),
+            regular_price_id = "_subscription_sign_up_fee",
+            price = getProductRegularPrice(regular_price_id);
+
+        if ($is_subscriptions_active === 'yes' && ($product_type === 'subscription' || $product_type === 'variable-subscription')) {
+            const subscription_price_attr =
+                $variable_product_variations.length > 0
+                    ? "variable_subscription_sign_up_fee[" + variation_loop_index_id + "]"
+                    : "_subscription_sign_up_fee";
+            price = $('input[name="' + subscription_price_attr + '"]').val();
+        }
+
+        var wholesale_price_field_id =
+            $variable_product_variations.length > 0
+                ? role + "_wholesale_signup_fee\\[" + variation_loop_index_id + "\\]"
+                : role + "_wholesale_signup_fee",
+            el_wholesale_price_field = $("#" + wholesale_price_field_id),
+            discount_field_id =
+                $variable_product_variations.length > 0
+                    ? role + "_wholesale_discount_type\\[" + variation_loop_index_id + "\\]"
+                    : role + "_wholesale_discount_type",
+            discount_type = $("#" + discount_field_id).val();
+
+        discount =
+            discount !== "" && $options.decimal_sep !== "."
+                ? discount.toString().replace($options.decimal_sep, ".")
+                : discount;
+
+        if (parseFloat(discount) > 100) {
+            $(document.body).triggerHandler("wc_add_error_tip", [
+                $discount_element,
+                "i18n_discount_greater_than_100_percent_error",
+            ]);
+        } else if (parseFloat(discount) == 100) {
+            $(document.body).triggerHandler("wc_remove_error_tip", [
+                $discount_element,
+                "i18n_discount_greater_than_100_percent_error",
+            ]);
+
+            $(document.body).triggerHandler("wc_remove_error_tip", [
+                $discount_element,
+                "i18n_discount_less_than_0_percent_error",
+            ]);
+
+            el_wholesale_price_field.val(0);
+        } else if (parseFloat(discount) < 0) {
+            $(document.body).triggerHandler("wc_add_error_tip", [
+                $discount_element,
+                "i18n_discount_less_than_0_percent_error",
+            ]);
+        } else if (parseFloat(discount) > 0) {
+            $(document.body).triggerHandler("wc_remove_error_tip", [
+                $discount_element,
+                "i18n_discount_greater_than_100_percent_error",
+            ]);
+
+            $(document.body).triggerHandler("wc_remove_error_tip", [
+                $discount_element,
+                "i18n_discount_less_than_0_percent_error",
+            ]);
+
+            var discounted_price = calculateDiscountedPrice(price, discount);
+            discounted_price = removeTrailingZeros(discounted_price);
+
+            el_wholesale_price_field.val(discounted_price);
         } else {
             $(document.body).triggerHandler("wc_remove_error_tip", [
                 $discount_element,

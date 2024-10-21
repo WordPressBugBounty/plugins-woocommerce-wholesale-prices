@@ -344,6 +344,7 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
          *
          * @since 1.13.0
          * @since 2.1.5  Fix Wholesale Prices fields won't show when changing product type from variable to simple
+         * @since 2.2.1  Add WC Subscription support.
          * @access public
          */
         public function maybe_add_wholesale_price_fields() {
@@ -351,8 +352,17 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
 
             $product = wc_get_product( $post->ID );
 
+            $product_types = array( 'simple', 'variable' );
+
+            // Check if WC Subscription is active.
+            $wc_subscription_active = is_plugin_active( 'woocommerce-subscriptions/woocommerce-subscriptions.php' ) ? true : false;
+            if ( $wc_subscription_active ) {
+                $product_types[] = 'subscription';
+                $product_types[] = 'variable-subscription';
+            }
+
             // Added variable product type, so the wholesale price field will be executed when the inital product type is variable then changed to simple product.
-            if ( in_array( WWP_Helper_Functions::wwp_get_product_type( $product ), array( 'simple', 'variable' ), true ) ) {
+            if ( in_array( WWP_Helper_Functions::wwp_get_product_type( $product ), $product_types, true ) ) {
                 $this->add_wholesale_price_fields();
             }
         }
@@ -365,6 +375,7 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
          * @since 1.2.0 Add Aelia Currency Switcher Plugin Integratio
          * @since 1.3.0 Refactor codebase, move it on its own model.
          * @since 2.1.0 Add additional fields to support wholesale percentage discount.
+         * @since 2.2.1 Add WC Subscription support.
          * @access public
          *
          * @param string $product_type Product type.
@@ -475,8 +486,9 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
 
             <?php
             } else {
-
-                $wwpp_active = is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ? true : false;
+                // Check if WC Subscription is active.
+                $wc_subscription_active = is_plugin_active( 'woocommerce-subscriptions/woocommerce-subscriptions.php' ) ? true : false;
+                $wwpp_active            = is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ? true : false;
                 ?>
 
                 <div class="wholesale-prices-options-group options-group options_group hide_if_advanced_gift_card hide_if_external" style="border-top: 1px solid #EEEEEE;">
@@ -579,6 +591,52 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
 										),
                                     )
                                 );
+
+                                // Add signup fee field if WC Subscription is active.
+                                if ( $wc_subscription_active && $wwpp_active ) {
+                                    $signup_fee          = $product->get_meta( $role_key . '_wholesale_signup_fee', true );
+                                    $field_signup_fee_id = $role_key . '_wholesale_signup_fee';
+                                    /* translators: %1$s: currency symbol */
+                                    $field_signup_fee_label = sprintf( __( 'Wholesale Signup Fee (%1$s)', 'woocommerce-wholesale-prices' ), $currency_symbol );
+                                    /* translators: %1$s: Wholesale role name */
+                                    $field_signup_fee_desc = sprintf( __( 'Wholesale Signup Fee for %1$s customers', 'woocommerce-wholesale-prices' ), str_replace( array( 'Customer', 'Customers' ), '', $role['roleName'] ) );
+
+                                    $signup_fee_discount          = $product->get_meta( $role_key . '_wholesale_signup_fee_discount', true );
+                                    $field_signup_fee_discount_id = $role_key . '_wholesale_signup_fee_discount';
+                                    /* translators: %1$s: currency symbol */
+                                    $field_signup_fee_discount_label = __( 'Signup Fee Discount (%)', 'woocommerce-wholesale-prices' );
+                                    /* translators: %1$s: Wholesale role name */
+                                    $field_signup_fee_discount_desc = sprintf( __( 'Wholesale Signup Fee for %1$s customers', 'woocommerce-wholesale-prices' ), str_replace( array( 'Customer', 'Customers' ), '', $role['roleName'] ) );
+
+                                    woocommerce_wp_text_input(
+                                        array(
+											'id'          => $field_signup_fee_discount_id,
+											'class'       => $role_key . '_wholesale_signup_fee_discount wholesale_signup_fee_discount',
+											'label'       => $field_signup_fee_discount_label,
+											'placeholder' => '',
+											'desc_tip'    => 'true',
+											'description' => __( 'The percentage amount discounted from the Sign-up fee', 'woocommerce-wholesale-prices' ),
+											'data_type'   => 'price',
+											'value'       => $signup_fee_discount,
+                                            'custom_attributes' => array(
+												'data-wholesale_role' => $role_key,
+											),
+                                        )
+                                    );
+
+                                    woocommerce_wp_text_input(
+                                        array(
+											'id'          => $field_signup_fee_id,
+											'class'       => $role_key . '_wholesale_signup_fee wholesale_signup_fee wholesale_price',
+											'label'       => $field_signup_fee_label,
+											'placeholder' => '',
+											'desc_tip'    => 'true',
+											'description' => $field_signup_fee_desc,
+											'data_type'   => 'price',
+											'value'       => $signup_fee,
+                                        )
+                                    );
+                                }
 
                                 do_action( 'wwp_after_simple_wholesale_price_field', $post->ID, $role, $role_key, $currency_symbol, $wholesale_price, $discount_type, $wholesale_percentage_discount );
                                 ?>

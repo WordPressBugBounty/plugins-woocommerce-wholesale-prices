@@ -111,7 +111,7 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
                 add_submenu_page( 'wholesale-suite', __( 'Orders', 'woocommerce-wholesale-prices' ), __( 'Orders', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-orders', array( $this, 'wholesale_orders' ), 1 );
 
                 // Settings Submenu.
-                add_submenu_page( 'wholesale-suite', __( 'Settings', 'woocommerce-wholesale-prices' ), __( 'Settings', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-settings', array( $this, 'wholesale_settings' ), 7 );
+                add_submenu_page( 'wholesale-suite', __( 'Settings', 'woocommerce-wholesale-prices' ), __( 'Settings', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-settings', array( $this, 'wholesale_settings' ), 5 );
 
             }
         }
@@ -175,7 +175,7 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
             do_action( 'before_wholesale-settings_submenu_page_callback' ); // phpcs:ignore
 
             echo '<div class="wrap">';
-            echo '<div class="logo" style="padding: 20px 0;"><a href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=logo" target="_blank" rel="noreferrer"><img src="' . esc_url( WWP_IMAGES_URL . 'logo.png' ) . '" /></a></div>';
+            echo '<div class="logo" style="padding: 20px 0;"><a href="' . esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'logo' ) ) . '" target="_blank" rel="noreferrer"><img src="' . esc_url( WWP_IMAGES_URL . 'logo.png' ) . '" /></a></div>';
             echo '<div class="wp-header-end"></div>';
             echo '<h1 class="wwp-settings-heading" style="font-size: 26px; font-weight: 700;">' . esc_html__( 'Settings', 'woocommerce-wholesale-prices' ) . '</h1>';
             echo '<div id="wwp-admin-settings"></div>';

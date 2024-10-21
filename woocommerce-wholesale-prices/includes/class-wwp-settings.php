@@ -248,7 +248,10 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
                     'desc_tip' => sprintf(
                         // translators: %1$s - <a> tag, %2$s - </a> tag.
                         __( 'Complete documentation on usage tracking is available %1$shere%2$s.', 'woocommerce-wholesale-prices' ),
-                        '<a href="https://wholesalesuiteplugin.com/kb/usage-tracking/?utm_source=wwp&utm_medium=kb&utm_campaign=helppageusagetracking" target="_blank">',
+                        sprintf(
+                            '<a href="%s" target="_blank">',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'kb/usage-tracking', 'wwp', 'kb', 'helppageusagetracking' ) )
+                        ),
                         '</a>'
                     ),
                     'id'       => 'wwp_anonymous_data',
@@ -496,9 +499,15 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
                         ),
                         '<b>',
                         '</b>',
-                        '<a target="_blank" href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionwwpplink">',
+                        sprintf(
+                            '<a target="_blank" href="%s">',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwptaxexemptionwwpplink' ) )
+                        ),
                         '</a>',
-                        '<a target="_blank" href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionbundlelink">'
+                        sprintf(
+                            '<a target="_blank" href="%s">',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwptaxexemptionbundlelink' ) )
+                        )
                     ),
                 ),
                 array(
@@ -524,9 +533,15 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
                                     This feature and more is available in the %1$sPremium add-on%2$s and we also have other wholesale tools available as part of the %3$sWholesale Suite Bundle%2$s.',
                             'woocommerce-wholesale-prices'
                         ),
-                        '<a target="_blank" href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionwwpplink"> ',
+                        sprintf(
+                            '<a target="_blank" href="%s"> ',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwptaxexemptionwwpplink' ) )
+                        ),
                         '</a>',
-                        '<a target="_blank" href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxexemptionbundlelink">'
+                        sprintf(
+                            '<a target="_blank" href="%s">',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwptaxexemptionbundlelink' ) )
+                        )
                     ),
                     'id'   => 'wwp_settings_wholesale_role_tax_class_mapping_section_title',
                 ),
@@ -618,7 +633,10 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
                     'desc_tip' => sprintf(
                         // translators: %1$s link to usage tracking documentation, %2$s </a> tag.
                         __( 'Complete documentation on usage tracking is available %1$shere%2$s.', 'woocommerce-wholesale-prices' ),
-                        '<a href="https://wholesalesuiteplugin.com/kb/usage-tracking/?utm_source=wwp&utm_medium=kb&utm_campaign=helppageusagetracking" target="_blank">',
+                        sprintf(
+                            '<a href="%s" target="_blank">',
+                            esc_url( WWP_Helper_Functions::get_utm_url( 'kb/usage-tracking', 'wwp', 'kb', 'helppageusagetracking' ) )
+                        ),
                         '</a>'
                     ),
                     'id'       => 'wwp_anonymous_data',
@@ -801,14 +819,14 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
                 <td style="padding: 0px; display: flex; padding-top: 20px;">
 
                     <a class="wws-bundle-btn" target="_blank"
-                        href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxbundlebutton">
+                        href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wwptaxbundlebutton' ) ); ?>">
                         <div>
                             <span><b><?php esc_html_e( 'Wholesale Suite Bundle &rarr;', 'woocommerce-wholesale-prices' ); ?></b></span>
                             <span><?php esc_html_e( '3x wholesale plugins', 'woocommerce-wholesale-prices' ); ?></span>
                         </div>
                     </a>
                     <a class="wwpp-addon" target="_blank"
-                        href="https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/?utm_source=wwp&utm_medium=upsell&utm_campaign=wwptaxwwppbutton"><?php esc_html_e( 'Wholeasale Prices Premium Add-on &rarr;', 'woocommerce-wholesale-prices' ); ?></a>
+                        href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'woocommerce-wholesale-prices-premium', 'wwp', 'upsell', 'wwptaxwwppbutton' ) ); ?>"><?php esc_html_e( 'Wholeasale Prices Premium Add-on &rarr;', 'woocommerce-wholesale-prices' ); ?></a>
                 </td>
             </tr>
             <?php
@@ -918,7 +936,7 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
                 </div>
 
                 <div class="actions">
-                    <a href="https://wholesalesuiteplugin.com/bundle/?utm_source=wwp&utm_medium=upsell&utm_campaign=generalsettingsboxlink" target="_blank"><?php esc_html_e( 'Get Wholesale Suite today & unlock these powerful features + more', 'woocommerce-wholesale-prices' ); ?> &rarr;</a>
+                    <a href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'generalsettingsboxlink' ) ); ?>" target="_blank"><?php esc_html_e( 'Get Wholesale Suite today & unlock these powerful features + more', 'woocommerce-wholesale-prices' ); ?> &rarr;</a>
                     <p>
                         <?php
                             echo wp_kses_post(

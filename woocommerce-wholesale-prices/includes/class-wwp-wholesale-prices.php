@@ -199,6 +199,11 @@ class WWP_Wholesale_Prices {
         // Get product object.
         $product = wc_get_product( $product_id );
 
+        // check if valid product.
+        if ( ! is_a( $product, 'WC_Product' ) ) {
+            return '';
+        }
+
         if ( empty( $user_wholesale_role ) ) {
             $wholesale_price = '';
         } elseif ( WWP_ACS_Integration_Helper::aelia_currency_switcher_active() ) {
@@ -638,7 +643,7 @@ class WWP_Wholesale_Prices {
                     foreach ( $variations as $variation_id ) {
 
                         $variation = wc_get_product( $variation_id );
-                        if ( ! $variation->is_purchasable() ) {
+                        if ( ! $variation || ! $variation->is_purchasable() ) {
                             continue;
                         }
 
@@ -745,6 +750,9 @@ class WWP_Wholesale_Prices {
                     $wholesale_price_title_text = $return_value['wholesale_price_title_text'];
                 }
             }
+
+            // Third party plugins can use this filter to alter the wholesale price html before returning wholesale price only.
+            $wholesale_price = apply_filters( 'wwp_before_wholesale_price_html_filter', $wholesale_price, $price, $product, $user_wholesale_role, $wholesale_price_title_text, $raw_wholesale_price, $source, $return_wholesale_price_only );
 
             if ( strcasecmp( $wholesale_price, '' ) !== 0 ) {
 
@@ -911,7 +919,7 @@ class WWP_Wholesale_Prices {
                     $wp = $cart_item['data']->get_price();
                 }
 
-                $cart_total += $wp * $cart_item['quantity'];
+                $cart_total += (float) $wp * $cart_item['quantity'];
                 $cart_items += $cart_item['quantity'];
 
             }
@@ -1415,9 +1423,9 @@ class WWP_Wholesale_Prices {
                 $original_price = sprintf( '<del class="original-computed-price">%s</del><br>', $original_price );
             }
             $price = sprintf(
-                '%1$s<span class="wholesale_price_container"><span class="wholesale_price_title">%2$s</span>%3$s</span>',
+                '%1$s<span class="wholesale_price_container"><span class="wholesale_price_title">%2$s</span><ins style="margin-left: 0.6180469716em;">%3$s</ins></span>',
                 $original_price,
-                esc_html__( 'Wholesale Price: ', 'woocommerce-wholesale-prices' ),
+                esc_html( trim( apply_filters( 'wwp_filter_wholesale_price_title_text', __( 'Wholesale Price:', 'woocommerce-wholesale-prices' ) ) ) ),
                 $price
             );
         }

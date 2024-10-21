@@ -84,7 +84,7 @@ if ( ! class_exists( 'WWP_Install_ACFW' ) ) {
                         return;
                     }
 
-                    $learn_more       = 'https://advancedcouponsplugin.com/?utm_source=wwp&utm_medium=wcinbox&utm_campaign=wcinboxacfwflearnmorebutton';
+                    $learn_more       = esc_url( WWP_Helper_Functions::get_utm_url( '', 'wwp', 'wcinbox', 'wcinboxacfwflearnmorebutton', 'https://advancedcouponsplugin.com' ) );
                     $install_acfw_url = admin_url() . self::AJAX_INSTALL_URL;
 
                     $note_content = __(

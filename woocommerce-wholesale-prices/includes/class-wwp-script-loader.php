@@ -739,7 +739,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
         public function load_front_end_styles_and_scripts() {
             global $post;
 
-            $show_wholesale_prices_to_non_wholesale = apply_filters( 'wwp_show_wholesale_prices_to_non_wholesale_customers', get_option( 'wwp_prices_settings_show_wholesale_prices_to_non_wholesale' ) );
+            $show_wholesale_prices_to_non_wholesale = apply_filters( 'wwp_show_wholesale_prices_to_non_wholesale_customers', get_option( 'wwp_prices_settings_show_wholesale_prices_to_non_wholesale' ), $post );
 
             if ( is_product() ) {
 
@@ -967,14 +967,12 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
         }
 
         /**
-         * Add WWP menu in admin bar
+         * Load scripts and style for wwp pointer
          *
-         * @since 2.2.1
+         * @since 2.1.3
          * @access public
-         *
-         * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance.
          */
-        public function add_wwp_menu_in_admin_bar( WP_Admin_Bar $wp_admin_bar ) {
+        public function load_wwp_pointer() {
             $wwp_activation_date     = get_option( 'wwp_activation_date' );
             $wwp_activation_datetime = $wwp_activation_date ? strtotime( $wwp_activation_date ) : false;
             $now                     = time();
@@ -983,6 +981,22 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             $date_diff = $wwp_activation_datetime ? ( $now - $wwp_activation_datetime ) / DAY_IN_SECONDS : false;
 
             if ( $date_diff < 21 || WWP_Helper_Functions::is_user_wws_notification_dismissed( get_current_user_id(), 'wpay-menu-bar-button' ) ) {
+				return false;
+			}
+
+            return true;
+        }
+
+        /**
+         * Add WWP menu in admin bar
+         *
+         * @since 2.2.1
+         * @access public
+         *
+         * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance.
+         */
+        public function add_wwp_menu_in_admin_bar( WP_Admin_Bar $wp_admin_bar ) {
+            if ( ! $this->load_wwp_pointer() ) {
 				return;
 			}
 
@@ -1040,9 +1054,11 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
          * @access public
          */
         public function enqueue_wpay_pointer() {
-            if ( ! WWP_Helper_Functions::is_wpay_active() ) {
+            if ( ! WWP_Helper_Functions::is_wpay_active() && $this->load_wwp_pointer() ) {
                 wp_enqueue_script( 'wp-pointer' );
 			    wp_enqueue_style( 'wp-pointer' );
+
+                wp_enqueue_style( 'wwp_admin_pointer_css', WWP_CSS_URL . 'wwp-admin-pointer.css', array(), $this->_wwp_current_version, 'all' );
             }
         }
 
@@ -1054,7 +1070,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
          */
         public function load_wpay_pointer() {
             // Check if wpay is not active.
-            if ( ! WWP_Helper_Functions::is_wpay_active() ) {
+            if ( ! WWP_Helper_Functions::is_wpay_active() && $this->load_wwp_pointer() ) {
                 ?>
                 <script>
                     jQuery(document).ready(function ($) {
@@ -1116,16 +1132,6 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
         }
 
         /**
-         * Deactivate plugin.
-         *
-         * @since 2.2.1
-         * @access public
-         */
-        public function wwp_deactivate() {
-            delete_option( 'wwp_activation_date' );
-        }
-
-        /**
          * Execute model.
          *
          * @since 1.4.0
@@ -1144,7 +1150,6 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             add_action( 'wp_ajax_wpay_toolbar_dismiss_notice', array( $this, 'ajax_dismiss_admin_notice' ) );
 
             register_activation_hook( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices' . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices.bootstrap.php', array( $this, 'wwp_activate' ) );
-            register_deactivation_hook( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices' . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices.bootstrap.php', array( $this, 'wwp_deactivate' ) );
         }
     }
 }

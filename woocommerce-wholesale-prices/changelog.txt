@@ -1,5 +1,26 @@
 == WooCommerce Wholesale Prices Changelog ==
 
+= 2.2.0.1 =
+* Improvement: Autoload option for the plugin settings are now set to `off` by default
+* Bug Fix: Wholesale Fixed Prices On Variations Are Deleted After Editing Regular Price
+
+= 2.2.0 =
+* Feature: Cart/Checkout Blocks Compatibility
+* Feature: Wholesale Payments product education page
+* Improvement: Cart/Checkout legacy - show crossed-out retail amount if item is added as discounted
+* Improvement: Allow custom roles to view top-level settings page
+* Improvement: Removes unnecessary `save()` call when adding order items meta
+* Improvement: Add wholesale_price_with_tax to the variation data on the single product page form
+* Improvement: Adds usage tracking for Wholesale Payments plugin
+* Improvement: Removes usage of (get/update/delete)_post_meta for product objects
+* Bug Fix: Broken access control vulnerability
+* Bug Fix: Wholesale settings is not clickable and can't be saved in Safari browser
+* Bug Fix: Metadata value for `wholesale_customer_have_wholesale_price` is not updated properly
+* Bug Fix: Script file integrity checks intermittently causing errors
+* Bug Fix: Dashboard fails to check plugin license status properly
+* Bug Fix: Wholesale price is not updating properly after editing product variations discount percentage and regular price
+* Bug Fix: REST API: Product variations missing when using hide products without wholesale and product category discount
+
 = 2.1.12 =
 * Improvement: shows admin notice to store owners for the new settings page location
 * Improvement: shows spinner and disable the save button for `Save Custom Field`

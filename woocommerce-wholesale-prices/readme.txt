@@ -3,7 +3,7 @@ Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 4.2
 Tested up to: 6.6
-Stable tag: 2.2.1
+Stable tag: 2.2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,10 @@ Plenty of amazing screenshots for this plugin and more over at:
 
 == Changelog ==
 
+= 2.2.1.1 =
+- Improvement: Settings to support button redirect action
+- Bug Fix: WWP Pointer layout issue
+
 = 2.2.1 =
 - Feature: Recommend Wholesale Payments via admin bar menu pointer
 - Feature: WC Subscription: Backend - Wholesale price on the product listing
@@ -154,27 +158,6 @@ Plenty of amazing screenshots for this plugin and more over at:
 
 = 2.2.0.2 =
 * Bug Fix: PHP Fatal error when bool is given to `array_merge()` call
-
-= 2.2.0.1 =
-* Improvement: Autoload option for the plugin settings are now set to `off` by default
-* Bug Fix: Wholesale Fixed Prices On Variations Are Deleted After Editing Regular Price
-
-= 2.2.0 =
-* Feature: Cart/Checkout Blocks Compatibility
-* Feature: Wholesale Payments product education page
-* Improvement: Cart/Checkout legacy - show crossed-out retail amount if item is added as discounted
-* Improvement: Allow custom roles to view top-level settings page
-* Improvement: Removes unnecessary `save()` call when adding order items meta
-* Improvement: Add wholesale_price_with_tax to the variation data on the single product page form
-* Improvement: Adds usage tracking for Wholesale Payments plugin
-* Improvement: Removes usage of (get/update/delete)_post_meta for product objects
-* Bug Fix: Broken access control vulnerability
-* Bug Fix: Wholesale settings is not clickable and can't be saved in Safari browser
-* Bug Fix: Metadata value for `wholesale_customer_have_wholesale_price` is not updated properly
-* Bug Fix: Script file integrity checks intermittently causing errors
-* Bug Fix: Dashboard fails to check plugin license status properly
-* Bug Fix: Wholesale price is not updating properly after editing product variations discount percentage and regular price
-* Bug Fix: REST API: Product variations missing when using hide products without wholesale and product category discount
 
 == Upgrade notice ==
 

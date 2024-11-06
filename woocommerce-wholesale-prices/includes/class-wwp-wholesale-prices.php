@@ -247,7 +247,19 @@ class WWP_Wholesale_Prices {
             $wholesale_price = $product->get_meta( $user_wholesale_role[0] . '_wholesale_price', true );
         }
 
-        return $wholesale_price;
+        /**
+         * Allows to filter the raw wholesale price for a product.
+         *
+         * @param string     $wholesale_price     The raw product wholesale price.
+         * @param WC_Product $product             The product object.
+         * @param array      $user_wholesale_role The user wholesale roles.
+         */
+        return apply_filters(
+            'wwp_get_product_raw_wholesale_price',
+            $wholesale_price,
+            $product,
+            $user_wholesale_role
+        );
     }
 
     /**
@@ -1496,7 +1508,7 @@ class WWP_Wholesale_Prices {
             $script = <<<JS
 document.addEventListener('DOMContentLoaded', function() {
     const { registerCheckoutFilters } = window.wc.blocksCheckout
-    
+
     const isCartContext = (args) => args?.context === 'cart'
     const isCheckoutContext = (args) => args?.context === 'summary'
     const isWholesalePriced = (args) => args?.cartItem?.extensions?.rymera_wwp?.wwp_data?.wholesale_priced === 'yes'
@@ -1517,7 +1529,7 @@ document.addEventListener('DOMContentLoaded', function() {
           if ( (isCartContext(args) || isCheckoutContext(args)) && isWholesalePriced(args) ) {
             value = value ? value + ' wwp-wholesale-priced' : 'wwp-wholesale-priced'
           }
-    
+
           return value
         }
     } )

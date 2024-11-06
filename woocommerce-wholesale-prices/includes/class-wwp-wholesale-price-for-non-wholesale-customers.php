@@ -246,10 +246,23 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
         $replacement_text                = get_option( 'wwp_see_wholesale_prices_replacement_text' );
         $wholesale_role_general_discount = get_option( 'wwpp_option_wholesale_role_general_discount_mapping', array() );
         $wholesale_price_options         = $is_wwpp_active ? get_option( 'wwp_non_wholesale_wholesale_role_select2', array() ) : array_keys( $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles() );
-        $show_in_product                 = get_option( 'wwp_non_wholesale_show_in_products' );
-        $show_in_shop                    = get_option( 'wwp_non_wholesale_show_in_shop' );
         $variable_parent_object          = $product->get_type( 'variation' ) ? wc_get_product( $product->get_parent_id() ) : null;
-        $show_wholesale_prices           = get_option( 'wwp_prices_settings_show_wholesale_prices_to_non_wholesale' );
+
+        $show_in_product       = apply_filters(
+            'wwp_non_wholesale_show_in_products',
+            get_option( 'wwp_non_wholesale_show_in_products' ),
+            $product
+        );
+        $show_in_shop          = apply_filters(
+            'wwp_non_wholesale_show_in_shop',
+            get_option( 'wwp_non_wholesale_show_in_shop' ),
+            $product
+        );
+        $show_wholesale_prices = apply_filters(
+            'wwp_prices_settings_show_wholesale_prices_to_non_wholesale',
+            get_option( 'wwp_prices_settings_show_wholesale_prices_to_non_wholesale' ),
+            $product
+        );
 
         $message = apply_filters( 'wwp_display_non_wholesale_replacement_message', empty( $replacement_text ) ? __( 'See wholesale prices', 'woocommerce-wholesale-prices' ) : $replacement_text );
 
@@ -305,7 +318,11 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
             }
         }
 
-        $show_wholesale_prices_text = apply_filters( 'wwp_show_wholesale_prices_to_non_wholesale_customers', $show_wholesale_prices_text );
+        $show_wholesale_prices_text = apply_filters(
+            'wwp_show_wholesale_prices_to_non_wholesale_customers',
+            $show_wholesale_prices_text,
+            $product
+        );
 
         if (
             $show_wholesale_prices_text && 'yes' === $show_wholesale_prices && (

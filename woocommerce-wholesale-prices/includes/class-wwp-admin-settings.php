@@ -264,6 +264,11 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
                 'message' => $settings_messages['message'],
             );
 
+            // Check if there is a redirect.
+            if ( ! empty( $settings_messages['redirect'] ) ) {
+                $response['redirect'] = $settings_messages['redirect'];
+            }
+
             return rest_ensure_response( $response );
         }
 

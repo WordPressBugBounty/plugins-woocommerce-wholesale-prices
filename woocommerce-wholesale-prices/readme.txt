@@ -2,8 +2,8 @@
 Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 4.2
-Tested up to: 6.6
-Stable tag: 2.2.1.1
+Tested up to: 6.7
+Stable tag: 2.2.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,9 @@ Plenty of amazing screenshots for this plugin and more over at:
 [https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/](https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/)
 
 == Changelog ==
+
+= 2.2.1.2 =
+- Bug Fix: add condition to load only pointer in the admin - possible fatal error
 
 = 2.2.1.1 =
 - Improvement: Settings to support button redirect action

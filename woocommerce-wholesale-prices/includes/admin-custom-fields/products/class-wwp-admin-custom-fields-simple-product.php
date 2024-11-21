@@ -84,6 +84,17 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
          * @access public
          */
         public function add_wholesale_price_fields_on_quick_edit_screen() {
+            /**
+             * Filter to show or hide wholesale prices on the WP Admin product editor.
+             *
+             * This allows integrations to hide/show the pricing fields conditionally.
+             *
+             * @param boolean $show Whether to show or hide pricing fields.
+             * @return boolean $show
+             */
+            if ( ! apply_filters( 'wwp_product_editor_show_wholesale_prices_fields', true ) ) {
+                return;
+            }
             $all_wholesale_roles = $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles();
             do_action( 'wwp_before_quick_edit_wholesale_price_fields', $all_wholesale_roles );?>
 
@@ -382,6 +393,18 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Simple_Product' ) ) {
          */
         public function add_wholesale_price_fields( $product_type = 'simple' ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
             global $post, $WOOCS, $woocommerce_wpml;
+
+            /**
+             * Filter to show or hide wholesale prices on the WP Admin product editor.
+             *
+             * This allows integrations to hide/show the pricing fields conditionally.
+             *
+             * @param boolean $show Whether to show or hide pricing fields.
+             * @return boolean $show
+             */
+            if ( ! apply_filters( 'wwp_product_editor_show_wholesale_prices_fields', true ) ) {
+                return;
+            }
 
             // Get product object.
             $product = wc_get_product( $post->ID );

@@ -167,6 +167,18 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Variable_Product' ) ) {
 
             global $woocommerce, $post, $WOOCS, $woocommerce_wpml;
 
+            /**
+             * Filter to show or hide wholesale prices on the WP Admin product editor.
+             *
+             * This allows integrations to hide/show the pricing fields conditionally.
+             *
+             * @param boolean $show Whether to show or hide pricing fields.
+             * @return boolean $show
+             */
+            if ( ! apply_filters( 'wwp_product_editor_show_wholesale_prices_fields', true ) ) {
+                return;
+            }
+
             $all_wholesale_roles = $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles();
 
             /**

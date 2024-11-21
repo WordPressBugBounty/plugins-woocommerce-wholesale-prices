@@ -112,7 +112,7 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
      * @since 2.1.6  Remove API usage.
      *
      * @access public
-     * @return string html
+     * @return string|void html
      */
     public function get_product_wholesale_prices_ajax() {
         global $wc_wholesale_prices;
@@ -136,9 +136,22 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
             $wholesale_role_options = array_keys( $wholesale_roles );
         }
 
+        /**
+         * Allow to filter non wholesale role options
+         *
+         * @param array $wholesale_role_options The current wholesale role options.
+         * @param int $product_id The product ID.
+         *
+         * @return array
+         */
+        $wholesale_role_options = apply_filters(
+            'wwp_non_wholesale_roles_options',
+            $wholesale_role_options,
+            $product_id
+        );
+
         foreach ( $wholesale_roles as $wholesale_role => $data ) {
             if ( in_array( $wholesale_role, $wholesale_role_options, true ) ) {
-
                 $wwp_price_html = $this->_wwp_wholesale_prices->wholesale_price_html_filter( 1, $product_object, array( $wholesale_role ), true );
 
                 if ( is_string( $wwp_price_html ) && str_contains( $wwp_price_html, $wholesale_price_title_text ) ) {
@@ -233,7 +246,7 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
      * @access public
      *
      * @param  WC_Product $product Product object.
-     * @return string     $message containing html string
+     * @return string|void     $message containing html string
      */
     public function display_replacement_message_to_non_wholesale( $product = null ) {
         if ( is_null( $product ) ) {

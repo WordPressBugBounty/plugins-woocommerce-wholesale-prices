@@ -676,8 +676,8 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
 					'is_wwpp_active'                      => WWP_Helper_Functions::is_wwpp_active(),
 					'is_wwlc_active'                      => WWP_Helper_Functions::is_wwlc_active(),
 					'is_wwof_active'                      => WWP_Helper_Functions::is_wwof_active(),
-					'show_in_shop'                        => get_option( 'wwp_non_wholesale_show_in_shop' ),
-					'show_in_products'                    => get_option( 'wwp_non_wholesale_show_in_products' ),
+					'show_in_shop'                        => apply_filters( 'wwp_non_wholesale_show_in_shop', get_option( 'wwp_non_wholesale_show_in_shop' ) ),
+					'show_in_products'                    => apply_filters( 'wwp_non_wholesale_show_in_products', get_option( 'wwp_non_wholesale_show_in_products' ) ),
 					'show_in_wwof'                        => get_option( 'wwp_non_wholesale_show_in_wwof' ),
 					'base_url'                            => get_site_url(),
 
@@ -870,8 +870,15 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             ?>
 
             <div class="upsell-area">
-                <h2><?php esc_html_e( 'Additional Wholesale Roles (Premium)', 'woocommerce-wholesale-prices' ); ?></h2>
-                <p><?php esc_html_e( 'You\'re currently using the free version of WooCommerce Wholesale Prices which lets you have one level of wholesale customers.', 'woocommerce-wholesale-prices' ); ?></p>
+                <h2><?php esc_html_e( 'Additional Wholesale Roles( Premium )', 'woocommerce - wholesale - prices' ); ?></h2>
+                <p>
+                <?php
+                esc_html_e(
+                    'You\'re currently using the free version of WooCommerce Wholesale Prices which lets you have one level of wholesale customers.',
+                    'woocommerce-wholesale-prices'
+                );
+?>
+</p>
                 <p>
                     <?php
                     echo wp_kses_post(
@@ -996,7 +1003,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
          * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance.
          */
         public function add_wwp_menu_in_admin_bar( WP_Admin_Bar $wp_admin_bar ) {
-            if ( ! $this->load_wwp_pointer() ) {
+            if ( ! is_admin() || ! $this->load_wwp_pointer() ) {
 				return;
 			}
 

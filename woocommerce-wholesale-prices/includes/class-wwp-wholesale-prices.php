@@ -1235,6 +1235,15 @@ class WWP_Wholesale_Prices {
     public function filter_product_original_price_visibility( $original_price, $wholesale_price, $price, $product, $user_wholesale_role ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
         if ( get_option( 'wwpp_settings_hide_original_price' ) === 'yes' ) {
             $original_price = '';
+        } else {
+            $wholesale_regular_text = apply_filters( 'wwp_filter_wholesale_regular_price_title_text', '', $original_price, $wholesale_price, $price, $product, $user_wholesale_role );
+
+            if ( ! empty( trim( $wholesale_regular_text ) ) ) {
+                $original_price = '<del style="display: block; text-decoration: none;" class="wholesale_regular_price_container">
+                                            <span class="wholesale_regular_price_title">' . $wholesale_regular_text . '</span>
+                                            <ins>' . $price . '</ins>
+                                        </del>';
+            }
         }
 
         return $original_price;
@@ -1250,6 +1259,25 @@ class WWP_Wholesale_Prices {
      */
     public function filter_wholesale_price_title_text( $title_text ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
         $setting_title_text = esc_attr( trim( get_option( 'wwpp_settings_wholesale_price_title_text' ) ) );
+
+        return $setting_title_text;
+    }
+
+    /**
+     * Filter the text for the regular price title.
+     *
+     * @param string     $title_text Regular price title text.
+     * @param float      $original_price Original price.
+     * @param float      $wholesale_price Wholesale price.
+     * @param float      $price Product price.
+     * @param WC_Product $product Product object.
+     * @param array      $user_wholesale_role User wholesale role.
+     *
+     * @since 2.2.2
+     * @return mixed
+     */
+    public function filter_wholesale_regular_price_title_text( $title_text, $original_price, $wholesale_price, $price, $product, $user_wholesale_role ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+        $setting_title_text = esc_attr( trim( get_option( 'wwpp_settings_regular_price_title_text' ) ) );
 
         return $setting_title_text;
     }
@@ -1501,46 +1529,16 @@ class WWP_Wholesale_Prices {
      * @since 2.2.0
      * @return void
      */
-    public function wc_cart_block_price_html() {
+	public function wc_cart_block_price_html() {
 
-        if ( ( ( is_cart() && has_block( 'woocommerce/cart' ) ) || has_block( 'woocommerce/cart' ) ) ||
-            ( ( is_checkout() && has_block( 'woocommerce/checkout' ) ) || has_block( 'woocommerce/checkout' ) ) ) {
-            $script = <<<JS
-document.addEventListener('DOMContentLoaded', function() {
-    const { registerCheckoutFilters } = window.wc.blocksCheckout
+        global $wc_wholesale_prices;
 
-    const isCartContext = (args) => args?.context === 'cart'
-    const isCheckoutContext = (args) => args?.context === 'summary'
-    const isWholesalePriced = (args) => args?.cartItem?.extensions?.rymera_wwp?.wwp_data?.wholesale_priced === 'yes'
+		if ( ( ( is_cart() && has_block( 'woocommerce/cart' ) ) || has_block( 'woocommerce/cart' ) ) || ( ( is_checkout() && has_block( 'woocommerce/checkout' ) ) || has_block( 'woocommerce/checkout' ) ) ) {
 
-    // Adjust cart item price of the cart line items.
-    registerCheckoutFilters( 'rymera-wwp', {
-        cartItemClass: ( value, extensions, args ) => {
-          /***************************************************************************
-           * Check context and if the product is wholesale priced.
-           ***************************************************************************
-           *
-           * We will only adjust the cart item price if the context is 'cart' and the
-           * product is wholesale priced.
-           *
-           * Note: for some reason, Javascript optional chaining (obj?.prop) does not
-           * work inside here hence we separated the checks into another function.
-           */
-          if ( (isCartContext(args) || isCheckoutContext(args)) && isWholesalePriced(args) ) {
-            value = value ? value + ' wwp-wholesale-priced' : 'wwp-wholesale-priced'
-          }
+            wp_enqueue_script( 'wwp-cart-checkout-block-js', WWP_JS_URL . 'frontend/cart-checkout-block.js', array( 'jquery', 'wp-element', 'wc-blocks-checkout' ), $wc_wholesale_prices::VERSION, true );
 
-          return value
-        }
-    } )
-})
-JS;
-
-            wp_add_inline_script( 'wc-cart-block-frontend', $script, 'before' );
-            wp_add_inline_script( 'wc-checkout-block-frontend', $script, 'before' );
-
-            if ( get_option( 'wwpp_settings_hide_original_price', null ) === 'yes' ) {
-                $css = <<<CSS
+			if ( get_option( 'wwpp_settings_hide_original_price', null ) === 'yes' ) {
+				$css = <<<CSS
 .wwp-wholesale-priced .price del.wc-block-components-product-price__regular {
   display: none;
 }
@@ -1548,10 +1546,10 @@ JS;
   margin-left: 0;
 }
 CSS;
-                wp_add_inline_style( 'woocommerce-inline', $css );
-            }
-        }
-    }
+				wp_add_inline_style( 'woocommerce-inline', $css );
+			}
+		}
+	}
 
     /**
      * Execute model.
@@ -1635,6 +1633,17 @@ CSS;
             ),
             10,
             1
+        );
+
+        // Custom Wholesale Price Text.
+        add_filter(
+            'wwp_filter_wholesale_regular_price_title_text',
+            array(
+                $this,
+                'filter_wholesale_regular_price_title_text',
+            ),
+            10,
+            6
         );
 
         // Hide Price and Add to Cart button feature.

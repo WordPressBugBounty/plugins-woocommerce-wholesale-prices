@@ -676,8 +676,8 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
 					'is_wwpp_active'                      => WWP_Helper_Functions::is_wwpp_active(),
 					'is_wwlc_active'                      => WWP_Helper_Functions::is_wwlc_active(),
 					'is_wwof_active'                      => WWP_Helper_Functions::is_wwof_active(),
-					'show_in_shop'                        => apply_filters( 'wwp_non_wholesale_show_in_shop', get_option( 'wwp_non_wholesale_show_in_shop' ) ),
-					'show_in_products'                    => apply_filters( 'wwp_non_wholesale_show_in_products', get_option( 'wwp_non_wholesale_show_in_products' ) ),
+					'show_in_shop'                        => apply_filters( 'wwp_scripts_non_wholesale_show_in_shop', get_option( 'wwp_non_wholesale_show_in_shop' ) ),
+					'show_in_products'                    => apply_filters( 'wwp_scripts_non_wholesale_show_in_products', get_option( 'wwp_non_wholesale_show_in_products' ) ),
 					'show_in_wwof'                        => get_option( 'wwp_non_wholesale_show_in_wwof' ),
 					'base_url'                            => get_site_url(),
 
@@ -826,10 +826,23 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             }
 
             // Show wholesale prices to non-wholesale users feature.
-            if ( 'yes' === $show_wholesale_prices_to_non_wholesale && (
-                    ( is_product() && 'yes' === get_option( 'wwp_non_wholesale_show_in_products' ) ) || (
-                        ( ( is_shop() || is_product_category() ) && 'yes' === get_option( 'wwp_non_wholesale_show_in_shop' ) ) ||
-                        apply_filters( 'wwp_load_show_wholesale_to_non_wholesale', false, 'scripts' )
+            $show_in_products = apply_filters(
+                'wwp_non_wholesale_show_in_products',
+                get_option( 'wwp_non_wholesale_show_in_products' ),
+                $post
+            );
+            $show_in_shop     = apply_filters(
+                'wwp_non_wholesale_show_in_shop',
+                get_option( 'wwp_non_wholesale_show_in_shop' ),
+                $post
+            );
+
+            if (
+                apply_filters( 'wwp_load_show_wholesale_to_non_wholesale', false, 'scripts' ) ||
+                (
+                    'yes' === $show_wholesale_prices_to_non_wholesale && (
+                        ( is_product() && 'yes' === $show_in_products ) ||
+                        ( ( is_shop() || is_product_category() ) && 'yes' === $show_in_shop )
                     )
                 )
             ) {
@@ -930,7 +943,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
 
             wp_localize_script(
                 'wwp-store-management-quick-link-js',
-                'options',
+                'wwp_store_management_quick_link',
                 array(
 					'has_all_premiums' => $has_all_premiums,
                 )

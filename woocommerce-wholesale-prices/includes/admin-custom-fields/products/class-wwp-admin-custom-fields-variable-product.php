@@ -595,6 +595,16 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Variable_Product' ) ) {
 
                             if ( isset( $wholesale_prices[ $i ] ) ) {
                                 $this->_save_variable_product_wholesale_price( $post_id, $variation_id, $role_key, $wholesale_prices[ $i ], $wholesale_price_key, $thousand_sep, $decimal_sep, $discount_type, $percentage_discount );
+
+                                /**
+                                 * Perform actions after saving a variation's wholesale prices
+                                 *
+                                 * @param int    $variation_id The variation's parent ID.
+                                 * @param string $role_key The wholesale role key.
+                                 * @param int    $i Variation's loop index.
+                                 * @param int    $post_id The vparent product's post id
+                                 */
+                                do_action( 'wwp_after_save_variable_product_wholesale_price', $variation_id, $role_key, $i, $variation_id );
                             }
                         }
                     }

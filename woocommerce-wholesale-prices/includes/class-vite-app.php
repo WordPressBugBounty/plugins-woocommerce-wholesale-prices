@@ -537,6 +537,10 @@ if ( ! class_exists( 'Vite_App' ) ) {
                             filemtime( WWP_PLUGIN_PATH . "dist/$style" )
                         );
                     }
+                } elseif ( ! empty( $this->style_dependencies ) ) {
+                    foreach ( $this->style_dependencies as $style_dependency ) {
+                        wp_enqueue_style( $style_dependency );
+                    }
                 }
             } elseif ( ! empty( $this->style_dependencies ) ) {
                 foreach ( $this->style_dependencies as $style_dependency ) {

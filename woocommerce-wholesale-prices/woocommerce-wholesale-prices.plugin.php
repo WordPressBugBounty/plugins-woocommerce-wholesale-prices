@@ -109,7 +109,7 @@ class WooCommerceWholeSalePrices {
     public $wwp_plugin_installer;
     // phpcs:enable
 
-    const VERSION = '2.2.1.2';
+    const VERSION = '2.2.2';
 
     /**
      * Class Methods
@@ -127,7 +127,11 @@ class WooCommerceWholeSalePrices {
 
         $this->wwp_rest_api_client = WWP_Rest_API_Client::instance( array() );
 
-        $this->wwp_wholesale_prices                     = WWP_Wholesale_Prices::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
+        $this->wwp_wholesale_prices                     = WWP_Wholesale_Prices::instance(
+            array(
+				'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles,
+            )
+        );
         $this->wwp_for_non_wholesale_customer           = WWP_Wholesale_Prices_For_Non_Wholesale_Customers::instance(
             array(
 				'WWP_Wholesale_Roles'  => $this->wwp_wholesale_roles,

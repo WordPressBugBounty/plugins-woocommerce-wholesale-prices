@@ -1,5 +1,8 @@
 == WooCommerce Wholesale Prices Changelog ==
 
+= 2.2.0.2 =
+* Bug Fix: PHP Fatal error when bool is given to `array_merge()` call
+
 = 2.2.0.1 =
 * Improvement: Autoload option for the plugin settings are now set to `off` by default
 * Bug Fix: Wholesale Fixed Prices On Variations Are Deleted After Editing Regular Price

@@ -91,23 +91,6 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
 
         /*
         |------------------------------------------------------------------------------------------------------------------
-        | Internationalization and Localization
-        |------------------------------------------------------------------------------------------------------------------
-         */
-
-        /**
-         * Load plugin text domain.
-         *
-         * @since 1.2.0
-         * @since 1.3.0 Refactor codebase and move to its dedicated model.
-         * @access public
-         */
-        public function load_plugin_text_domain() {
-            load_plugin_textdomain( 'woocommerce-wholesale-prices', false, WWP_PLUGIN_BASE_PATH . 'languages/' );
-        }
-
-        /*
-        |------------------------------------------------------------------------------------------------------------------
         | Bootstrap/Shutdown Functions
         |------------------------------------------------------------------------------------------------------------------
          */
@@ -211,7 +194,7 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
             }
 
             // Default Wholesale Price Text.
-            if ( ! get_option( 'wwpp_settings_wholesale_price_title_text', false ) ) {
+            if ( false === get_option( 'wwpp_settings_wholesale_price_title_text', false ) ) {
                 update_option( 'wwpp_settings_wholesale_price_title_text', 'Wholesale Price:', 'no' );
             }
 
@@ -463,8 +446,6 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
          * @access public
          */
         public function run() {
-            // Load Plugin Text Domain.
-            add_action( 'plugins_loaded', array( $this, 'load_plugin_text_domain' ) );
 
             register_activation_hook( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices' . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices.bootstrap.php', array( $this, 'activate' ) );
             register_deactivation_hook( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices' . DIRECTORY_SEPARATOR . 'woocommerce-wholesale-prices.bootstrap.php', array( $this, 'deactivate' ) );

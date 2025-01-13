@@ -112,6 +112,8 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
             switch ( $column ) {
 
                 case 'wholesale_price':
+                    ob_start();
+
                     ?>
 
                     <div class="wholesale_prices" id="wholesale_prices_<?php echo esc_attr( $post_id ); ?>">
@@ -128,20 +130,57 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
                             $wholesale_price = $this->_wwp_wholesale_prices->wholesale_price_html_filter( 1, $product, array( $roleKey ), true );
 
                             if ( strpos( $wholesale_price, 'wholesale_price_container' ) !== false && ! empty( $wholesale_price ) ) {
-                        ?>
+                                ?>
                                 <div id="<?php echo esc_attr( $roleKey ); ?>_wholesale_price" class="wholesale_price">
                                     <div class="wholesale_role"><b><?php echo wp_kses_post( $role['roleName'] ); ?></b></div>
                                     <?php echo wp_kses_post( $wholesale_price ); ?>
                                 </div>
-                            <?php
+                                <?php
                             }
                         }
                     ?>
-
                     </div>
-
                     <?php
 
+                    $column_content = ob_get_clean();
+
+                    /**
+                     * Filter the wholesale price column content.
+                     *
+                     * Allow to modify the column content before it is show in the column.
+                     *
+                     * @param string $column_content The content to show in the column.
+                     * @param string $column The column id.
+                     * @param int $post_id  The current product id.
+                     */
+                    $column_content = apply_filters(
+                        'wwp_product_wholesale_price_column_content',
+                        $column_content,
+                        $column,
+                        $post_id,
+                    );
+
+                    /**
+                     * Filter to show/hide wholesale price column data.
+                     *
+                     * Allows integrations to conditionally show or hide the wholesale price data pe row.
+                     *
+                     * @param boolean $show Whethre to show the column data or not.
+                     * @param int     $post_id The post id of the current product.
+                     * @param string  $column The id of the column.
+                     */
+                    if ( apply_filters( 'wwp_show_wholesale_price_column_value', true, $post_id, $column ) ) {
+                        $allowed_html = array_merge(
+                            wp_kses_allowed_html( 'post' ),
+                            array(
+                                'style' => array(),
+                                'ins'   => array(
+                                    'style' => array(),
+                                ),
+                            )
+                        );
+                        echo wp_kses( $column_content, $allowed_html );
+                    }
                     break;
 
                 default:
@@ -193,7 +232,6 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
             add_action( 'manage_product_posts_custom_column', array( $this, 'add_wholesale_price_column_value_to_product_cpt_listing' ), 99, 2 );
             add_action( 'admin_head', array( $this, 'add_wholesale_price_column_styling' ) );
         }
-
     }
 
 }

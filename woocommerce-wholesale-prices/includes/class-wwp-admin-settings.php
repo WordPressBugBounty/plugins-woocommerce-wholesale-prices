@@ -196,23 +196,21 @@ if ( ! class_exists( 'WWP_Admin_Settings' ) ) {
             if ( ! empty( $params ) ) {
                 $options = array();
                 foreach ( $params as $param ) {
-                    $value = '';
-                    if ( isset( $param['value'] ) ) {
-                        $value = $param['value'];
-                    }
+                    if ( is_array( $param ) && isset( $param['key'] ) ) {
+                        $value       = isset( $param['value'] ) ? $param['value'] : '';
+                        $final_value = $value;
 
-                    $final_value = $value;
-
-                    if ( ! is_array( $value ) ) {
-                        // Validate if value is true or false.
-                        if ( 'true' === trim( $value ) ) {
-                            $final_value = 'yes';
-                        } elseif ( 'false' === trim( $value ) ) {
-                            $final_value = 'no';
+                        if ( ! is_array( $value ) ) {
+                            // Validate if value is true or false.
+                            if ( 'true' === trim( $value ) ) {
+                                $final_value = 'yes';
+                            } elseif ( 'false' === trim( $value ) ) {
+                                $final_value = 'no';
+                            }
                         }
-                    }
 
-                    $options[ $param['key'] ] = $final_value;
+                        $options[ $param['key'] ] = $final_value;
+                    }
                 }
 
                 if ( ! empty( $options['action'] ) ) {

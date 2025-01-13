@@ -379,7 +379,7 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
             }
 
             if ( file_exists( WP_PLUGIN_DIR . '/' . $plugin_basename ) ) {
-                return get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_basename );
+                return get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_basename, false, false );
             } else {
                 return false;
             }
@@ -1134,7 +1134,7 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
                     require_once ABSPATH . '/wp-admin/includes/plugin.php';
                 }
 
-                $wwp_data = get_plugin_data( WWP_PLUGIN_PATH . 'woocommerce-wholesale-prices.bootstrap.php' );
+                $wwp_data = get_plugin_data( WWP_PLUGIN_PATH . 'woocommerce-wholesale-prices.bootstrap.php', false, false );
 
                 if ( version_compare( $wwp_data['Version'], '2', '>=' ) ) {
                     return true;
@@ -1163,7 +1163,7 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
                 case 'wwof':
                     if ( self::is_plugin_active( 'woocommerce-wholesale-order-form/woocommerce-wholesale-order-form.bootstrap.php' ) ) {
 
-                        $data = get_plugin_data( WWOF_MAIN_PLUGIN_FILE_PATH );
+                        $data = get_plugin_data( WWOF_MAIN_PLUGIN_FILE_PATH, false, false );
 
                         if ( version_compare( $data['Version'], $version, '>=' ) ) {
                             return true;
@@ -1175,7 +1175,7 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
                 case 'wwlc':
                     if ( self::is_plugin_active( 'woocommerce-wholesale-lead-capture/woocommerce-wholesale-lead-capture.bootstrap.php' ) ) {
 
-                        $data = get_plugin_data( WWLC_MAIN_PLUGIN_FILE_PATH );
+                        $data = get_plugin_data( WWLC_MAIN_PLUGIN_FILE_PATH, false, false );
 
                         if ( version_compare( $data['Version'], $version, '>=' ) ) {
                             return true;
@@ -1188,7 +1188,7 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
                 default:
                     if ( self::is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ) {
 
-                        $data = get_plugin_data( WWPP_MAIN_PLUGIN_FILE_PATH );
+                        $data = get_plugin_data( WWPP_MAIN_PLUGIN_FILE_PATH, false, false );
 
                         if ( version_compare( $data['Version'], $version, '>=' ) ) {
                             return true;

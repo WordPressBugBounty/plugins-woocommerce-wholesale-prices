@@ -3,7 +3,7 @@ Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 4.2
 Tested up to: 6.7
-Stable tag: 2.2.1.2
+Stable tag: 2.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,8 +136,14 @@ Plenty of amazing screenshots for this plugin and more over at:
 
 == Changelog ==
 
-= 2.2.1.2 =
-- Bug Fix: add condition to load only pointer in the admin - possible fatal error
+= 2.2.2 =
+- Bug Fix: Critical Error When Saving Wholesale Prices Setting
+- Bug Fix: Function _load_textdomain_just_in_time was called incorrectly error
+- Bug Fix: Original price config to be hidden still showing on Woo 9.5RC
+- Bug Fix: Usage Tracking effectiveness is fetching 2 weeks before and the next week
+- Bug Fix: wwp_store_management_link_script JS is causing conflict with DPD France plugin
+- Feature: An option to add Regular Price Suffix/Text
+- Improvement: Only Set/Update Wholesale Price Text Option in New Installation
 
 = 2.2.1.1 =
 - Improvement: Settings to support button redirect action
@@ -158,9 +164,6 @@ Plenty of amazing screenshots for this plugin and more over at:
 - Bug Fix: Menu sub page ordering is wrong
 - Bug Fix: Various issues with WPAY in-app landing page
 - Bug Fix: scripts and styles loaded by Vite are not enqueued properly when using a CDN
-
-= 2.2.0.2 =
-* Bug Fix: PHP Fatal error when bool is given to `array_merge()` call
 
 == Upgrade notice ==
 

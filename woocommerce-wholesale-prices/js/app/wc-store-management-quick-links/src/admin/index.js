@@ -3,7 +3,7 @@ import { listView, megaphone } from "@wordpress/icons";
 wp.hooks.addFilter(
     'woocommerce_admin_homescreen_quicklinks',
     'woocommerce-wholesale-prices',
-    function(quickLinks) {
+    function (quickLinks) {
 
         let wwpStoreLinks = [{
             title: 'View Wholesale Orders',
@@ -12,7 +12,7 @@ wp.hooks.addFilter(
         }];
 
         // If not all premium plugins are not activated (WWPP, WWLC, WWOF) Show the Upgrade link.
-        if(options.has_all_premiums == 'false'){
+        if (wwp_store_management_quick_link.has_all_premiums == 'false') {
 
             wwpStoreLinks.push({
                 title: 'Upgrade Wholesale Suite',

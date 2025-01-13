@@ -302,7 +302,7 @@ if ( ! class_exists( 'WWP_WWS_License_Manager' ) ) {
                  * We need to register license menu and content even if WWPP is active but if it is on version 1.27.11.
                  * This version no longer registers license menu and content so its solely the responsibility of WWP to register such.
                  */
-                $wwpp_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' );
+                $wwpp_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php', false, false );
 
                 if ( version_compare( $wwpp_plugin_data['Version'], '1.27.11', '>=' ) ) {
 
@@ -327,7 +327,7 @@ if ( ! class_exists( 'WWP_WWS_License_Manager' ) ) {
                  * We need to register license menu and content even if WWOF is active but if it is on version 2.0.3.
                  * This version no longer registers license menu and content so its solely the responsibility of WWP to register such.
                  */
-                $wwof_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce-wholesale-order-form/woocommerce-wholesale-order-form.bootstrap.php' );
+                $wwof_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce-wholesale-order-form/woocommerce-wholesale-order-form.bootstrap.php', false, false );
 
                 if ( version_compare( $wwof_plugin_data['Version'], '2.0.3', '>=' ) ) {
 
@@ -352,7 +352,7 @@ if ( ! class_exists( 'WWP_WWS_License_Manager' ) ) {
                  * We need to register license menu and content even if WWLC is active but if it is on version 1.17.2.
                  * This version no longer registers license menu and content so its solely the responsibility of WWP to register such.
                  */
-                $wwlc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce-wholesale-lead-capture/woocommerce-wholesale-lead-capture.bootstrap.php' );
+                $wwlc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce-wholesale-lead-capture/woocommerce-wholesale-lead-capture.bootstrap.php', false, false );
 
                 if ( version_compare( $wwlc_plugin_data['Version'], '1.17.2', '>=' ) ) {
 

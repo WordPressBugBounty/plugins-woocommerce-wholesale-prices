@@ -397,6 +397,7 @@ class WWP_Usage {
      * Fetch effectiveness data and compile them together into an array
      *
      * @since  2.1.7
+     * @since  2.2.2 Change date from Sunday last week to Saturday last week.
      * @access private
      * @return array All effectiveness data.
      */
@@ -404,11 +405,11 @@ class WWP_Usage {
 
         $data = array();
 
-        // Set the start date to 12:00:01 Monday last week.
-        $start_date = strtotime( 'midnight', strtotime( 'last Monday' ) ) - WEEK_IN_SECONDS + 1;
+        // Set the start date Sunday last week.
+        $start_date = gmdate( 'Y-m-d', strtotime( 'monday last week' ) - DAY_IN_SECONDS );
 
-        // Set the end date to 11:59:59 last Sunday.
-        $end_date = strtotime( 'midnight', strtotime( 'last Sunday' ) ) + WEEK_IN_SECONDS - 1;
+        // Set the end date Saturday last week.
+        $end_date = gmdate( 'Y-m-d', strtotime( 'saturday last week' ) );
 
         $order_args = array(
             'limit'        => -1,

@@ -406,15 +406,15 @@ class WWP_Usage {
         $data = array();
 
         // Set the start date Sunday last week.
-        $start_date = gmdate( 'Y-m-d', strtotime( 'monday last week' ) - DAY_IN_SECONDS );
+        $start_date = strtotime( 'monday last week' ) - DAY_IN_SECONDS;
 
         // Set the end date Saturday last week.
-        $end_date = gmdate( 'Y-m-d', strtotime( 'saturday last week' ) );
+        $end_date = strtotime( 'saturday last week' );
 
         $order_args = array(
             'limit'        => -1,
             'status'       => array( 'wc-completed', 'wc-processing' ),
-            'date_created' => $start_date . '...' . $end_date,
+            'date_created' => gmdate( 'Y-m-d', (int) $start_date ) . '...' . gmdate( 'Y-m-d', (int) $end_date ),
             'return'       => 'objects',
         );
 
@@ -467,8 +467,8 @@ class WWP_Usage {
             'role__in'    => array_keys( $registered_wholesale_roles ),
             'date_query'  => array(
                 array(
-                    'after'     => gmdate( 'Y-m-d H:i:s', $start_date ),
-                    'before'    => gmdate( 'Y-m-d H:i:s', $end_date ),
+                    'after'     => gmdate( 'Y-m-d H:i:s', (int) $start_date ),
+                    'before'    => gmdate( 'Y-m-d H:i:s', (int) $end_date ),
                     'inclusive' => true,
                 ),
             ),
@@ -481,7 +481,7 @@ class WWP_Usage {
         // Set the data and pass back.
 
         $data['currency']                = get_option( 'woocommerce_currency' );
-        $data['date']                    = gmdate( 'Y-m-d H:i:s', $end_date );
+        $data['date']                    = gmdate( 'Y-m-d H:i:s', (int) $end_date );
         $data['wholesale_order_count']   = $total_orders;
         $data['wholesale_order_revenue'] = $revenue_total;
         $data['wholesale_new_leads']     = $total_registrations;

@@ -3,7 +3,7 @@ Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 4.2
 Tested up to: 6.7
-Stable tag: 2.2.2
+Stable tag: 2.2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,9 @@ Plenty of amazing screenshots for this plugin and more over at:
 [https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/](https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/)
 
 == Changelog ==
+
+= 2.2.2.1 =
+- Bug Fix: Fatal Error: Value Passed To gmdate() Is A String Instead Of Integer Timestamp
 
 = 2.2.2 =
 - Bug Fix: Critical Error When Saving Wholesale Prices Setting

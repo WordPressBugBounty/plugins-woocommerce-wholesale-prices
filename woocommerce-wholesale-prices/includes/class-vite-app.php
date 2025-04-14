@@ -172,11 +172,16 @@ if ( ! class_exists( 'Vite_App' ) ) {
             $port = 3000;
             if ( $this->is_hmr ) {
                 $this->parse_env();
-                $protocol = ! empty( $this->env['VITE_DEV_SERVER_HTTPS_KEY'] ) && $this->env['VITE_DEV_SERVER_HTTPS_CERT']
-                    ? 'https:'
-                    : 'http:';
-                $host     = $this->env['VITE_DEV_SERVER_HOST'] ?? $host;
-                $port     = $this->env['VITE_DEV_SERVER_PORT'] ?? $port;
+                if ( ! empty( $this->env['VITE_DEV_SERVER_PROTOCOL'] ) ) {
+                    $protocol = $this->env['VITE_DEV_SERVER_PROTOCOL'];
+                    $protocol = str_contains( $protocol, ':' ) ? $protocol : "$protocol:";
+                } elseif ( ( ! empty( $this->env['VITE_DEV_SERVER_HTTPS_KEY'] ) && $this->env['VITE_DEV_SERVER_HTTPS_CERT'] ) || is_ssl() ) {
+                    $protocol = 'https:';
+                } else {
+                    $protocol = 'http:';
+                }
+                $host = $this->env['VITE_DEV_SERVER_HOST'] ?? $host;
+                $port = $this->env['VITE_DEV_SERVER_PORT'] ?? $port;
             }
             $this->base_url = $this->is_hmr
                 ? "$protocol//$host:$port/"

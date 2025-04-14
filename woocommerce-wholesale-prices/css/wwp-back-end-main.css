@@ -1,28 +1,50 @@
-.notice.wwp-getting-started,
+.notice.wwp-getting-started {
+  padding: 0.2rem 0.5rem !important;
+  position: relative;
+}
+
 .notice.wwp-new-settings-notice {
   padding: 15px 20px !important;
   position: relative;
 }
 
 .notice.wwp-getting-started p,
+.notice.wwp-getting-started .dashicons-arrow-right-alt,
 .notice.wwp-new-settings-notice p {
-  font-size: 16px;
+  font-size: 13px;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.notice.wwp-getting-started .wws-logo {
+  max-width : 150px;
+}
+
+.notice.wwp-getting-started .dashicons-arrow-right-alt::before {
+  display: inline-block;
+  margin-top: 3px;
 }
 
 .notice.wwp-getting-started p a {
   font-family: "Lato", "Lato", Helvetica, Arial, Sans-serif;
-  font-size: 18px;
+  font-size: 13px;
   font-weight: bold;
   color: #fff;
   background-color: #f7941d;
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #a85e06;
-  padding: 10px 20px;
+  padding: 0.2em 0.5em;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   text-decoration: none;
   display: inline-block;
+}
+
+.notice.wwp-getting-started p a.notice-dismiss-link {
+  background: none;
+  border: none;
+  color: #2271b1;
 }
 
 .notice.wwp-getting-started p a:active {

@@ -337,6 +337,36 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
         }
 
         /**
+         * Check if StoreAgent AI is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_storeagent_installed() {
+
+            $plugin_file     = 'storeagent-ai-for-woocommerce/storeagent-ai-for-woocommerce.php';
+            $storeagent_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $storeagent_file );
+        }
+
+        /**
+         * Check if FunnelKit Stripe is installed
+         *
+         * @since 2.2.1
+         *
+         * @return bool
+         */
+        public static function is_funnelkit_stripe_installed() {
+
+            $plugin_file           = 'funnelkit-stripe-woo-payment-gateway/funnelkit-stripe-woo-payment-gateway.php';
+            $funnelkit_stripe_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $funnelkit_stripe_file );
+        }
+
+        /**
          * Check if any plugin is installed
          *
          * @param string $plugin_name Plugin name.
@@ -1256,6 +1286,10 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
          * @return array Formatted meta data.
          */
         public static function get_formatted_meta_data( $product, $meta_key ) {
+            // Check if products is product object.
+            if ( ! is_object( $product ) || ! $product instanceof WC_Product ) {
+                return array();
+            }
 
             $meta_datas          = $product->get_meta( $meta_key, false );
             $formatted_meta_data = array();
@@ -1359,5 +1393,79 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
 
 			return in_array( $key, $userdata, true );
 		}
+
+        /**
+         * Check if a plugin exists on WordPress.org
+         *
+         * @param string $plugin_slug The plugin slug.
+         *
+         * @since 2.2.1
+         * @access public
+         *
+         * @return bool
+         */
+        public static function plugin_exists_on_wporg( $plugin_slug ) {
+            // These plugins are known to exist on WordPress.org.
+            $known_plugins = array(
+                'advanced-coupons-for-woocommerce-free' => true,
+                'wc-vendors'                            => true,
+                'storeagent-ai-for-woocommerce'         => true,
+                'invoice-gateway-for-woocommerce'       => true,
+                'woo-product-feed-pro'                  => true,
+                'funnelkit-stripe-woo-payment-gateway'  => true,
+                'woocommerce-store-toolkit'             => true,
+                'woocommerce-exporter'                  => true,
+                // Add more as needed.
+            );
+
+            // If it's a known plugin, return true.
+            if ( isset( $known_plugins[ $plugin_slug ] ) ) {
+                return true;
+            }
+
+            // For unknown plugins, we'll assume they exist.
+            return true;
+        }
+
+        /**
+         * Get the WordPress.org plugin icon URL
+         *
+         * @param string $plugin_slug The plugin slug.
+         * @param int    $size        The icon size (default: 128).
+         *
+         * @since 2.2.1
+         * @access public
+         *
+         * @return string
+         */
+        public static function get_wp_org_plugin_icon_url( $plugin_slug, $size = 128 ) {
+            // Default fallback icon.
+            $default_icon = WWP_IMAGES_URL . 'wws-marketing-logo.png';
+
+            // If the plugin doesn't exist on WordPress.org, return the default icon.
+            if ( ! self::plugin_exists_on_wporg( $plugin_slug ) ) {
+                return $default_icon;
+            }
+
+            // Known plugins with specific icon formats.
+            $icon_formats = array(
+                'invoice-gateway-for-woocommerce' => 'jpg',
+                // Add more as needed.
+            );
+
+            // Determine the file extension based on our known list or default to PNG.
+            $extension = isset( $icon_formats[ $plugin_slug ] ) ? $icon_formats[ $plugin_slug ] : 'png';
+
+            // Build the icon URL with dimensions.
+            $icon_url = sprintf(
+                'https://ps.w.org/%s/assets/icon-%dx%d.%s',
+                $plugin_slug,
+                $size,
+                $size,
+                $extension
+            );
+
+            return $icon_url;
+        }
     }
 }

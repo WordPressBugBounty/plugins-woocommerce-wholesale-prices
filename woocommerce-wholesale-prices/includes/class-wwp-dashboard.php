@@ -140,13 +140,13 @@ if ( ! class_exists( 'WWP_Dashboard' ) ) {
          *
          * @param string $handle Handle of the script.
          */
-        public function load_back_end_styles_and_scripts( $handle ) {
+        public function load_back_end_styles_and_scripts( $handle ) {// phpcs:ignore
             // Don't queue scripts if dashboard is disabled via filter.
             if ( $this->is_wholesale_dashboard_disabled() ) {
                 return;
             }
 
-            if ( strpos( $handle, 'wholesale-suite' ) !== false ) {
+            if ( filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'wholesale-suite' ) {
 
                 // Important: Must enqueue this script in order to use WP REST API via JS.
                 wp_enqueue_script( 'wp-api' );

@@ -29,7 +29,7 @@
     <div class="row-container two-columns">
         <div class="left-box">
             <div class="desc">
-                <div class="page-title"><img id="acfw-marketing-logo" src="<?php echo esc_url( WWP_IMAGES_URL . 'acfw-marketing-logo.png' ); ?>" alt="<?php esc_attr_e( 'Advanced Coupons', 'woocommerce-wholesale-prices' ); ?>" />&nbsp;<?php esc_html_e( 'Advanced Coupons for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <div class="page-title"><img id="acfw-marketing-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'advanced-coupons-for-woocommerce-free' ) ); ?>" alt="<?php esc_attr_e( 'Advanced Coupons', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Advanced Coupons for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
                 <p><?php esc_html_e( 'Extends your coupon features so you can market your store better. Adds cart conditions (coupon rules), buy one get one (BOGO) deals, url coupons, coupon categories and loads more. Install this free plugin.', 'woocommerce-wholesale-prices' ); ?></p>
             </div>
             <div class="acfw-installed check-installed">
@@ -53,23 +53,23 @@
         </div>
     </div>
 
-    <!-- WC Vendor and AdTribes -->
+    <!-- StoreAgent AI and AdTribes -->
     <div class="row-container two-columns">
         <div class="left-box">
             <div class="desc">
-                <div class="page-title"><img id="wc-vendors-marketing-logo" src="<?php echo esc_url( WWP_IMAGES_URL . 'wc-vendors-logo.svg' ); ?>" alt="<?php esc_attr_e( 'WC Vendors Marketplace', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'WC Vendors (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
-                <p><?php esc_html_e( 'Easiest way to create your multivendor marketplace and earn commission from every sale. Create a WooCommerce marketplace with multi-seller, product vendor & multi vendor commissions.', 'woocommerce-wholesale-prices' ); ?></p>
+                <div class="page-title"><img id="storeagent-marketing-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'storeagent-ai-for-woocommerce' ) ); ?>" alt="<?php esc_attr_e( 'StoreAgent AI', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'StoreAgent AI for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <p><?php esc_html_e( 'Get AI Agents for WooCommerce with StoreAgent.ai, the free AI-powered plugin designed to automate tasks, personalize customer interactions, and optimize your eCommerce operations.', 'woocommerce-wholesale-prices' ); ?></p>
             </div>
-            <div class="wc-vendors-installed check-installed">
-                <span><strong><?php esc_html_e( 'Status:', 'woocommerce-wholesale-prices' ); ?></strong>&nbsp;<span class="wc-vendors-status-text"><?php echo WWP_Helper_Functions::is_wcvendors_installed() ? esc_html_e( 'Installed', 'woocommerce-wholesale-prices' ) : esc_html_e( 'Not installed', 'woocommerce-wholesale-prices' ); ?></span></span>
-                <?php if ( ! WWP_Helper_Functions::is_wcvendors_installed() ) { ?>
-                <a href="#" data-plugin-slug="wc-vendors" class="button-green wwp-plugin-install"><?php esc_html_e( 'Install Plugin', 'woocommerce-wholesale-prices' ); ?></a>
+            <div class="storeagent-installed check-installed">
+                <span><strong><?php esc_html_e( 'Status:', 'woocommerce-wholesale-prices' ); ?></strong>&nbsp;<span class="storeagent-ai-for-woocommerce-status-text"><?php echo WWP_Helper_Functions::is_storeagent_installed() ? esc_html_e( 'Installed', 'woocommerce-wholesale-prices' ) : esc_html_e( 'Not installed', 'woocommerce-wholesale-prices' ); ?></span></span>
+                <?php if ( ! WWP_Helper_Functions::is_storeagent_installed() ) { ?>
+                <a href="#" data-plugin-slug="storeagent-ai-for-woocommerce" class="button-green wwp-plugin-install"><?php esc_html_e( 'Install Plugin', 'woocommerce-wholesale-prices' ); ?></a>
                 <?php } ?>
             </div>
         </div>
         <div class="right-box">
             <div class="desc">
-                <div class="page-title"><img id="ad-tribes-logo" src="<?php echo esc_url( WWP_IMAGES_URL . 'adtribes-logo.png' ); ?>" alt="<?php esc_attr_e( 'Product Feed Pro', 'woocommerce-wholesale-prices' ); ?>" />&nbsp;<?php esc_html_e( 'Product Feed Pro (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <div class="page-title"><img id="ad-tribes-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'woo-product-feed-pro' ) ); ?>" alt="<?php esc_attr_e( 'Product Feed Pro', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Product Feed Pro (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
                 <p><?php esc_html_e( 'Helps you generate and manage product feeds for various marketing channels, such as Google Shopping, Facebook, and more, to optimize your eCommerce store\'s visibility and sales.', 'woocommerce-wholesale-prices' ); ?></p>
             </div>
             <div class="ad-tribes-installed check-installed">
@@ -81,11 +81,23 @@
         </div>
     </div>
 
-    <!-- Invoice Gateway and Store Toolkit -->
+    <!-- WC Vendors and Invoice Gateway -->
     <div class="row-container two-columns">
         <div class="left-box">
             <div class="desc">
-                <div class="page-title"><img id="invoice-gateway-marketing-logo" src="<?php echo esc_url( WWP_IMAGES_URL . 'invoice-gateway-logo.jpg' ); ?>" alt="<?php esc_attr_e( 'Invoice Gateway for WooCommerce', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Invoice Gateway for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <div class="page-title"><img id="wc-vendors-marketing-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'wc-vendors' ) ); ?>" alt="<?php esc_attr_e( 'WC Vendors Marketplace', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'WC Vendors (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <p><?php esc_html_e( 'Easiest way to create your multivendor marketplace and earn commission from every sale. Create a WooCommerce marketplace with multi-seller, product vendor & multi vendor commissions.', 'woocommerce-wholesale-prices' ); ?></p>
+            </div>
+            <div class="wc-vendors-installed check-installed">
+                <span><strong><?php esc_html_e( 'Status:', 'woocommerce-wholesale-prices' ); ?></strong>&nbsp;<span class="wc-vendors-status-text"><?php echo WWP_Helper_Functions::is_wcvendors_installed() ? esc_html_e( 'Installed', 'woocommerce-wholesale-prices' ) : esc_html_e( 'Not installed', 'woocommerce-wholesale-prices' ); ?></span></span>
+                <?php if ( ! WWP_Helper_Functions::is_wcvendors_installed() ) { ?>
+                <a href="#" data-plugin-slug="wc-vendors" class="button-green wwp-plugin-install"><?php esc_html_e( 'Install Plugin', 'woocommerce-wholesale-prices' ); ?></a>
+                <?php } ?>
+            </div>
+        </div>
+        <div class="right-box">
+            <div class="desc">
+                <div class="page-title"><img id="invoice-gateway-marketing-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'invoice-gateway-for-woocommerce' ) ); ?>" alt="<?php esc_attr_e( 'Invoice Gateway for WooCommerce', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Invoice Gateway for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
                 <p><?php esc_html_e( 'Accept orders via a special invoice payment gateway method which lets your customer enter their order without upfront payment. Then just issue an invoice from your accounting system and paste in the number.', 'woocommerce-wholesale-prices' ); ?></p>
             </div>
             <div class="invoice-gateway-installed check-installed">
@@ -95,9 +107,13 @@
                 <?php } ?>
             </div>
         </div>
-        <div class="right-box">
+    </div>
+
+    <!-- Store Toolkit and Store Exporter -->
+    <div class="row-container two-columns">
+        <div class="left-box">
             <div class="desc">
-                <div class="page-title"><img id="store-toolkit-logo" src="<?php echo esc_url( WWP_IMAGES_URL . 'store-toolkit-logo.png' ); ?>" alt="<?php esc_attr_e( 'Store Toolkit', 'woocommerce-wholesale-prices' ); ?>" />&nbsp;<?php esc_html_e( 'Store Toolkit for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <div class="page-title"><img id="store-toolkit-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'woocommerce-store-toolkit' ) ); ?>" alt="<?php esc_attr_e( 'Store Toolkit', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Store Toolkit for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
                 <p><?php esc_html_e( 'A growing set of commonly-used WooCommerce admin tools such as deleting WooCommerce data in bulk, such as products, orders, coupons, and customers. It also adds extra small features, order filtering, and more.', 'woocommerce-wholesale-prices' ); ?></p>
             </div>
             <div class="store-toolkit-installed check-installed">
@@ -107,13 +123,9 @@
                 <?php } ?>
             </div>
         </div>
-    </div>
-
-    <!-- Invoice Gateway and Store Toolkit -->
-    <div class="row-container two-columns">
-        <div class="left-box">
+        <div class="right-box">
             <div class="desc">
-                <div class="page-title"><img id="store-exporter-marketing-logo" src="<?php echo esc_url( WWP_IMAGES_URL . 'store-exporter-logo.png' ); ?>" alt="<?php esc_attr_e( 'Store Exporter for WooCommerce', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Store Exporter for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
+                <div class="page-title"><img id="store-exporter-marketing-logo" src="<?php echo esc_url( WWP_Helper_Functions::get_wp_org_plugin_icon_url( 'woocommerce-exporter' ) ); ?>" alt="<?php esc_attr_e( 'Store Exporter for WooCommerce', 'woocommerce-wholesale-prices' ); ?>" width="36" />&nbsp;<?php esc_html_e( 'Store Exporter for WooCommerce (Free Plugin)', 'woocommerce-wholesale-prices' ); ?></div>
                 <p><?php esc_html_e( 'Easily export Orders, Subscriptions, Coupons, Products, Categories, Tags to a variety of formats. The deluxe version also adds scheduled exporting for easy reporting and syncing with other systems.', 'woocommerce-wholesale-prices' ); ?></p>
             </div>
             <div class="store-exporter-installed check-installed">

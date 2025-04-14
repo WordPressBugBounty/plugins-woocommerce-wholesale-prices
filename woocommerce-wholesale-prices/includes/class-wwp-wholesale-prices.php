@@ -1376,6 +1376,8 @@ class WWP_Wholesale_Prices {
             $message = '<a class="wwp-login-to-see-wholesale-prices" href="' . get_permalink( wc_get_page_id( 'myaccount' ) ) . '">' . __( 'Login to see prices', 'woocommerce-wholesale-prices' ) . '</a>';
         } else {
             $message = html_entity_decode( $message );
+
+            $message = $this->wwp_get_translated_text( $message, 'wwp_price_and_add_to_cart_replacement_message' );
         }
 
         return apply_filters( 'wwp_display_replacement_message', $message );
@@ -1552,6 +1554,115 @@ CSS;
 	}
 
     /**
+     * Customize the posts clauses.
+     *
+     * @param array    $clauses Clauses.
+     * @param WP_Query $query WP_Query object.
+     *
+     * @since 2.2.3
+     * @return array
+     */
+    public function posts_clauses( $clauses, $query ) {
+        global $wpdb;
+
+        if ( ! $query->is_main_query() ) {
+            return $clauses;
+        }
+
+        $user_wholesale_role = $this->_wwp_wholesale_roles->getUserWholesaleRole();
+
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended
+        $min_price = isset( $_GET['min_price'] ) ? floatval( wp_unslash( $_GET['min_price'] ) ) : 1;
+        $max_price = isset( $_GET['max_price'] ) ? floatval( wp_unslash( $_GET['max_price'] ) ) : 0;
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+        if ( ! empty( $user_wholesale_role ) && $max_price > 0 ) {
+            // Join post meta table.
+            $clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} ON {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id ";
+
+            // Where post meta is wholesale price.
+            $wwp_clause = $wpdb->prepare(
+                ' AND (wp_posts.post_type = %s AND wp_posts.post_status = %s) ',
+                'product',
+                'publish',
+            );
+
+            $wwp_clause .= $wpdb->prepare(
+                " AND {$wpdb->postmeta}.meta_key = %s AND {$wpdb->postmeta}.meta_value BETWEEN %f AND %f ",
+                $user_wholesale_role[0] . '_wholesale_price',
+                $min_price,
+                $max_price
+            );
+
+            $clauses['where'] = $wwp_clause;
+        }
+
+        return $clauses;
+    }
+
+    /**
+     * Register the options for translation.
+     *
+     * @param string $value The value of the option.
+     * @param string $option The option key.
+     *
+     * @since 2.2.3
+     * @return string
+     */
+    public function wwp_wpml_translatable_options( $value, $option ) {
+        // Check if WPML is active.
+        if ( ! defined( 'ICL_SITEPRESS_VERSION' ) ) {
+            return $value;
+        }
+
+        $translatable_options = array(
+			'wwp_price_and_add_to_cart_replacement_message',
+		);
+
+        $translatable_options = apply_filters( 'wwp_translatable_options', $translatable_options );
+
+        if ( in_array( $option, $translatable_options, true ) ) {
+            $title   = 'WWP Option';
+            $package = array(
+                'kind'      => $title,
+                'kind_slug' => 'woocommerce-wholesale-prices',
+                'name'      => 'option',
+                'title'     => $title,
+            );
+
+            // Register the option for translation.
+            do_action( 'wpml_register_string', $value, $option, $package, $title, $package['kind'] );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get the translated text.
+     *
+     * @param string $message The message to translate.
+     * @param string $option_key The option key.
+     *
+     * @since 2.2.3
+     * @return string
+     */
+    public function wwp_get_translated_text( $message, $option_key ) {
+        if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+            $title   = 'WWP Option';
+            $package = array(
+                'kind'      => $title,
+                'kind_slug' => 'woocommerce-wholesale-prices',
+                'title'     => $title,
+                'name'      => 'option',
+            );
+
+            return apply_filters( 'wpml_translate_string', $message, $option_key, $package );
+        }
+
+        return $message;
+    }
+
+    /**
      * Execute model.
      *
      * @since  1.5.0
@@ -1674,5 +1785,11 @@ CSS;
 
         add_action( 'wp_enqueue_scripts', array( $this, 'wc_cart_block_price_html' ), 20 );
         add_action( 'woocommerce_blocks_loaded', array( $this, 'wc_cart_item_block_wwp_data' ) );
+
+        // WooCommerce Filter.
+        add_filter( 'posts_clauses', array( $this, 'posts_clauses' ), 99, 2 );
+
+        // Register the option for translation.
+        add_filter( 'pre_update_option', array( $this, 'wwp_wpml_translatable_options' ), 100, 2 );
     }
 }

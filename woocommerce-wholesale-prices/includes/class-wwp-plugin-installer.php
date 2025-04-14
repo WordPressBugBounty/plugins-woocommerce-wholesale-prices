@@ -31,10 +31,12 @@ if ( ! class_exists( 'WWP_Plugin_Installer' ) ) {
         private $allowed_plugins = array(
 			'advanced-coupons-for-woocommerce-free' => 'advanced-coupons-for-woocommerce-free/advanced-coupons-for-woocommerce-free.php',
 			'wc-vendors'                            => 'wc-vendors/class-wc-vendors.php',
+			'storeagent-ai-for-woocommerce'         => 'storeagent-ai-for-woocommerce/storeagent-ai-for-woocommerce.php',
 			'invoice-gateway-for-woocommerce'       => 'invoice-gateway-for-woocommerce/invoice-gateway-for-woocommerce.php',
-			'woocommerce-store-exporter'            => 'woocommerce-exporter/exporter.php',
 			'woo-product-feed-pro'                  => 'woo-product-feed-pro/woocommerce-sea.php',
+			'funnelkit-stripe-woo-payment-gateway'  => 'funnelkit-stripe-woo-payment-gateway/funnelkit-stripe-woo-payment-gateway.php',
 			'woocommerce-store-toolkit'             => 'woocommerce-store-toolkit/store-toolkit.php',
+			'woocommerce-store-exporter'            => 'woocommerce-exporter/exporter.php',
 		);
 
 		/**
@@ -145,7 +147,37 @@ if ( ! class_exists( 'WWP_Plugin_Installer' ) ) {
         private function _activate_plugin( $plugin_basename ) {
             $result = activate_plugin( $plugin_basename );
 
+            if ( ! is_wp_error( $result ) ) {
+                // Get plugin slug from basename.
+                $plugin_slug = explode( '/', $plugin_basename )[0];
+
+                // Update plugin install information.
+                $this->_update_plugin_install_information( $plugin_slug );
+            }
+
             return is_wp_error( $result ) ? $result : true;
+        }
+
+        /**
+         * Update tracking information after plugin installation.
+         *
+         * @param string $plugin_slug The plugin slug.
+         *
+         * @since 2.2.1
+         * @access private
+         *
+         * @return void
+         */
+        private function _update_plugin_install_information( $plugin_slug ) {
+            // Update StoreAgent AI source option when StoreAgent AI is installed.
+            if ( 'storeagent-ai-for-woocommerce' === $plugin_slug ) {
+                update_option( 'storeagent_installed_by', 'wwp' );
+            }
+
+            // Update Advanced Coupons source option when Advanced Coupons is installed.
+            if ( 'advanced-coupons-for-woocommerce-free' === $plugin_slug ) {
+                update_option( 'acfw_installed_by', 'wwp' );
+            }
         }
 
         /**

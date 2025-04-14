@@ -309,11 +309,17 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                 }
             }
 
+            $file_version = wp_get_environment_type() !== 'production' ? time() : $this->_wwp_current_version;
+            if ( get_option( 'wwp_admin_notice_getting_started_show' ) === 'yes' &&
+                filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'getting-started-with-wholesale-suite' ) {
+                wp_enqueue_style( 'wwp-getting-started-css', WWP_CSS_URL . 'getting-started.css', array( 'dashicons' ), $file_version );
+            }
+
             /**
              * Backend Common CSS
              */
             if ( get_option( 'wwp_admin_notice_getting_started_show' ) === 'yes' || get_option( WWP_SHOW_INSTALL_ACFWF_NOTICE ) === 'yes' || ( isset( $_GET['tab'] ) && 'wwp_settings' === $_GET['tab'] ) ) { // phpcs:ignore
-                wp_enqueue_style( 'wwp_backend_main_css', WWP_CSS_URL . 'wwp-back-end-main.css', array(), $this->_wwp_current_version, 'all' );
+                wp_enqueue_style( 'wwp_backend_main_css', WWP_CSS_URL . 'wwp-back-end-main.css', array(), $file_version );
             }
 
             /**

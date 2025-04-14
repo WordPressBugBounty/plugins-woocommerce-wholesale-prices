@@ -11,3 +11,4 @@ wp_clear_scheduled_hook( 'wwp_wc_admin_note_wws_youtube' );
 
 // Delete options.
 delete_option( 'wwp_activation_date' );
+delete_option( 'wwp_admin_notice_getting_started_show' );

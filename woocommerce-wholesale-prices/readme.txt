@@ -2,8 +2,8 @@
 Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 4.2
-Tested up to: 6.7
-Stable tag: 2.2.2.1
+Tested up to: 6.8
+Stable tag: 2.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,19 @@ Plenty of amazing screenshots for this plugin and more over at:
 [https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/](https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/)
 
 == Changelog ==
+
+= 2.2.3 =
+- Bug Fix: 500 error during wholesale API meta fetching wp-json/wholesale/v1/products/xxxxx
+- Bug Fix: Can't Delete Custom Field On WWLC
+- Bug Fix: Check if WWPP_LICENSE_ACTIVATED is defined before using it
+- Bug Fix: FIlter Products By Price Not Filtering Wholesale Price
+- Bug Fix: Fatal error while clearing trash via WP Rocket
+- Bug Fix: Text under Price and Add to Cart Replacement Message is Not Translatable
+- Bug Fix: Usage Tracking: Effectiveness is using future date
+- Feature: Make the wholesale price is filterable
+- Improvement: Additional 1-click plugins on about page
+- Improvement: Getting Started page
+- Improvement: Remove FunnelKit Stripe from about page
 
 = 2.2.2.1 =
 - Bug Fix: Fatal Error: Value Passed To gmdate() Is A String Instead Of Integer Timestamp

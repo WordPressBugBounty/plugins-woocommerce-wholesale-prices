@@ -383,15 +383,20 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
                 ) { ?>
 
                     <div class="updated notice wwp-getting-started">
-                        <p><img src="<?php echo esc_url( WWP_IMAGES_URL ); ?>wholesale-suite-activation-notice-logo.png" alt="" /></p>
-                        <p><?php esc_html_e( 'Thank you for choosing Wholesale Suite &#8211; the most complete wholesale solution for building wholesale sales into your existing WooCommerce driven store.', 'woocommerce-wholesale-prices' ); ?>
-                        <p><?php esc_html_e( 'The free WooCommerce Wholesale Prices plugin lets you set wholesale pricing for wholesale level customers. Would you like to find out how to drive it?', 'woocommerce-wholesale-prices' ); ?>
+                        <p><img class="wws-logo" src="<?php echo esc_url( WWP_IMAGES_URL ); ?>wholesale-suite-activation-notice-logo.png" alt="" /></p>
+                        <p><?php esc_html_e( 'Thank you for choosing Wholesale Suite! the most complete wholesale solution for building wholesale sales into your existing WooCommerce driven store.', 'woocommerce-wholesale-prices' ); ?>
+                            <?php esc_html_e( 'The free WooCommerce Wholesale Prices plugin lets you set wholesale pricing for wholesale level customers. Would you like to find out how to drive it?', 'woocommerce-wholesale-prices' ); ?></p>
 
-                        <p><a href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'kb/woocommerce-wholesale-prices-free-plugin-getting-started-guide', 'wwp', 'kb', 'wwpgettingstarted' ) ); ?>"
+                        <p class="wws-getting-started-btn-wrapper">
+                            <a href="<?php echo esc_url( WWP_Helper_Functions::get_utm_url( 'kb/woocommerce-wholesale-prices-free-plugin-getting-started-guide', 'wwp', 'kb', 'wwpgettingstarted' ) ); ?>"
                                 target="_blank">
                                 <?php esc_html_e( 'Read the Getting Started guide', 'woocommerce-wholesale-prices' ); ?>
-                                <span class="dashicons dashicons-arrow-right-alt" style="margin-top: 5px"></span>
-                            </a></p>
+                                <span class="dashicons dashicons-arrow-right-alt"></span>
+                            </a>
+                            <a class="notice-dismiss-link" href="#">
+                                <span><?php esc_html_e( 'Dismiss', 'woocommerce-wholesale-prices' ); ?></span>
+                            </a>
+                        </p>
                         <button type="button" class="notice-dismiss"><span
                                 class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'woocommerce-wholesale-prices' ); ?></span></button>
                     </div>
@@ -440,6 +445,82 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
         }
 
         /**
+         * Maybe redirect to Getting Started page.
+         *
+         * @param string $plugin The plugin file path basename.
+         *
+         * @return void
+         */
+        public function maybe_redirect_to_getting_started_page( $plugin ) {
+
+            /***************************************************************************
+             * We check if the plugin is activated via WP-CLI or CLI.
+             ***************************************************************************
+             *
+             * We check if the plugin is activated via WP-CLI or CLI and just output a
+             * message to the console to connect the plugin via a connect URL.
+             */
+            if ( ( ( defined( 'WP_CLI' ) && WP_CLI ) || php_sapi_name() === 'cli' ) ) {
+                return;
+            }
+
+            if ( plugin_basename( WWP_PLUGIN_FILE ) === $plugin ) {
+                /***************************************************************************
+                 * Handle plugin activation via plugins.php Bulk Actions
+                 ***************************************************************************
+                 *
+                 * We check if the plugin is activated via plugins.php Bulk Actions and
+                 * redirect to the connect page if it's the only plugin activated. Otherwise,
+                 * we do nothing.
+                 */
+                if ( ! empty( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+                    $definition = array(
+                        'checked' => array(
+                            'filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+                            'flags'  => FILTER_REQUIRE_ARRAY,
+                        ),
+                        'action'  => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+                        'action2' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+                    );
+
+                    $posted = filter_input_array( INPUT_POST, $definition );
+                    if ( isset( $posted['checked'] ) && count( $posted['checked'] ) === 1 &&
+                        isset( $posted['action'] ) && 'activate-selected' === $posted['action'] &&
+                        isset( $posted['action2'] ) && 'activate-selected' === $posted['action2'] &&
+                        plugin_basename( WWP_PLUGIN_FILE ) === array_shift( $posted['checked'] ) ) {
+                        wp_safe_redirect( admin_url( 'admin.php?page=getting-started-with-wholesale-suite' ) );
+                        exit;
+                    }
+                } else {
+                    wp_safe_redirect( admin_url( 'admin.php?page=getting-started-with-wholesale-suite' ) );
+                    exit;
+                }
+            }
+        }
+
+        /**
+         * Maybe hide Getting Started notice.
+         *
+         * @since 2.2.3
+         * @return void
+         */
+        public function maybe_hide_getting_started_notice() {
+
+            global $pagenow;
+
+            /***************************************************************************
+             * Disable Getting Started menu item.
+             ***************************************************************************
+             *
+             * Once the Getting Started page is visited, we disable the menu item.
+             */
+            if ( 'admin.php' === $pagenow && filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'getting-started-with-wholesale-suite' &&
+                get_option( 'wwp_admin_notice_getting_started_show' ) !== 'no' ) {
+                update_option( 'wwp_admin_notice_getting_started_show', 'no', 'no' );
+            }
+        }
+
+        /**
          * Execute model.
          *
          * @since 1.3.0
@@ -462,6 +543,8 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
             // Getting Started notice.
             add_action( 'admin_notices', array( $this, 'getting_started_notice' ), 10 );
             add_action( 'wp_ajax_wwp_getting_started_notice_hide', array( $this, 'wwp_getting_started_notice_hide' ) );
+            add_action( 'activated_plugin', array( $this, 'maybe_redirect_to_getting_started_page' ) );
+            add_action( 'admin_footer', array( $this, 'maybe_hide_getting_started_notice' ) );
         }
     }
 }

@@ -744,41 +744,48 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Variable_Product' ) ) {
                 }
             }
 
-            /**
-             * If it has valid wholesale price, attached current variation id to parent product (variable)
-             * $role_key . '_variations_with_wholesale_price' post meta. This meta of the parent variable product
-             * will be used later to determine if the parent variable product has wholesale price or not.
-             */
-            if ( $aelia_currency_switcher_active ) {
-
+            if ( $variable_product instanceof WC_Product ) {
                 /**
-                 * Only add current variation id to parent variable product $role_key . '_variations_with_wholesale_price' meta
-                 * if this is the base currency. You see due to how Aelia Currency Switcher works, base currency is very important.
-                 * Therefore only base currency wholesale price is used to determine if variation has wholesale price or not.
+                 * If it has valid wholesale price, attached current variation id to parent product (variable)
+                 * $role_key . '_variations_with_wholesale_price' post meta. This meta of the parent variable product
+                 * will be used later to determine if the parent variable product has wholesale price or not.
                  */
-                if ( $is_base_currency ) {
-                    if ( is_numeric( $wholesale_price ) && $wholesale_price > 0 ) {
-                        $variable_product->add_meta_data( $role_key . '_variations_with_wholesale_price', $variation_id );
+                if ( $aelia_currency_switcher_active ) {
+
+                    /**
+                     * Only add current variation id to parent variable product $role_key . '_variations_with_wholesale_price' meta
+                     * if this is the base currency. You see due to how Aelia Currency Switcher works, base currency is very important.
+                     * Therefore only base currency wholesale price is used to determine if variation has wholesale price or not.
+                     */
+                    if ( $is_base_currency ) {
+                        if ( is_numeric( $wholesale_price ) && $wholesale_price > 0 ) {
+                            $variable_product->add_meta_data( $role_key . '_variations_with_wholesale_price', $variation_id );
+                        }
                     }
+                } elseif ( is_numeric( $wholesale_price ) && $wholesale_price > 0 ) {
+                    $variable_product->add_meta_data( $role_key . '_variations_with_wholesale_price', $variation_id );
                 }
-            } elseif ( is_numeric( $wholesale_price ) && $wholesale_price > 0 ) {
-                $variable_product->add_meta_data( $role_key . '_variations_with_wholesale_price', $variation_id );
+
+                // Save variable product.
+                $variable_product->save();
             }
 
             $wholesale_price = wc_clean( apply_filters( 'wwp_before_save_variation_product_wholesale_price', $wholesale_price, $role_key, $variation_id, $variable_id, $aelia_currency_switcher_active, $is_base_currency, $currency_code ) );
 
-            $variation_product->update_meta_data( $wholesale_price_key, $wholesale_price );
+            if ( $variation_product instanceof WC_Product ) {
+                $variation_product->update_meta_data( $wholesale_price_key, $wholesale_price );
 
-            if ( 'percentage' === $discount_type ) {
-                $variation_product->update_meta_data( $role_key . '_wholesale_percentage_discount', $percentage_discount );
-            } else {
-                $variation_product->delete_meta_data( $role_key . '_wholesale_percentage_discount' );
+                if ( 'percentage' === $discount_type ) {
+                    $variation_product->update_meta_data( $role_key . '_wholesale_percentage_discount', $percentage_discount );
+                } else {
+                    $variation_product->delete_meta_data( $role_key . '_wholesale_percentage_discount' );
+                }
+
+                // Save the current variation product.
+                $variation_product->save();
             }
-            // phpcs:enable WordPress.Security.NonceVerification.Missing
 
-            // Save the current variation product.
-            $variable_product->save();
-            $variation_product->save();
+            // phpcs:enable WordPress.Security.NonceVerification.Missing
         }
 
         /**
@@ -915,5 +922,4 @@ if ( ! class_exists( 'WWP_Admin_Custom_Fields_Variable_Product' ) ) {
             }
         }
     }
-
 }

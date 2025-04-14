@@ -58,6 +58,17 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
         }
 
         /**
+         * Getting Started Page
+         *
+         * @since 2.2.3
+         * @return void
+         */
+        public function getting_started_page() {
+
+            require_once WWP_VIEWS_PATH . 'view-wwp-getting-started-page.php';
+        }
+
+        /**
          * Register Wholesale Top Level Menu
          *
          * @since 2.0
@@ -99,8 +110,14 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
                 // Wholesale Top Level Menu.
                 add_menu_page( __( 'Wholesale', 'woocommerce-wholesale-prices' ), __( 'Wholesale', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-suite', array( $this, 'wholesale_dashboard' ), $wws_icon, '55.5' );
 
+                $show_getting_started = get_option( 'wwp_admin_notice_getting_started_show' ) === 'yes';
+
+                if ( $show_getting_started ) {
+                    add_submenu_page( 'wholesale-suite', __( 'Getting Started', 'woocommerce-wholesale-prices' ), sprintf( '%1$s <span class="awaiting-mod"><span class="plugin-count">%2$s</span></span>', __( 'Getting Started', 'woocommerce-wholesale-prices' ), __( 'NEW', 'woocommerce-wholesale-prices' ) ), 'manage_woocommerce', 'getting-started-with-wholesale-suite', array( $this, 'getting_started_page' ), 0 );
+                }
+
                 // Dashboard Submenu.
-                add_submenu_page( 'wholesale-suite', $dashboard_label, $dashboard_label, 'manage_woocommerce', 'wholesale-suite', array( $this, 'wholesale_dashboard' ) );
+                add_submenu_page( 'wholesale-suite', $dashboard_label, $dashboard_label, 'manage_woocommerce', 'wholesale-suite', array( $this, 'wholesale_dashboard' ), $show_getting_started ? 1 : 0 );
 
                 // Reports Submenu.
                 if ( WWP_Helper_Functions::is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ) {
@@ -108,7 +125,7 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
                 }
 
                 // Orders Submenu.
-                add_submenu_page( 'wholesale-suite', __( 'Orders', 'woocommerce-wholesale-prices' ), __( 'Orders', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-orders', array( $this, 'wholesale_orders' ), 1 );
+                add_submenu_page( 'wholesale-suite', __( 'Orders', 'woocommerce-wholesale-prices' ), __( 'Orders', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-orders', array( $this, 'wholesale_orders' ), $show_getting_started ? 3 : 2 );
 
                 // Settings Submenu.
                 add_submenu_page( 'wholesale-suite', __( 'Settings', 'woocommerce-wholesale-prices' ), __( 'Settings', 'woocommerce-wholesale-prices' ), 'manage_woocommerce', 'wholesale-settings', array( $this, 'wholesale_settings' ), 5 );
@@ -216,11 +233,50 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
             }
         }
 
-        /*
-        |-------------------------------------------------------------------------------------------------------------------
-        | Execute Model
-        |-------------------------------------------------------------------------------------------------------------------
+        /**
+         * Remove default admin submenu.
+         *
+         * @since 2.2.3
+         * @return void
          */
+        public function maybe_remove_default_admin_submenu() {
+
+            global $submenu, $pagenow;
+
+            $show_getting_started    = get_option( 'wwp_admin_notice_getting_started_show' ) === 'yes';
+            $is_getting_started_page = 'admin.php' === $pagenow && filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) === 'getting-started-with-wholesale-suite';
+            if ( ! $show_getting_started ) {
+                if ( $is_getting_started_page ) {
+                    wp_safe_redirect( admin_url( 'admin.php?page=wholesale-suite' ) );
+                    exit;
+                }
+
+                return;
+            }
+
+            if ( $is_getting_started_page ) {
+                remove_all_actions( 'admin_notices' );
+            }
+
+            /***************************************************************************
+             * Remove default 'Wholesale' submenu.
+             ***************************************************************************
+             *
+             * When getting started page is shown, we remove the default 'Wholesale'
+             * submenu as it is already overridden by the 'Dashboard' submenu and is
+             * therefore redundant.
+             */
+            $menu_slug = 'wholesale-suite';
+            if ( isset( $submenu[ $menu_slug ] ) ) {
+                $submenu_slug = $menu_slug; // Default submenu slug is the same as the menu slug.
+                $menu_label   = __( 'Wholesale', 'woocommerce-wholesale-prices' );
+                foreach ( $submenu[ $menu_slug ] as $i => $item ) {
+                    if ( $submenu_slug === $item[2] && ( $menu_label === $item[0] || $menu_label === $item[3] ) ) {
+                        unset( $submenu[ $menu_slug ][ $i ] );
+                    }
+                }
+            }
+        }
 
         /**
          * Execute model.
@@ -230,6 +286,7 @@ if ( ! class_exists( 'WWP_Admin_Menu' ) ) {
          */
         public function run() {
             add_action( 'admin_menu', array( $this, 'register_page' ), 98 );
+            add_action( 'admin_menu', array( $this, 'maybe_remove_default_admin_submenu' ), 100 );
             add_action( 'init', array( $this, 'wc_navigation_bar' ) );
 
             // Removes admin notices in dashboard.

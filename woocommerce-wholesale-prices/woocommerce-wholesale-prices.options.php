@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 // This is where you set various options affecting the plugin.
 
 // Path Constants.
-define( 'WWP_PLUGIN_FILE', __FILE__ );
 define( 'WWP_PLUGIN_BASE_PATH', basename( __DIR__ ) . '/' );
 define( 'WWP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WWP_PLUGIN_URL', plugins_url() . '/woocommerce-wholesale-prices/' );

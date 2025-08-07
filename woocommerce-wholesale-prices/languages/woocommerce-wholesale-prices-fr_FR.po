@@ -22,6 +22,7 @@ msgstr ""
 
 #. translators: %1$s: wholesale role name, %2$s: currency symbol
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:149
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:175
 #, php-format
 msgid "%1$s Price (%2$s)"
 msgstr "%1$s Prix (%2$s)"
@@ -104,7 +105,7 @@ msgstr "Activer cette extension"
 msgid "Active"
 msgstr "Actif"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:523
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:575
 msgid "Add additional wholesale price levels."
 msgstr "Ajouter des rôles grossistes supplémentaires."
 
@@ -174,7 +175,7 @@ msgstr "Autoriser le suivi d’utilisation"
 msgid "Always Use Regular Price"
 msgstr "Toujours utiliser le prix de base"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:490
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:542
 msgid "Auto"
 msgstr "Auto"
 
@@ -305,13 +306,13 @@ msgstr "Description"
 msgid "Disable Coupons For Wholesale Users"
 msgstr "Désactiver les code promo pour les clients grossistes"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:588
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:385
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:639
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:384
 msgid "Discount (%)"
 msgstr "Réduction (%)"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:569
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:364
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:620
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:363
 msgid "Discount Type"
 msgstr "Type de réduction"
 
@@ -418,8 +419,8 @@ msgstr "Fonctionnalités"
 msgid "Fine grained control over price tax display for wholesale, tax exemptions per user role and more."
 msgstr "Contrôlez finement l'affichage de la taxe pour les ventes en gros, les exonérations de taxe par rôle client et plus encore."
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:572
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:367
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:623
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:366
 msgid "Fixed"
 msgstr "Fixé"
 
@@ -812,7 +813,7 @@ msgstr "État d’activation de la licence :"
 msgid "Locations"
 msgstr "Emplacements"
 
-#: includes/class-wwp-wholesale-prices.php:1376
+#: includes/class-wwp-wholesale-prices.php:1380
 msgid "Login to see prices"
 msgstr "Connectez-vous pour voir les prix"
 
@@ -934,8 +935,8 @@ msgid "Once Weekly"
 msgstr "Hebdomadaire"
 
 #. translators: %1$s: Wholesale role name,%2$s: currency name and symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:448
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:483
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:500
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:535
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:233
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:269
 #, php-format
@@ -989,8 +990,8 @@ msgstr "Passe outre le suffixe de prix des prix de base pour les clients grossis
 msgid "Payment gateway mapping"
 msgstr "Correspondance des plateformes de paiement"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:573
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:368
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:624
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:367
 msgid "Percentage"
 msgstr "Pourcentage"
 
@@ -1175,7 +1176,7 @@ msgstr "La vente en gros dans WooCommerce demande une stratégie globale, c’es
 msgid "Set a specific price suffix specifically for wholesale prices."
 msgstr "Définit un suffixe de prix spécifique pour les prix de gros."
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:522
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:574
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:312
 msgid "Set a wholesale price for this product."
 msgstr "Définir un prix de gros pour ce produit."
@@ -1310,8 +1311,8 @@ msgstr "La voie royale pour mettre en œuvre la vente en gros pour vos clients d
 msgid "The free WooCommerce Wholesale Prices plugin lets you set wholesale pricing for wholesale level customers. Would you like to find out how to drive it?"
 msgstr "La version gratuite de l'extension WooCommerce Wholesale Prices vous permet de définir un prix pour les clients d'un niveau de clients en gros. Souhaitez-vous savoir comment réaliser cela?"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:591
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:388
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:642
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:387
 msgid "The percentage amount discounted from the regular price"
 msgstr "Le pourcentage de réduction déduit du prix de base"
 
@@ -1526,14 +1527,14 @@ msgid "Wholesale Price"
 msgstr "Prix de gros"
 
 #. translators: %1$s: currency symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:539
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:591
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:328
 #, php-format
 msgid "Wholesale Price (%1$s)"
 msgstr "Prix de gros (%1$s)"
 
 #. translators: %1$s: Wholesale role name
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:542
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:594
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:331
 #, php-format
 msgid "Wholesale price for %1$s customers"
@@ -1555,16 +1556,17 @@ msgstr "Suffixe du prix de gros"
 msgid "Wholesale Price Text"
 msgstr "Texte du prix de gros"
 
+#: includes/class-wwp-products-cpt.php:207
 #: includes/class-wwp-wholesale-price-for-non-wholesale-customers.php:99
 #: includes/class-wwp-wholesale-price-for-non-wholesale-customers.php:130
 #: includes/class-wwp-wholesale-price-grouped-product.php:181
 #: includes/class-wwp-wholesale-prices.php:604
-#: includes/class-wwp-wholesale-prices.php:1470
+#: includes/class-wwp-wholesale-prices.php:1474
 msgid "Wholesale Price:"
 msgstr "Prix de gros :"
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:424
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:520
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:476
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:572
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:198
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:310
 #: includes/class-wwp-admin-settings.php:331
@@ -1765,85 +1767,89 @@ msgid "“Wholesale Only” products"
 msgstr "Des produits \"Vente en gros uniquement\""
 
 #. translators: %1$s: HTML tag (<br/>), %2$s: HTML tag (<b>), %3$s: HTML tag (</b>)
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:428
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:480
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:202
+#, php-format
 msgid "Wholesale prices are set per role and currency.%1$s%1$s%2$sNote:%3$s Wholesale price must be set for the base currency to enable wholesale pricing for that role. The base currency will be used for conversion to other currencies that have no wholesale price explicitly set (Auto)."
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:446
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:498
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:230
 msgid "Base Currency"
 msgstr ""
 
 #. translators: %1$s: Wholesale role name, %2$s: HTML tag (<br/>)
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:546
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:598
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:335
+#, php-format
 msgid "Wholesale price for %1$s customers %2$s Note: Prices are shown up to 6 decimal places but may be calculated and stored at higher precision."
 msgstr ""
 
 #. translators: %1$s: HTML tag (<br/>)
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:577
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:372
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:628
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:371
+#, php-format
 msgid "Choose Price Type%1$sFixed (default)%1$sPercentage"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:906
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:859
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:956
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:857
 msgid "Sale Discount (%)"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:909
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:862
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:959
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:860
 msgid "The percentage amount discounted from the wholesale price"
 msgstr ""
 
 #. translators: %s: currency symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:923
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:878
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:973
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:876
+#, php-format
 msgid "Wholesale Sale Price (%1$s)"
 msgstr ""
 
 #. translators: %s: currency symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:925
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:878
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:975
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:876
 msgid "Schedule"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:931
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:981
 msgid "Sale price dates"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:932
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:887
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:982
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:885
 msgctxt "placeholder"
 msgid "From&hellip;"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:933
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:891
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:983
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:889
 msgctxt "placeholder"
 msgid "To&hellip;"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:934
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:984
 #: includes/I18n/settings.php:78
 msgid "Cancel"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:934
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:984
 msgid "The sale will start at 00:00:00 of \"From\" date and end at 23:59:59 of \"To\" date."
 msgstr ""
 
 #. translators: %s: currency symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:878
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:876
 msgid "Cancel schedule"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:886
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:884
 msgid "Sale start date"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:890
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:888
 msgid "Sale end date"
 msgstr ""
 
@@ -1903,6 +1909,7 @@ msgstr ""
 
 #. translators: %1$s: wholesale role name.
 #: includes/class-wwp-order.php:208
+#, php-format
 msgid "Wholesale (%1$s)"
 msgstr ""
 
@@ -1929,6 +1936,7 @@ msgstr ""
 #: includes/class-wwp-admin-settings.php:957
 #: includes/class-wwp-settings.php:250
 #: includes/class-wwp-settings.php:635
+#, php-format
 msgid "Complete documentation on usage tracking is available %1$shere%2$s."
 msgstr ""
 
@@ -1968,6 +1976,7 @@ msgstr ""
 
 #. translators: %1$s: <span style="font-weight: bold;">, %2$s: <span class="green-text">50&#37;, %3$s: </span>, %4$s: </span>.
 #: includes/class-wwp-settings.php:945
+#, php-format
 msgid "%1$sBonus:%3$s Wholesale Prices lite users get %2$soff regular price%3$s, automatically applied at checkout."
 msgstr ""
 
@@ -1977,11 +1986,13 @@ msgstr ""
 
 #. translators: %1$s: <a> link to knowledge base, %2$s: </a> closing link tag.
 #: views/plugin-settings-custom-fields/view-wwp-help-resources-controls-custom-field.php:17
+#, php-format
 msgid "Looking for documentation? Please see our growing %1$sKnowledge Base%2$s"
 msgstr ""
 
 #. translators: %1$s Minimum WWPP version required, %2$s Minimum WWP version required.
 #: woocommerce-wholesale-prices.bootstrap.php:110
+#, php-format
 msgid "We have detected an outdated version of WooCommerce Wholesale Prices Premium. You require at least version %1$s for this version of WooCommerce Wholesale Prices (%2$s). Please update now."
 msgstr ""
 
@@ -1991,52 +2002,62 @@ msgstr ""
 
 #. translators: %1$s Opening bold tag, %2$s Closing bold tag, %3$s Opening break tag, %4$s Opening link tag, %5$s Closing link tag, %6$s Closing break tag.
 #: woocommerce-wholesale-prices.bootstrap.php:169
+#, php-format
 msgid "%1$sWooCommerce Wholesale Prices%2$s plugin missing dependency.%3$sPlease ensure you have the %4$sWooCommerce%5$s plugin installed and activated.%6$s"
 msgstr ""
 
 #. translators: 1. Opening bold tag, 2. Opening green text tag, 3. Closing span tag, 4. Closing paragraph tag.
 #: includes/class-wwp-script-loader.php:298
+#, php-format
 msgid "%1$sBonus:%3$s Wholesale Prices lite users get %2$s50&#37; off regular price%3$s automatically applied at checkout.%4$s"
 msgstr ""
 
 #. translators: %1$s - <p><span style="font-weight: bold;">Bonus:</span>, %2$s <span style="color: #218900; font-weight: bold;">, %3$s </span></p><p>, %4$s </p><p>.
 #: includes/class-wwp-script-loader.php:703
+#, php-format
 msgid "%1$sWholesale Prices lite users get %2$s50&#37; off regular price%3$s automatically applied at checkout.%4$s"
 msgstr ""
 
 #. translators: %1$s - <div class="notice wwp-wwlc-inactive"><p><i class="fa fa-star checked"></i><strong>, %2$s <a href="https://wholesalesuiteplugin.com/woocommerce-wholesale-lead-capture/?utm_source=wwp&utm_medium=upsell&utm_campaign=wholesaletoguestwwlcrecommend" target="_blank">, %3$s </a></strong></p><p>, %4$s </p><p>.
 #: includes/class-wwp-script-loader.php:714
+#, php-format
 msgid "%1$sRecommended Plugin: %2$sWooCommerce Wholesale Lead Capture%3$sLead Capture adds an additional 'register text' link to the wholesale prices box on the front end to help you capture even more wholesale leads.%4$s"
 msgstr ""
 
 #. translators: %s <br /> tag.
 #: views/view-wwp-lead-capture.php:28
+#, php-format
 msgid "Wholesale Lead Capture gives you a customizable wholesale-specific registration form,%swholesale user approvals system, email notifications, user upgrading, and more."
 msgstr ""
 
 #. translators: %s <br /> tag.
 #: views/view-wwp-order-form.php:28
+#, php-format
 msgid "Wholesale Order Form is proven to get more wholesale sales than your normal shop layout.%sGive your wholesale customers searchable access to your entire catalog on one page."
 msgstr ""
 
 #. translators: %s: <br/> tag.
 #: views/view-wwp-upgrade-upsell.php:126
+#, php-format
 msgid "Everything you need to sell to wholesale customers in WooCommerce. %sThe most complete wholesale solution for building wholesale sales into your existing WooCommerce driven store."
 msgstr ""
 
 #. translators: %1$s - <strong>, %2$s </strong>.
 #: includes/class-wwp-script-loader.php:728
+#, php-format
 msgid "To use this option, you must have %1$sWooCommerce Wholesale Order Form%2$s plugin installed and activated."
 msgstr ""
 
 #. translators: %1$s <strong> tag, %2$s </strong> tag.
 #: views/view-wwp-free-training-guide.php:28
 #: views/view-wwp-help-page.php:37
+#, php-format
 msgid "If you've ever wanted to grow a store to 6, 7 or 8-figures and beyond %1$sdownload this guide%2$s now. You'll learn how smart store owners are using coupons to grow their WooCommerce stores."
 msgstr ""
 
 #. translators: %1$s <strong> tag, %2$s </strong> tag.
 #: views/wws-license-settings/view-wwpp-license-upsell-content.php:17
+#, php-format
 msgid "Currently using: %1$sFree Version%2$s"
 msgstr ""
 
@@ -2046,6 +2067,7 @@ msgstr ""
 
 #. translators: 1. <p> tag, 2. </p> tag, 3. <a> tag link to wholesale suite support, 4. </a> tag.
 #: includes/class-wwp-script-loader.php:150
+#, php-format
 msgid ""
 "%1$sWe see you have been using Wholesale Suite for a couple of weeks now - thank you once again for your purchase and we hope you are enjoying it so far!%2$s\n"
 "                            %1$sWe'd really appreciate it if you could take a few minutes to write a 5-star review of our Wholesale Prices plugin on WordPress.org!%2$s\n"
@@ -2056,6 +2078,7 @@ msgstr ""
 
 #. translators: 1. <p> tag, 2. </p> tag.
 #: includes/class-wwp-script-loader.php:166
+#, php-format
 msgid ""
 "%1$sThanks for using our free WooCommerce Wholesale Prices plugin - we hope you are enjoying it so far.%2$s\n"
 "                            %1$sWe'd really appreciate it if you could take a few minutes to write a 5-star review of our Wholesale Prices plugin on WordPress.org!%2$s\n"
@@ -2096,6 +2119,7 @@ msgstr ""
 
 #. translators: %1$s - <p> tag, %2$s - </p> tag.
 #: includes/class-wwp-script-loader.php:573
+#, php-format
 msgid ""
 "%1$sWholesale Suite is the #1 best rated wholesale solution for WooCommerce.%2$s\n"
 "                                                    %1$sPrices Premium (one of the three plugins) features in-depth tax exemption controls including being able to turn on/off tax exemption just for specific wholesale roles.%2$s"
@@ -2103,6 +2127,7 @@ msgstr ""
 
 #. translators: %1$s - <p> tag, %2$s - </p> tag.
 #: includes/class-wwp-script-loader.php:592
+#, php-format
 msgid ""
 "%1$sWholesale Suite is the #1 best rated wholesale solution for WooCommerce. Prices Premium (one of three plugins) features advanced price suffix controls.%2$s\n"
 "                                                    %1$sThis can help in complex tax situations where prices suffixes should be different for wholesale customers.%2$s"
@@ -2110,6 +2135,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are html tags.
 #: includes/class-wwp-script-loader.php:906
+#, php-format
 msgid ""
 "In the %1$sPremium add-on%2$s you can add multiple wholesale roles. This will let you create separate \"levels\" of wholesale customers,\n"
 "                                    each of which can have separate wholesale pricing, shipping and payment mapping, order minimums and more."
@@ -2117,6 +2143,7 @@ msgstr ""
 
 #. translators: %1$s <b> tag, %2$s </b> tag, %3$s link to premium add-on, %4$s </a> tag, %5$s link to bundle.
 #: includes/class-wwp-settings.php:491
+#, php-format
 msgid ""
 "Specify tax exemption per wholesale role. Overrides general %1$sTax Exemption%2$s option above.\n"
 "\n"
@@ -2128,6 +2155,7 @@ msgstr ""
 
 #. translators: %1$s link to premium add-on, %2$s </a> tag, %3$s link to wholesale suite bundle.
 #: includes/class-wwp-settings.php:527
+#, php-format
 msgid ""
 "Specify tax classes per wholesale role.\n"
 "\n"
@@ -2139,6 +2167,7 @@ msgstr ""
 
 #. translators: %1$s <a> link to premium add-on, %2$s </a> closing tag.
 #: views/wholesale-roles/view-wwp-wholesale-roles-admin-page.php:90
+#, php-format
 msgid ""
 "In the %1$sPremium add-on%2$s you can add multiple wholesale roles. This will let you create separate \"levels\" of wholesale customers,\n"
 "                                                    each of which can have separate wholesale pricing, shipping and payment mapping, order minimums and more."
@@ -2154,16 +2183,19 @@ msgstr ""
 
 #. translators: %1$s <b> tag, %2$s </b> tag, %3$s link to premium add-on, %4$s </a> tag, %5$s link to bundle.
 #: includes/class-wwp-admin-settings.php:373
+#, php-format
 msgid "Specify tax exemption per wholesale role. Overrides general %1$sTax Exemption%2$s option above. <br><br>In the Premium add-on you can map specific wholesale roles to be tax exempt which gives you more control. This is useful for classifying customers based on their tax exemption status so you can separate those who need to pay tax and those who don't. <br><br>This feature and more is available in the %3$sPremium add-on%4$s and we also have other wholesale tools available as part of the %5$sWholesale Suite Bundle%4$s."
 msgstr ""
 
 #. translators: %1$s link to premium add-on, %2$s </a> tag, %3$s link to wholesale suite bundle.
 #: includes/class-wwp-admin-settings.php:391
+#, php-format
 msgid "Specify tax classes per wholesale role. <br><br>In the Premium add-on you can map specific wholesale role to specific tax classes. You can also hide those mapped tax classes from your regular customers making it possible to completely separate tax functionality for wholesale customers. <br><br>This feature and more is available in the %1$sPremium add-on%2$s and we also have other wholesale tools available as part of the %3$sWholesale Suite Bundle%2$s."
 msgstr ""
 
 #. translators: %1$s link to premium add-on, %2$s </a> tag.
 #: includes/class-wwp-admin-settings.php:442
+#, php-format
 msgid "Looking for documentation? Please see our growing %1$sKnowledge Base%2$s."
 msgstr ""
 
@@ -2201,6 +2233,7 @@ msgstr ""
 
 #. translators: %1$s link to premium add-on, %2$s </a> tag.
 #: includes/class-wwp-admin-settings.php:694
+#, php-format
 msgid "To use this option, you must have %1$s<b>WooCommerce Wholesale Order Form</b>%2$s plugin installed and activated."
 msgstr ""
 
@@ -2274,6 +2307,7 @@ msgstr ""
 
 #. translators: %s = download guide text
 #: includes/I18n/settings.php:27
+#, php-format
 msgid "If you've ever wanted to grow a store to 6, 7 or 8 - figures and beyond %s now. Want to increase your product's sales and reach, all while making amazing connections with other retailers ? Download this guide for free now."
 msgstr ""
 
@@ -2295,6 +2329,7 @@ msgstr ""
 
 #. translators: %s = download guide text
 #: includes/I18n/settings.php:39
+#, php-format
 msgid "Wholesale Prices lite users get %s, automatically applied at checkout."
 msgstr ""
 
@@ -2304,6 +2339,7 @@ msgstr ""
 
 #. translators: %s = five star image
 #: includes/I18n/settings.php:44
+#, php-format
 msgid "We know that you will truly love Wholesale Suite. It has 442+ five star ratings (%s) and is active on over 25,000+ stores."
 msgstr ""
 
@@ -2506,7 +2542,7 @@ msgstr ""
 msgid "Wholesale Payments"
 msgstr ""
 
-#: includes/class-wwp-wholesale-prices.php:1521
+#: includes/class-wwp-wholesale-prices.php:1526
 msgid "Wholesale Prices data."
 msgstr ""
 
@@ -2595,27 +2631,29 @@ msgid "Customize plan visibility to match customers' brand identity and expectat
 msgstr ""
 
 #. translators: %1$s: currency symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:623
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:422
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:673
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:420
+#, php-format
 msgid "Wholesale Signup Fee (%1$s)"
 msgstr ""
 
 #. translators: %1$s: Wholesale role name
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:625
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:632
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:424
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:431
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:675
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:682
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:422
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:429
+#, php-format
 msgid "Wholesale Signup Fee for %1$s customers"
 msgstr ""
 
 #. translators: %1$s: currency symbol
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:630
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:429
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:680
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:427
 msgid "Signup Fee Discount (%)"
 msgstr ""
 
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:641
-#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:441
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:691
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:439
 msgid "The percentage amount discounted from the Sign-up fee"
 msgstr ""
 
@@ -2645,6 +2683,7 @@ msgstr ""
 
 #. translators: %1$s <a> open tag, %2$s </a> close tag.
 #: includes/class-wwp-script-loader.php:132
+#, php-format
 msgid "Want to do NET 30/60/90 Invoices for your wholesale customers? %1$sGet Wholesale Payments%2$s."
 msgstr ""
 
@@ -2919,4 +2958,12 @@ msgstr ""
 
 #: views/view-wwp-getting-started-page.php:467
 msgid "\"Great stuff as usual from Rymera!\""
+msgstr ""
+
+#: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:164
+msgid "Wholesale Sale Price"
+msgstr ""
+
+#: includes/class-wwp-products-cpt.php:111
+msgid "Wholesale Sale price"
 msgstr ""

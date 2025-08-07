@@ -98,6 +98,20 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
         }
 
         /**
+         * Add Wholesale Sale Price Column
+         *
+         * @since 2.2.3
+         *
+         * @param array $columns Array of columns.
+         * @return array Filtered array of columns.
+         */
+        public function add_wholesale_price_sale_column_to_product_cpt_listing( $columns ) {
+            $all_keys    = array_keys( $columns );
+            $price_index = array_search( 'price', $all_keys ); //phpcs:ignore
+            return array_slice( $columns, 0, $price_index + 1, true ) + array( 'wholesale_sale_price' => __( 'Wholesale Sale price', 'woocommerce-wholesale-prices' ) ) + array_slice( $columns, $price_index + 1, null, true );
+        }
+
+        /**
          * Add wholesale price column data for each product on the product listing page
          *
          * @since 1.0.1
@@ -182,7 +196,55 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
                         echo wp_kses( $column_content, $allowed_html );
                     }
                     break;
+                case 'wholesale_sale_price':
+                    $all_wholesale_roles = $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles();
+                    /**
+                     * Get product object.
+                     *
+                     * @var WC_Product|WC_Product_Variable $product
+                     */
+                    $product              = wc_get_product( $post_id );
+                    $wholesale_price_text = trim( apply_filters( 'wwp_filter_wholesale_price_title_text', __( 'Wholesale Price:', 'woocommerce-wholesale-prices' ) ) );
+                    $is_tax_enabled       = get_option( 'woocommerce_prices_include_tax' );
+                    if ( 'variable' === $product->get_type() ) {
+                        foreach ( $product->get_available_variations() as $variation_product ) {
+                            foreach ( $all_wholesale_roles as $roleKey => $roleObject ) {
+                                $sale_price = WWPP_Wholesale_Prices::get_product_wholesale_sale_price( $variation_product['variation_id'], array( $roleKey ) );
 
+                                if ( ! empty( $sale_price ) ) {
+                                    ?>
+                                            <div id="<?php echo esc_attr( $roleKey ); ?>_wholesale_price" class="wholesale_price">
+                                                <div class="wholesale_role"><b><?php echo wp_kses_post( $roleObject['roleName'] ); ?></b></div>
+                                                <?php echo $wholesale_price_text .' '.('yes' === $is_tax_enabled ? wp_kses_post( wc_price($sale_price['wholesale_sale_price_with_tax']) ) : wp_kses_post( wc_price($sale_price['wholesale_sale_price_with_no_tax']) ) );//phpcs:ignore ?>
+                                            </div>
+                                    <?php
+                                }
+                            }
+                        }
+                    } else {
+                    ?>
+                        <div class="wholesale_prices" id="wholesale_prices_<?php echo esc_attr( $post_id ); ?>">
+                            <style>ins { text-decoration: none !important; }</style>
+                                <?php
+                                        foreach ( $all_wholesale_roles as $roleKey => $roleObject ) {
+                                            $sale_price = WWPP_Wholesale_Prices::get_product_wholesale_sale_price( $post_id, array( $roleKey ) );
+
+                                            if ( ! empty( $sale_price ) ) {
+                                                ?>
+                                                        <div id="<?php echo esc_attr( $roleKey ); ?>_wholesale_price" class="wholesale_price">
+                                                            <div class="wholesale_role"><b><?php echo wp_kses_post( $roleObject['roleName'] ); ?></b></div>
+                                                            <?php echo $wholesale_price_text .' '.('yes' === $is_tax_enabled ? wp_kses_post( wc_price($sale_price['wholesale_sale_price_with_tax']) ) : wp_kses_post( wc_price($sale_price['wholesale_sale_price_with_no_tax']) ) );//phpcs:ignore ?>
+                                                        </div>
+                                                <?php
+                                            }
+                                        }
+                                ?>
+                            </style>
+                        </div>
+                    <?php
+                    }
+
+                    break;
                 default:
                     break;
 
@@ -199,8 +261,12 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
         ?>
 
             <style>
-                th#wholesale_price {
+                th#wholesale_price{
                     width: 10% !important;
+                }
+
+                th#wholesale_sale_price {
+                    width: 15% !important;
                 }
 
                 table.wp-list-table .column-product_cat, table.wp-list-table .column-product_tag {
@@ -226,6 +292,10 @@ if ( ! class_exists( 'WWP_Products_CPT' ) ) {
         public function run() {
             if ( get_option( 'wwpp_hide_wholesale_price_on_product_listing' ) === 'yes' ) {
                 return;
+            }
+
+            if ( is_plugin_active( 'woocommerce-wholesale-prices-premium/woocommerce-wholesale-prices-premium.bootstrap.php' ) ) {
+                add_filter( 'manage_product_posts_columns', array( $this, 'add_wholesale_price_sale_column_to_product_cpt_listing' ), 100, 1 );
             }
 
             add_filter( 'manage_product_posts_columns', array( $this, 'add_wholesale_price_column_to_product_cpt_listing' ), 99, 1 );

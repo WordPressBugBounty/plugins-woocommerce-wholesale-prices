@@ -3,7 +3,7 @@ Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 4.2
 Tested up to: 6.8
-Stable tag: 2.2.4
+Stable tag: 2.2.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -139,6 +139,9 @@ Plenty of amazing screenshots for this plugin and more over at:
 [https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/](https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/)
 
 == Changelog ==
+
+= 2.2.4.1 =
+- Bug Fix: Wholesale Price Becomes Retail Price  In Cart/Checkout When Coupon is used With Advanced Coupons Plugin
 
 = 2.2.4 =
 - Bug Fix: Fatal Error in WWP_Duplicate_Product Class and Missing Variable Product Variations

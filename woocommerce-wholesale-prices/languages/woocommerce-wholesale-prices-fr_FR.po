@@ -813,7 +813,7 @@ msgstr "État d’activation de la licence :"
 msgid "Locations"
 msgstr "Emplacements"
 
-#: includes/class-wwp-wholesale-prices.php:1380
+#: includes/class-wwp-wholesale-prices.php:1376
 msgid "Login to see prices"
 msgstr "Connectez-vous pour voir les prix"
 
@@ -1561,7 +1561,7 @@ msgstr "Texte du prix de gros"
 #: includes/class-wwp-wholesale-price-for-non-wholesale-customers.php:130
 #: includes/class-wwp-wholesale-price-grouped-product.php:181
 #: includes/class-wwp-wholesale-prices.php:604
-#: includes/class-wwp-wholesale-prices.php:1474
+#: includes/class-wwp-wholesale-prices.php:1470
 msgid "Wholesale Price:"
 msgstr "Prix de gros :"
 
@@ -2542,7 +2542,7 @@ msgstr ""
 msgid "Wholesale Payments"
 msgstr ""
 
-#: includes/class-wwp-wholesale-prices.php:1526
+#: includes/class-wwp-wholesale-prices.php:1522
 msgid "Wholesale Prices data."
 msgstr ""
 

@@ -832,10 +832,6 @@ class WWP_Wholesale_Prices {
 
         $user_wholesale_role = $this->_wwp_wholesale_roles->getUserWholesaleRole();
 
-        if ( \WC()->session->get( 'acfw_bogo_cart_hash' ) ) {
-            return false;
-        }
-
         if ( empty( $user_wholesale_role ) ) {
             return false;
         }

@@ -210,7 +210,7 @@ msgstr "Choisissez comment les rôles grossistes voient les prix sur les pages p
 msgid "Choose how wholesale roles see all prices throughout your shop pages."
 msgstr "Choisissez comment les rôles grossistes voient les prix sur les pages de votre boutique."
 
-#: includes/class-wwp-script-loader.php:678
+#: includes/class-wwp-script-loader.php:683
 msgid "Choose wholesale role..."
 msgstr "Sélectionnez le rôle grossiste…"
 
@@ -240,7 +240,7 @@ msgid "Click to activate the plugin."
 msgstr "Cliquez pour activer cette extension."
 
 #: includes/class-wwp-admin-settings.php:768
-#: includes/class-wwp-script-loader.php:695
+#: includes/class-wwp-script-loader.php:700
 msgid "Click to See Wholesale Prices Text"
 msgstr "Cliquez pour voir le texte des prix de gros"
 
@@ -371,7 +371,7 @@ msgstr "Modifier le rôle"
 msgid "Enter a value (leave blank to remove pricing)"
 msgstr "Entrez une valeur (laissez vide pour supprimer le prix)"
 
-#: includes/class-wwp-script-loader.php:405
+#: includes/class-wwp-script-loader.php:410
 msgid "Error in Wholesale Form"
 msgstr "Erreur dans le formulaire Wholesale"
 
@@ -406,7 +406,7 @@ msgstr "Étendez les fonctionnalités de vos codes promo pour rendre meilleur le
 msgid "Extra features like gift cards and loyalty program available"
 msgstr "Des fonctionnalités supplémentaires disponibles comme les cartes cadeau et le programme de fidélité"
 
-#: includes/class-wwp-script-loader.php:409
+#: includes/class-wwp-script-loader.php:414
 msgid "Failed to Edit Wholesale Role"
 msgstr "Echec de la modification du rôle"
 
@@ -536,7 +536,7 @@ msgstr "Obtenez Wholesale Prices Premium"
 msgid "Get Wholesale Suite"
 msgstr "Obtenez la suite Wholesale"
 
-#: includes/class-wwp-script-loader.php:655
+#: includes/class-wwp-script-loader.php:660
 msgid "Get WooCommerce Wholesale Lead Capture to unlock this powerful feature + more"
 msgstr "Obtenez WooCommerce Wholesale Lead Capture pour déverrouiller cette puissante fonctionnalité + suite"
 
@@ -688,7 +688,7 @@ msgid "Install Now"
 msgstr "Installer maintenant"
 
 #: includes/class-wwp-marketing.php:294
-#: includes/class-wwp-script-loader.php:457
+#: includes/class-wwp-script-loader.php:462
 #: views/view-wwp-about-page.php:38
 #: views/view-wwp-about-page.php:66
 #: views/view-wwp-about-page.php:78
@@ -699,7 +699,7 @@ msgstr "Installer maintenant"
 msgid "Install Plugin"
 msgstr "Installer l'extension"
 
-#: includes/class-wwp-script-loader.php:456
+#: includes/class-wwp-script-loader.php:461
 #: views/view-wwp-about-page.php:36
 #: views/view-wwp-about-page.php:48
 #: views/view-wwp-about-page.php:64
@@ -809,7 +809,7 @@ msgid "License Activation Status:"
 msgstr "État d’activation de la licence :"
 
 #: includes/class-wwp-admin-settings.php:721
-#: includes/class-wwp-script-loader.php:694
+#: includes/class-wwp-script-loader.php:699
 msgid "Locations"
 msgstr "Emplacements"
 
@@ -875,7 +875,7 @@ msgstr "Multiples rôles grossiste"
 msgid "Name"
 msgstr "Nom"
 
-#: includes/class-wwp-script-loader.php:395
+#: includes/class-wwp-script-loader.php:400
 msgid "No"
 msgstr "Non"
 
@@ -1007,11 +1007,11 @@ msgstr "Veuillez entrer un pourcentage inféieur ou égal à 0."
 msgid "Please enter in a value not less than 0 percent"
 msgstr "Veuillez entrer un pourcentage supérieur ou égal à 0"
 
-#: includes/class-wwp-script-loader.php:406
+#: includes/class-wwp-script-loader.php:411
 msgid "Please Enter Role Key"
 msgstr "Veuillez entrer la clé du rôle"
 
-#: includes/class-wwp-script-loader.php:404
+#: includes/class-wwp-script-loader.php:409
 msgid "Please Enter Role Name"
 msgstr "Veuillez entrer le nom du rôle"
 
@@ -1070,7 +1070,7 @@ msgid "Recent Wholesale Orders:"
 msgstr "Commandes en gros récentes :"
 
 #: includes/class-wwp-admin-settings.php:801
-#: includes/class-wwp-script-loader.php:697
+#: includes/class-wwp-script-loader.php:702
 msgid "Register Text"
 msgstr "Texte d'inscription"
 
@@ -1144,8 +1144,8 @@ msgid "See feature comparisons"
 msgstr "Voir le comparatif des fonctionnalités"
 
 #: includes/class-wwp-script-loader.php:295
-#: includes/class-wwp-script-loader.php:553
-#: includes/class-wwp-script-loader.php:602
+#: includes/class-wwp-script-loader.php:558
+#: includes/class-wwp-script-loader.php:607
 #: includes/I18n/settings.php:21
 #: includes/wc-admin-notes/class-wwp-wws-bundle.php:107
 msgid "See Features & Pricing"
@@ -1157,7 +1157,7 @@ msgid "See the full bundle now"
 msgstr "Voir l'ensemble complet maintenant"
 
 #: includes/class-wwp-admin-settings.php:1101
-#: includes/class-wwp-script-loader.php:926
+#: includes/class-wwp-script-loader.php:931
 #: views/view-wwp-upgrade-upsell.php:110
 #: views/wholesale-roles/view-wwp-wholesale-roles-admin-page.php:106
 msgid "See the full feature list"
@@ -1220,7 +1220,7 @@ msgid "Shipping method mapping"
 msgstr "Correspondance des méthodes d'expédition"
 
 #: includes/class-wwp-admin-settings.php:723
-#: includes/class-wwp-script-loader.php:698
+#: includes/class-wwp-script-loader.php:703
 msgid "Shop Archives"
 msgstr "Archives de la boutique"
 
@@ -1234,12 +1234,12 @@ msgid "Show Wholesale Price to non-wholesale users"
 msgstr "Montrer le prix de gros aux clients de détail"
 
 #: includes/class-wwp-admin-settings.php:363
-#: includes/class-wwp-script-loader.php:693
+#: includes/class-wwp-script-loader.php:698
 msgid "Show Wholesale Prices Box For Non Wholesale Customers"
 msgstr "Afficher la boîte des prix de gros pour les clients non grossistes"
 
 #: includes/class-wwp-admin-settings.php:738
-#: includes/class-wwp-script-loader.php:699
+#: includes/class-wwp-script-loader.php:704
 msgid "Single Product"
 msgstr "Produits uniques"
 
@@ -1269,7 +1269,7 @@ msgstr "État :"
 msgid "Successfully activated"
 msgstr "Activé avec succès"
 
-#: includes/class-wwp-script-loader.php:408
+#: includes/class-wwp-script-loader.php:413
 msgid "Successfully Edited Role"
 msgstr "Rôle modifié avec succès"
 
@@ -1297,7 +1297,7 @@ msgstr "Options de taxe"
 msgid "That's why we decided to make Wholesale Suite - a state of the art solution focused suite of plugins that make it easy to sell to wholesale alongside your existing WooCommerce store."
 msgstr "C'est pourquoi nous avons décidé de créer Wholesale Suite - un ensemble d’extensions conformes à l'état de l'art qui facilite la vente en gros au sein même de votre e-boutique WooCommerce."
 
-#: includes/class-wwp-script-loader.php:676
+#: includes/class-wwp-script-loader.php:681
 msgid "The 'Click to See Wholesale Prices' text seen in frontend."
 msgstr "Le texte 'Cliquez pour voir les prix de gros ' vu dans le frontend."
 
@@ -1321,7 +1321,7 @@ msgid "The product wholesale price."
 msgstr "Le prix de gros du produit."
 
 #: includes/class-wwp-admin-settings.php:788
-#: includes/class-wwp-script-loader.php:677
+#: includes/class-wwp-script-loader.php:682
 msgid "The selected wholesale roles and pricing that should show to non-wholesale customers on the front end."
 msgstr "Les rôles de gros sélectionnés et les prix qui doivent être montrés aux clients non grossistes sur le front-end."
 
@@ -1357,7 +1357,7 @@ msgstr "Ceci est le rôle principal de vente en gros."
 msgid "This message is only shown if <b>Hide Price and Add to Cart button</b> is enabled. \"Login to see prices\" is the default message."
 msgstr "Ce message est affiché uniquement <b>Masquer le prix et le bouton Ajouter au panier</b> si est activé. \"Connectez-vous pour voir les prix\" est le message par défaut."
 
-#: includes/class-wwp-script-loader.php:674
+#: includes/class-wwp-script-loader.php:679
 msgid "This text is linked to the defined registration page in WooCommerce Wholesale Lead Capture Settings."
 msgstr "Ce texte est lié à la page d’enregistrement définie dans Les paramètres de capture de prospects WooCommerce Wholesale."
 
@@ -1498,7 +1498,7 @@ msgstr "Wholesale Lead Capture apporte un formulaire d’inscription et de conne
 #: includes/class-wwp-dashboard.php:678
 #: includes/class-wwp-dashboard.php:726
 #: includes/class-wwp-order-form.php:109
-#: includes/class-wwp-script-loader.php:700
+#: includes/class-wwp-script-loader.php:705
 #: includes/class-wwp-settings.php:920
 #: includes/I18n/settings.php:56
 #: views/view-wwp-getting-started-page.php:228
@@ -1556,7 +1556,6 @@ msgstr "Suffixe du prix de gros"
 msgid "Wholesale Price Text"
 msgstr "Texte du prix de gros"
 
-#: includes/class-wwp-products-cpt.php:207
 #: includes/class-wwp-wholesale-price-for-non-wholesale-customers.php:99
 #: includes/class-wwp-wholesale-price-for-non-wholesale-customers.php:130
 #: includes/class-wwp-wholesale-price-grouped-product.php:181
@@ -1570,7 +1569,7 @@ msgstr "Prix de gros :"
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:198
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-variable-product.php:310
 #: includes/class-wwp-admin-settings.php:331
-#: includes/class-wwp-script-loader.php:872
+#: includes/class-wwp-script-loader.php:877
 #: includes/class-wwp-settings.php:29
 #: includes/class-wwp-wws-license-manager.php:165
 msgid "Wholesale Prices"
@@ -1614,7 +1613,7 @@ msgstr "Correspondance rôle grossiste / classe d'imposition de taxe"
 msgid "Wholesale Role / Tax Exemption Mapping"
 msgstr "Correspondance rôle grossiste / exonération de taxe"
 
-#: includes/class-wwp-script-loader.php:407
+#: includes/class-wwp-script-loader.php:412
 msgid "Wholesale Role Successfully Edited"
 msgstr "Modification du rôle réussie"
 
@@ -1624,7 +1623,7 @@ msgid "Wholesale Roles"
 msgstr "Rôles grossistes"
 
 #: includes/class-wwp-admin-settings.php:782
-#: includes/class-wwp-script-loader.php:696
+#: includes/class-wwp-script-loader.php:701
 msgid "Wholesale Roles(s)"
 msgstr "Rôles en gros"
 
@@ -1741,7 +1740,7 @@ msgstr "Paramètres de Licence WWS"
 msgid "Yep, it's totally free! Enjoy extended coupons for WooCommerce with the Advanced Coupons Free plugin. In minutes you can be creating amazing new coupons offers for your store that will explode your revenue."
 msgstr "Ouais, c’est complètement gratuit! Améliorez facilement vos codes promo sous WooCommerce avec l’extension Advanced Coupons Free. En quelques minutes vous créerez de nouvelles offres de code promos étonnantes pour votre boutique qui feront exploser vos revenus."
 
-#: includes/class-wwp-script-loader.php:394
+#: includes/class-wwp-script-loader.php:399
 msgid "Yes"
 msgstr "Oui"
 
@@ -1753,7 +1752,7 @@ msgstr "Vous utilisez actuellement WooCommerce Wholesale Prices Free sous licenc
 msgid "You don't have permission."
 msgstr "Vous n’avez pas d’autorisation."
 
-#: includes/class-wwp-script-loader.php:895
+#: includes/class-wwp-script-loader.php:900
 #: views/wholesale-roles/view-wwp-wholesale-roles-admin-page.php:84
 msgid "You're currently using the free version of WooCommerce Wholesale Prices which lets you have one level of wholesale customers."
 msgstr "Vous utilisez actuellement la version gratuite de WooCommerce Wholesale Prices qui vous permet d'avoir un niveau de clients en gros."
@@ -1869,32 +1868,32 @@ msgstr ""
 msgid "Upgrade For Wholesale Sale Price Features"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:536
+#: includes/class-wwp-script-loader.php:541
 #: includes/I18n/settings.php:22
 msgid "Define Prices By Percentage Globally Or On Categories"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:545
+#: includes/class-wwp-script-loader.php:550
 #: includes/I18n/settings.php:64
 msgid "Change How Variable Product Prices Are Displayed"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:570
+#: includes/class-wwp-script-loader.php:575
 #: includes/I18n/settings.php:69
 msgid "Upgrade To Wholesale Suite For Tax Exemption"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:584
+#: includes/class-wwp-script-loader.php:589
 #: includes/I18n/settings.php:19
 msgid "Upgrade To Wholesale Suite For Advanced Tax Display"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:585
+#: includes/class-wwp-script-loader.php:590
 #: includes/I18n/settings.php:20
 msgid "Wholesale Suite is the #1 best rated wholesale solution for WooCommerce. Prices Premium (one of the three plugins) features in-depth tax display controls."
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:589
+#: includes/class-wwp-script-loader.php:594
 #: includes/I18n/settings.php:66
 msgid "Upgrade To Wholesale Suite For Suffix Overrides"
 msgstr ""
@@ -2013,13 +2012,13 @@ msgid "%1$sBonus:%3$s Wholesale Prices lite users get %2$s50&#37; off regular pr
 msgstr ""
 
 #. translators: %1$s - <p><span style="font-weight: bold;">Bonus:</span>, %2$s <span style="color: #218900; font-weight: bold;">, %3$s </span></p><p>, %4$s </p><p>.
-#: includes/class-wwp-script-loader.php:703
+#: includes/class-wwp-script-loader.php:708
 #, php-format
 msgid "%1$sWholesale Prices lite users get %2$s50&#37; off regular price%3$s automatically applied at checkout.%4$s"
 msgstr ""
 
 #. translators: %1$s - <div class="notice wwp-wwlc-inactive"><p><i class="fa fa-star checked"></i><strong>, %2$s <a href="https://wholesalesuiteplugin.com/woocommerce-wholesale-lead-capture/?utm_source=wwp&utm_medium=upsell&utm_campaign=wholesaletoguestwwlcrecommend" target="_blank">, %3$s </a></strong></p><p>, %4$s </p><p>.
-#: includes/class-wwp-script-loader.php:714
+#: includes/class-wwp-script-loader.php:719
 #, php-format
 msgid "%1$sRecommended Plugin: %2$sWooCommerce Wholesale Lead Capture%3$sLead Capture adds an additional 'register text' link to the wholesale prices box on the front end to help you capture even more wholesale leads.%4$s"
 msgstr ""
@@ -2043,7 +2042,7 @@ msgid "Everything you need to sell to wholesale customers in WooCommerce. %sThe 
 msgstr ""
 
 #. translators: %1$s - <strong>, %2$s </strong>.
-#: includes/class-wwp-script-loader.php:728
+#: includes/class-wwp-script-loader.php:733
 #, php-format
 msgid "To use this option, you must have %1$sWooCommerce Wholesale Order Form%2$s plugin installed and activated."
 msgstr ""
@@ -2105,20 +2104,20 @@ msgid ""
 "                                    Click below for all the details."
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:537
+#: includes/class-wwp-script-loader.php:542
 msgid ""
 "In WooCommerce Wholesale Prices Premium you can set your wholesale prices by a percentage on a category or site-wide general level.\n"
 "                                            This can save heaps of time instead of setting wholesale pricing on individual products. Read more about it below."
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:546
+#: includes/class-wwp-script-loader.php:551
 msgid ""
 "Changing how your variable product prices are displayed can reduce the amount of computational work WooCommerce does on load, making your site faster.\n"
 "                            Access this optimization option and more in the WooCommerce Wholesale Prices Premium plugin."
 msgstr ""
 
 #. translators: %1$s - <p> tag, %2$s - </p> tag.
-#: includes/class-wwp-script-loader.php:573
+#: includes/class-wwp-script-loader.php:578
 #, php-format
 msgid ""
 "%1$sWholesale Suite is the #1 best rated wholesale solution for WooCommerce.%2$s\n"
@@ -2126,7 +2125,7 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s - <p> tag, %2$s - </p> tag.
-#: includes/class-wwp-script-loader.php:592
+#: includes/class-wwp-script-loader.php:597
 #, php-format
 msgid ""
 "%1$sWholesale Suite is the #1 best rated wholesale solution for WooCommerce. Prices Premium (one of three plugins) features advanced price suffix controls.%2$s\n"
@@ -2134,7 +2133,7 @@ msgid ""
 msgstr ""
 
 #. translators: %1$s and %2$s are html tags.
-#: includes/class-wwp-script-loader.php:906
+#: includes/class-wwp-script-loader.php:911
 #, php-format
 msgid ""
 "In the %1$sPremium add-on%2$s you can add multiple wholesale roles. This will let you create separate \"levels\" of wholesale customers,\n"
@@ -2536,8 +2535,8 @@ msgstr ""
 msgid "Select the user roles allowed to access the Wholesale admin dashboard. Administrator and Shop manager are allowed by default."
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1063
-#: includes/class-wwp-script-loader.php:1064
+#: includes/class-wwp-script-loader.php:1068
+#: includes/class-wwp-script-loader.php:1069
 #: views/view-wwp-getting-started-page.php:284
 msgid "Wholesale Payments"
 msgstr ""
@@ -2687,31 +2686,31 @@ msgstr ""
 msgid "Want to do NET 30/60/90 Invoices for your wholesale customers? %1$sGet Wholesale Payments%2$s."
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Setup Wholesale Payments (Recommended)"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Use Wholesale Suite Wholesale Payments plugin to create NET 30, 60, or any other invoice payment plan you can think of for your wholesale customers."
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Turn WooCommerce orders into Stripe Invoices with NET payment terms"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Add a new \"Wholesale Invoice\" gateway"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Restrict to certain wholesale roles or even certain customers only"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Create any kind of delayed payment plan (eg. NET 30, NET 60, % deposits, ...)"
 msgstr ""
 
-#: includes/class-wwp-script-loader.php:1103
+#: includes/class-wwp-script-loader.php:1108
 msgid "Expert worldwide support"
 msgstr ""
 
@@ -2962,8 +2961,4 @@ msgstr ""
 
 #: includes/admin-custom-fields/products/class-wwp-admin-custom-fields-simple-product.php:164
 msgid "Wholesale Sale Price"
-msgstr ""
-
-#: includes/class-wwp-products-cpt.php:111
-msgid "Wholesale Sale price"
 msgstr ""

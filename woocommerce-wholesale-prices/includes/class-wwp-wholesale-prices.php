@@ -860,6 +860,7 @@ class WWP_Wholesale_Prices {
                 array(
                     'simple',
                     'variation',
+                    'subscription',
                 ),
                 true
             ) ) {
@@ -1355,10 +1356,17 @@ class WWP_Wholesale_Prices {
      */
     public function display_replacement_message() {
 
+        $allowed_html = array(
+            'a' => array(
+                'href'  => array(),
+                'class' => array(),
+            ),
+        );
+
         $hide_price_and_add_to_cart_button = apply_filters( 'wwp_hide_price_and_add_to_cart_button', ! is_user_logged_in() && get_option( 'wwp_hide_price_add_to_cart' ) === 'yes' ? true : false );
 
         if ( $hide_price_and_add_to_cart_button ) {
-            echo $this->get_price_and_add_to_cart_replacement_message(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            echo wp_kses( $this->get_price_and_add_to_cart_replacement_message(), $allowed_html );
         }
     }
 
@@ -1631,10 +1639,19 @@ CSS;
 
         // if the user has a wholesale role and the min and max price is set, then add the meta query to the query.
         if ( ! empty( $user_wholesale_role ) && isset( $_GET['min_price'] ) && isset( $_GET['max_price'] ) ) { //phpcs:ignore
-            $min_price = isset( $_GET['min_price'] ) ? floatval( wp_unslash( $_GET['min_price'] ) ) : 1; //phpcs:ignore
-            $max_price = isset( $_GET['max_price'] ) ? floatval( wp_unslash( $_GET['max_price'] ) ) : 0; //phpcs:ignore
-            $meta_key            = $user_wholesale_role[0] . '_wholesale_price';
-            $meta_key_variations = $user_wholesale_role[0] . '_variations_with_wholesale_price';
+            $min_price = isset( $_GET['min_price'] ) ? $this->absfloat( sanitize_text_field( wp_unslash( $_GET['min_price'] ) ) ) : 1; //phpcs:ignore
+            $max_price = isset( $_GET['max_price'] ) ? $this->absfloat( sanitize_text_field( wp_unslash( $_GET['max_price'] ) ) ) : 0; //phpcs:ignore
+
+            // Validate wholesale role.
+            $role_key                       = sanitize_key( $user_wholesale_role[0] );
+            $all_registered_wholesale_roles = $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles();
+
+            if ( ! isset( $all_registered_wholesale_roles[ $role_key ] ) ) {
+                return $query;
+            }
+
+            $meta_key            = $role_key . '_wholesale_price';
+            $meta_key_variations = $role_key . '_variations_with_wholesale_price';
 
             $meta_query          = array(
                 'relation' => 'OR',
@@ -1656,6 +1673,19 @@ CSS;
         return $query;
     }
 
+
+    /**
+     * Convert into float.
+     *
+     * @since 2.2.5
+     * @param int|string $value The subject value.
+     * @return float
+     */
+    private function absfloat( $value ) {
+        $float = floatval( $value );
+        return $float >= 0 ? $float : 0;
+    }
+
     /**
      * Configure Maximum/Minimum Values in WooCommerce Product Queries for Compatibility with the HUSKY – Products Filter Professional for WooCommerce Plugin.
      *
@@ -1668,10 +1698,19 @@ CSS;
         $user_wholesale_role = $this->_wwp_wholesale_roles->getUserWholesaleRole();
 
         if ( ! empty( $user_wholesale_role ) && isset( $_GET['min_price'] ) && isset( $_GET['max_price'] ) ) { //phpcs:ignore
-            $min_price = isset( $_GET['min_price'] ) ? floatval( wp_unslash( $_GET['min_price'] ) ) : 1; //phpcs:ignore
-            $max_price = isset( $_GET['max_price'] ) ? floatval( wp_unslash( $_GET['max_price'] ) ) : 0; //phpcs:ignore
-            $meta_key            = $user_wholesale_role[0] . '_wholesale_price';
-            $meta_key_variations = $user_wholesale_role[0] . '_variations_with_wholesale_price';
+            $min_price = isset( $_GET['min_price'] ) ? $this->absfloat( sanitize_text_field( wp_unslash( $_GET['min_price'] ) ) ) : 1; //phpcs:ignore
+            $max_price = isset( $_GET['max_price'] ) ? $this->absfloat( sanitize_text_field( wp_unslash( $_GET['max_price'] ) ) ) : 0; //phpcs:ignore
+
+            // Validate wholesale role.
+            $role_key                       = sanitize_key( $user_wholesale_role[0] );
+            $all_registered_wholesale_roles = $this->_wwp_wholesale_roles->getAllRegisteredWholesaleRoles();
+
+            if ( ! isset( $all_registered_wholesale_roles[ $role_key ] ) ) {
+                return;
+            }
+
+            $meta_key            = $role_key . '_wholesale_price';
+            $meta_key_variations = $role_key . '_variations_with_wholesale_price';
 
             $meta_query = array(
                 'relation' => 'OR',

@@ -109,9 +109,11 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
 
             $settings = array_merge( $this->get_settings( $current_section ), $this->sub_fields( $current_section ) );
 
-            if ( isset( $_POST['wwp_editor'] ) && ! empty( $_POST['wwp_editor'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-                foreach ( $_POST['wwp_editor'] as $index => $content ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-                    $_POST[ $index ] = htmlentities( wpautop( $content ) );
+            if ( isset( $_POST['wwp_editor'] ) && is_array( $_POST['wwp_editor'] ) && ! empty( $_POST['wwp_editor'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                $wwp_editor = wp_unslash( $_POST['wwp_editor'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized below per-field.
+                foreach ( $wwp_editor as $index => $content ) {
+                    $index           = sanitize_key( $index );
+                    $_POST[ $index ] = htmlentities( wpautop( wp_kses_post( $content ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 }
             }
 

@@ -318,7 +318,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
             /**
              * Backend Common CSS
              */
-            if ( get_option( 'wwp_admin_notice_getting_started_show' ) === 'yes' || get_option( WWP_SHOW_INSTALL_ACFWF_NOTICE ) === 'yes' || ( isset( $_GET['tab'] ) && 'wwp_settings' === $_GET['tab'] ) ) { // phpcs:ignore
+            if ( get_option( 'wwp_admin_notice_getting_started_show' ) === 'yes' || get_option( WWP_SHOW_INSTALL_ACFWF_NOTICE ) === 'yes' || ( isset( $_GET['tab'] ) && 'wwp_settings' === sanitize_key( wp_unslash( $_GET['tab'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 wp_enqueue_style( 'wwp_backend_main_css', WWP_CSS_URL . 'wwp-back-end-main.css', array(), $file_version );
             }
 
@@ -427,6 +427,17 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                 ! WWP_Helper_Functions::is_wwlc_active()
             ) {
                 wp_enqueue_style( 'wwp_lead_capture_page_css', WWP_CSS_URL . 'wwp-lead-capture.css', array(), $this->_wwp_current_version, 'all' );
+            }
+
+            /**
+             * Wholesale Quotes Page
+             */
+            // Load script if premium add on isn't present.
+            if (
+                strpos( $screen->id, 'wwp-wholesale-quotes-page' ) !== false &&
+                ! WWP_Helper_Functions::is_wwq_active()
+            ) {
+                wp_enqueue_style( 'wwp_wholesale_quotes_page_css', WWP_CSS_URL . 'wwp-wholesale-quotes.css', array(), $this->_wwp_current_version, 'all' );
             }
 
             /**
@@ -1110,7 +1121,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                         $('#wp-admin-bar-wpay_toolbar').pointer({
                             "content": wpayToolBarHTML,
                             "buttons": function (event, t) {
-                                var redirectUrl = '<?php echo( admin_url( 'admin-ajax.php?action=wpay_toolbar_dismiss_notice&nkey=wpay-menu-bar-button&nonce=' . wp_create_nonce( 'wp_wpay_toolbar_dismiss_notice' ) . '&redirect=' . basename( $_SERVER['REQUEST_URI'] ) ) ); //phpcs:ignore ?>';
+                                var redirectUrl = '<?php echo esc_js( admin_url( 'admin-ajax.php?action=wpay_toolbar_dismiss_notice&nkey=wpay-menu-bar-button&nonce=' . wp_create_nonce( 'wp_wpay_toolbar_dismiss_notice' ) . '&redirect=' . urlencode( basename( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) ) );  //phpcs:ignore ?>';
                                 var button = $('<a class="close" href="' + redirectUrl + '"></a>').text(wp.i18n.__('Dismiss Forever'));
 
                                 return button.on('click.pointer', function (e) {

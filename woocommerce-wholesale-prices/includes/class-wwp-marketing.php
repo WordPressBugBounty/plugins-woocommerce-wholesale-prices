@@ -223,6 +223,16 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
         }
 
         /**
+         * Print wwp in new format.
+         *
+         * @since 2.2.5
+         * @access public
+         */
+        public function print_wwp_tag_v2() {
+            echo '<meta name="generator" content="WooCommerce Wholesale Prices ' . WooCommerceWholeSalePrices::VERSION . '" />'; //phpcs:ignore
+        }
+
+        /**
          * Flag to show review request.
          *
          * @since 3.0.0
@@ -249,7 +259,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
          * @access public
          */
         public function wwp_hide_acfwf_install_notice() {
-            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_hide_acfwf_install_notice_nonce' ) ) {
+            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_hide_acfwf_install_notice_nonce' ) ) { //phpcs:ignore
                 // Security check failure.
                 return;
             }
@@ -311,7 +321,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
          */
         public function ajax_request_review_response() {
 
-            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_request_review_nonce' ) ) {
+            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_request_review_nonce' ) ) { //phpcs:ignore
                 $response = array(
 					'status'    => 'fail',
 					'error_msg' => __( 'Security check failure', 'woocommerce-wholesale-prices' ),
@@ -333,7 +343,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
 
             } else {
                 // Sanitize.
-                $review_request_response = sanitize_text_field( $_POST['review_request_response'] );
+                $review_request_response = sanitize_text_field( $_POST['review_request_response'] ); //phpcs:ignore
 
                 switch ( $review_request_response ) {
                     case 'review-later':
@@ -381,6 +391,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
         public function run() {
             // Show review request.
             add_action( 'wp_head', array( $this, 'print_wwp_tag' ) );
+            add_action( 'wp_head', array( $this, 'print_wwp_tag_v2' ) );
             add_action( WWP_CRON_REQUEST_REVIEW, array( $this, 'flag_show_review_request' ) );
             add_action( 'init', array( $this, 'register_ajax_handlers' ) );
 

@@ -245,6 +245,33 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
             return file_exists( $wwlc_file );
         }
 
+
+        /**
+         * Check if WWQ is active.
+         *
+         * @since 2.2.5
+         *
+         * @return boolean
+         */
+        public static function is_wwq_active() {
+            return self::is_plugin_active( 'woocommerce-wholesale-quotes/woocommerce-wholesale-quotes.php' );
+        }
+
+        /**
+         * Check if WWQ is installed.
+         *
+         * @since 2.2.5
+         *
+         * @return boolean
+         */
+        public static function is_wwq_installed() {
+            $plugin_file = 'woocommerce-wholesale-quotes/woocommerce-wholesale-quotes.php';
+
+            $wwq_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $wwq_file );
+        }
+
         /**
          * Check if WPAY is installed
          *
@@ -319,6 +346,18 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
             $store_toolkit_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
 
             return file_exists( $store_toolkit_file );
+        }
+
+        /**
+         * Check if 'SaveTo Wishlist Lite for WooCommerce' is installed.
+         *
+         * @return boolean
+         */
+        public static function is_save_to_wish_list_for_woocommerce_installed() {
+            $plugin_file           = 'saveto-wishlist-lite-for-woocommerce/saveto-wishlist-lite-for-woocommerce.php';
+            $save_to_wishlist_file = trailingslashit( WP_PLUGIN_DIR ) . plugin_basename( $plugin_file );
+
+            return file_exists( $save_to_wishlist_file );
         }
 
         /**

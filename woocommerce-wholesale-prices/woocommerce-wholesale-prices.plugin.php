@@ -111,7 +111,7 @@ class WooCommerceWholeSalePrices {
     public $wwp_plugin_installer;
     // phpcs:enable
 
-    const VERSION = '2.2.6';
+    const VERSION = '2.2.7';
 
     /**
      * Class Methods

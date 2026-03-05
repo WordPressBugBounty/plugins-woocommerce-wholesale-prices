@@ -259,7 +259,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
          * @access public
          */
         public function wwp_hide_acfwf_install_notice() {
-            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_hide_acfwf_install_notice_nonce' ) ) { //phpcs:ignore
+            if ( ! WWP_Helper_Functions::verify_ajax_nonce( 'wwp_hide_acfwf_install_notice_nonce' ) ) {
                 // Security check failure.
                 return;
             }
@@ -321,7 +321,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
          */
         public function ajax_request_review_response() {
 
-            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_request_review_nonce' ) ) { //phpcs:ignore
+            if ( ! WWP_Helper_Functions::verify_ajax_nonce( 'wwp_request_review_nonce' ) ) {
                 $response = array(
 					'status'    => 'fail',
 					'error_msg' => __( 'Security check failure', 'woocommerce-wholesale-prices' ),
@@ -330,8 +330,8 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
                 echo wp_json_encode( $response );
                 wp_die();
 
-            } elseif ( ! isset( $_POST['review_request_response'] ) ||
-                ! in_array( $_POST['review_request_response'], array( 'review-later', 'review', 'never-show' ), true ) ) {
+            } elseif ( ! isset( $_POST['review_request_response'] ) || // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified via WWP_Helper_Functions::verify_ajax_nonce() above.
+                ! in_array( sanitize_text_field( wp_unslash( $_POST['review_request_response'] ) ), array( 'review-later', 'review', 'never-show' ), true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
 
                 $response = array(
 					'status'    => 'fail',
@@ -343,7 +343,7 @@ if ( ! class_exists( 'WWP_Marketing' ) ) {
 
             } else {
                 // Sanitize.
-                $review_request_response = sanitize_text_field( $_POST['review_request_response'] ); //phpcs:ignore
+                $review_request_response = sanitize_text_field( wp_unslash( $_POST['review_request_response'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
 
                 switch ( $review_request_response ) {
                     case 'review-later':

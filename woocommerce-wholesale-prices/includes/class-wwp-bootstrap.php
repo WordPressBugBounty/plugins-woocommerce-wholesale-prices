@@ -414,7 +414,7 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
          * @access public
          */
         public function wwp_getting_started_notice_hide() {
-            if ( ! wp_doing_ajax() || ! wp_verify_nonce( $_POST['nonce'], 'wwp_getting_started_nonce' ) ) {  //phpcs:ignore
+            if ( ! WWP_Helper_Functions::verify_ajax_nonce( 'wwp_getting_started_nonce' ) ) {
                 // Security check failure.
                 return;
             }

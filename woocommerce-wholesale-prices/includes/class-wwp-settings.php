@@ -696,7 +696,7 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
          */
         public function render_license_upgrade_content() {
 
-            if ( isset( $_GET['section'] ) && 'wwp_license_section' === $_GET['section'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            if ( isset( $_GET['section'] ) && 'wwp_license_section' === sanitize_key( wp_unslash( $_GET['section'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 wp_safe_redirect( admin_url( 'admin.php?page=wws-license-settings' ) );
                 exit;
             }
@@ -776,7 +776,7 @@ if ( ! class_exists( 'WWP_Settings' ) ) {
             if ( WWP_Helper_Functions::is_wwpp_active() ) {
 
                 if ( isset( $_GET['section'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                    switch ( $_GET['section'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    switch ( sanitize_key( wp_unslash( $_GET['section'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                         case 'wwpp_setting_price_section':
                             $dummy_settings_to_remove = array(
                                 'wwp_settings_explicitly_use_product_regular_price_on_discount_calc_dummy',

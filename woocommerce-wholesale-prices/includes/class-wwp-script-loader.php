@@ -526,7 +526,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
              */
             if (
                 ! WWP_Helper_Functions::is_wwpp_active() &&
-                isset( $_GET['tab'] ) && 'wwp_settings' === $_GET['tab'] // phpcs:ignore
+                isset( $_GET['tab'] ) && 'wwp_settings' === sanitize_key( wp_unslash( $_GET['tab'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             ) {
 
                 // Queue up stuff that is used on all tabs.
@@ -539,8 +539,8 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                 wp_enqueue_style( 'wwp-free-training-guide-css', WWP_CSS_URL . 'backend/wwp-free-training-guide.css', array(), $this->_wwp_current_version, 'all' );
 
                 // Handle each section of the settings (General, Price, Tax, Upgrade).
-                if ( isset( $_GET['section'] ) && '' !== $_GET['section'] ) { // phpcs:ignore
-                    switch ( $_GET['section'] ) { // phpcs:ignore
+                if ( isset( $_GET['section'] ) && '' !== $_GET['section'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    switch ( sanitize_key( wp_unslash( $_GET['section'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                         case 'wwpp_setting_price_section':
                             wp_enqueue_script( 'wwp-price-settings', WWP_JS_URL . 'backend/wwp-price-setting.js', array( 'select2' ), $this->_wwp_current_version, true );
                             wp_localize_script(
@@ -631,8 +631,8 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
                     // General page.
                     wp_enqueue_style( 'wwp-general-css', WWP_CSS_URL . 'wwp-general-settings.css', array(), $this->_wwp_current_version, 'all' );
                 }
-            } elseif ( isset( $_GET['section'] ) ) { // phpcs:ignore
-                switch ( $_GET['section'] ) { // phpcs:ignore
+            } elseif ( isset( $_GET['section'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                switch ( sanitize_key( wp_unslash( $_GET['section'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                     case 'wwpp_setting_price_section':
                         $this->load_wwp_prices_settings_for_non_wholesale_users_styles_and_scripts();
                         break;
@@ -978,7 +978,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
          * @since 2.1.2
          */
         public function wchome_wws_upgrade_to_premium() {
-            if ( isset( $_GET['page'] ) && 'wchome-wws-upgrade' === $_GET['page'] ) { // phpcs:ignore
+            if ( isset( $_GET['page'] ) && 'wchome-wws-upgrade' === sanitize_key( wp_unslash( $_GET['page'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 wp_safe_redirect( esc_url_raw( WWP_Helper_Functions::get_utm_url( 'bundle', 'wwp', 'upsell', 'wchomeupgradelink' ) ) );
                 exit;
             }
@@ -1003,7 +1003,7 @@ if ( ! class_exists( 'WWP_Script_Loader' ) ) {
          * @access public
          */
         public function load_wws_license_upsell_upgrade_to_premium_styles_and_scripts() {
-            if ( isset( $_GET['page'] ) && $_GET['page'] == 'wws-license-settings' ) { // phpcs:ignore
+            if ( isset( $_GET['page'] ) && 'wws-license-settings' === sanitize_key( wp_unslash( $_GET['page'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 wp_enqueue_style( 'wws-wwp-license-upsell-upgrade-css', WWP_CSS_URL . 'backend/wwp-license-upsell-upgrade.css', array(), $this->_wwp_current_version, 'all' );
             }
         }

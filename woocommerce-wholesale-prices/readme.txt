@@ -4,7 +4,7 @@ Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic prici
 Requires at least: 4.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.2.6
+Stable tag: 2.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -142,6 +142,12 @@ See plenty of screenshots for this plugin and others at:
 [https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/](https://wholesalesuiteplugin.com/woocommerce-wholesale-prices-premium/)
 
 == Changelog ==
+
+= 2.2.7 =
+- Bug Fix: JavaScript Console Error Cannot read properties of undefined
+- Bug Fix: Unable to filter product wholesale price if using General Discount Rules
+- Bug Fix: Privilege escalation via REST API settings endpoint allows shop managers to write arbitrary cross-plugin options
+- Improvement: Fully support wholesale price filtering for logged in wholesale customers
 
 = 2.2.6 =
 - Bug Fix: Incorrect Wholesale Order Meta on Subscription Orders and Subscriptions

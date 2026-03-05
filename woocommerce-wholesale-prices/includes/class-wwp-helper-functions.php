@@ -1506,5 +1506,20 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
 
             return $icon_url;
         }
+        /**
+         * Verify an AJAX request by checking wp_doing_ajax(), nonce existence, and nonce validity.
+         *
+         * @param string $nonce_action The nonce action name to verify against.
+         *
+         * @since  2.2.7
+         * @access public
+         *
+         * @return boolean True if the AJAX request passes all security checks, false otherwise.
+         */
+        public static function verify_ajax_nonce( $nonce_action ) {
+            return wp_doing_ajax()
+                && isset( $_POST['nonce'] )
+                && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), $nonce_action );
+        }
     }
 }

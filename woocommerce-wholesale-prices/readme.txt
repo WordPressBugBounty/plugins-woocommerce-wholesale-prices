@@ -2,9 +2,9 @@
 Contributors: jkohlbach, RymeraWebCo, smub
 Tags: woocommerce wholesale, b2b, wholesale pricing, catalog mode, dynamic pricing
 Requires at least: 5.9
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.2.9
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -148,6 +148,25 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 8. Price Settings — Control how wholesale prices appear on the front end: the label shown before the price, whether the retail price is hidden, how variable product ranges display, and whether prices and add to cart are hidden from visitors altogether.
 
 == Changelog ==
+
+= 2.3.0 =
+- Feature: New AI / MCP settings tab to connect your store to AI assistants such as Claude, ChatGPT, and Cursor through StoreAgent
+- Feature: Add WordPress Abilities API support, so AI assistants and automation tools can get and set wholesale prices and list wholesale customers
+- Improvement: Speed up the List Wholesale Customers ability by no longer looking up each customer's last order one at a time
+- Improvement: Remove unused bundled code to make the plugin smaller
+- Improvement: Show the variations dropdown on variable products when 'Hide Price and Add to Cart button' is enabled
+- Improvement: Record every Wholesale Suite ability call in an audit log on WordPress 7.1 and later
+- Improvement: Show the Getting Started notice in the WooCommerce Inbox
+- Improvement: Speed up product saves by clearing the wholesale price range cache for all roles in one step
+- Bug Fix: Classic Cart page shows the wholesale price before quantity-based discounts after a page reload
+- Bug Fix: Composite products: the wholesale price popover stays empty for non-wholesale customers
+- Bug Fix: Settings number fields that allow negative values don't accept negative numbers
+- Bug Fix: Usage tracking reports the Wholesale Lead Capture version as the Wholesale Payments version
+- Bug Fix: Wholesale price doesn't display on a variable product after the Set Wholesale Price ability updates one of its variations
+- Bug Fix: WPML Multicurrency and WooCommerce Payments: REST API price HTML shows the wrong currency symbol
+- Bug Fix: Advanced Dynamic Pricing rules override the wholesale price
+- Bug Fix: Onboarding card shows a completed step as incomplete for up to one minute
+- Bug Fix: List Wholesale Customers ability denies access to subsite admins and shop managers on Multisite
 
 = 2.2.9 =
 - Improvement: "Preview as wholesale role" admin-bar toggle

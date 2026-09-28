@@ -24,6 +24,7 @@ require_once 'includes/class-wwp-lead-capture.php';
 require_once 'includes/class-wwp-wholesale-quotes.php';
 require_once 'includes/class-wwp-order-form.php';
 require_once 'includes/class-wwp-usage.php';
+require_once 'includes/onboarding/class-wwp-onboarding.php';
 require_once 'includes/class-wwp-about-page.php';
 require_once 'includes/class-wwp-wholesale-payments-page.php';
 require_once 'includes/class-wwp-help-page.php';
@@ -35,9 +36,12 @@ require_once 'includes/class-wwp-admin-menu.php';
 require_once 'includes/class-wwp-dashboard.php';
 require_once 'includes/class-vite-app.php';
 require_once 'includes/class-wwp-admin-settings.php';
+require_once 'includes/class-wwp-ai-mcp-settings.php';
 require_once 'includes/class-wwp-wholesale-price-for-non-wholesale-customers.php';
 require_once 'includes/class-wwp-wholesale-price-grouped-product.php';
-require_once 'includes/api/class-wwp-rest-api-client.php';
+require_once 'includes/wwp-abilities-functions.php';
+require_once 'includes/class-wwp-abilities.php';
+require_once 'includes/class-wwp-abilities-audit.php';
 
 // WC Admin Notes.
 require_once 'includes/wc-admin-notes/class-wwp-install-acfw.php';
@@ -45,6 +49,7 @@ require_once 'includes/wc-admin-notes/class-wwp-wws-bundle.php';
 require_once 'includes/wc-admin-notes/class-wwp-store-owner-tips-fb.php';
 require_once 'includes/wc-admin-notes/class-wwp-wws-youtube.php';
 require_once 'includes/wc-admin-notes/class-wwp-wws-review.php';
+require_once 'includes/wc-admin-notes/class-wwp-getting-started-note.php';
 
 // WWP Admin Notice Bar Lite.
 require_once 'includes/class-wwp-notice-bar.php';
@@ -54,6 +59,7 @@ require_once 'includes/api/class-wwp-rest-api.php';
 
 // Compatibility.
 require_once 'includes/compatibility/class-wwp-wpml-compatibility.php';
+require_once 'includes/compatibility/class-wwp-advanced-dynamic-pricing-compatibility.php';
 
 // License Manager.
 require_once 'includes/class-wwp-wws-license-manager.php';
@@ -96,12 +102,15 @@ class WooCommerceWholeSalePrices {
     public $wwp_wholesale_quotes;
     public $wwp_order_form;
     public $wwp_usage;
+    public $wwp_onboarding;
     public $wwp_for_non_wholesale_customer;
     public $wwp_wholesale_price_grouped_product;
-    public $wwp_rest_api_client;
+    public $wwp_abilities;
+    public $wwp_abilities_audit;
     public $wwp_admin_menu;
     public $wwp_dashboard;
     public $wwp_settings;
+    public $wwp_ai_mcp_settings;
     public $wwp_about_page;
     public $wwp_wholesale_payments_page;
     public $wwp_help_page;
@@ -110,10 +119,11 @@ class WooCommerceWholeSalePrices {
     public $wwp_admin_notice_bar;
     public $wwp_wws_license_manager;
     public $wwp_wpml_compatibility;
+    public $wwp_adp_compatibility;
     public $wwp_plugin_installer;
     // phpcs:enable
 
-    const VERSION = '2.2.9';
+    const VERSION = '2.3.0';
 
     /**
      * Class Methods
@@ -129,8 +139,6 @@ class WooCommerceWholeSalePrices {
     public function __construct() {
         $this->wwp_wholesale_roles = WWP_Wholesale_Roles::getInstance();
 
-        $this->wwp_rest_api_client = WWP_Rest_API_Client::instance( array() );
-
         $this->wwp_wholesale_prices                     = WWP_Wholesale_Prices::instance(
             array(
 				'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles,
@@ -143,6 +151,8 @@ class WooCommerceWholeSalePrices {
             )
         );
         $this->wwp_wholesale_price_grouped_product      = WWP_Wholesale_Price_Grouped_Product::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
+        $this->wwp_abilities                            = WWP_Abilities::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
+        $this->wwp_abilities_audit                      = WWP_Abilities_Audit::instance();
         $this->wwp_bootstrap                            = WWP_Bootstrap::instance(
             array(
 				'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles,
@@ -172,14 +182,17 @@ class WooCommerceWholeSalePrices {
         $this->wwp_wholesale_roles_admin_page           = WWP_Wholesale_Roles_Admin_Page::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
         $this->wwp_import_export                        = WWP_Import_export::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
         $this->wwp_wpml_compatibility                   = WWP_WPML_Compatibility::instance();
+        $this->wwp_adp_compatibility                    = WWP_Advanced_Dynamic_Pricing_Compatibility::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
         $this->wwp_product_visibility                   = WWP_Product_Visibility::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
         $this->wwp_lead_capture                         = WWP_Lead_Capture::instance();
         $this->wwp_wholesale_quotes                     = WWP_Wholesale_Quotes::instance();
         $this->wwp_order_form                           = WWP_Order_Form::instance();
         $this->wwp_usage                                = WWP_Usage::instance();
+        $this->wwp_onboarding                           = WWP_Onboarding::instance();
         $this->wwp_admin_menu                           = WWP_Admin_Menu::instance( array() );
         $this->wwp_dashboard                            = WWP_Dashboard::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
         $this->wwp_settings                             = WWP_Admin_Settings::instance( array( 'WWP_Wholesale_Roles' => $this->wwp_wholesale_roles ) );
+        $this->wwp_ai_mcp_settings                      = WWP_AI_MCP_Settings::instance();
         $this->wwp_about_page                           = WWP_About_Page::instance();
         $this->wwp_wholesale_payments_page              = WWP_Wholesale_Payments_Page::instance();
         $this->wwp_help_page                            = WWP_Help_Page::instance();
@@ -307,22 +320,27 @@ class WooCommerceWholeSalePrices {
         $this->wwp_admin_custom_fields_simple_product->run();
         $this->wwp_admin_custom_fields_variable_product->run();
         $this->wwp_wholesale_prices->run();
+        $this->wwp_abilities->run();
+        $this->wwp_abilities_audit->run();
         $this->wwp_order->run();
         $this->wwp_duplicate_product->run();
         $this->wwp_products_cpt->run();
         $this->wwp_wholesale_roles_admin_page->run();
         $this->wwp_import_export->run();
         $this->wwp_wpml_compatibility->run();
+        $this->wwp_adp_compatibility->run();
         $this->wwp_product_visibility->run();
         $this->wwp_lead_capture->run();
         $this->wwp_wholesale_quotes->run();
         $this->wwp_order_form->run();
         $this->wwp_usage->run();
+        $this->wwp_onboarding->run();
         $this->wwp_for_non_wholesale_customer->run();
         $this->wwp_wholesale_price_grouped_product->run();
         $this->wwp_admin_menu->run();
         $this->wwp_dashboard->run();
         $this->wwp_settings->run();
+        $this->wwp_ai_mcp_settings->run();
         $this->wwp_about_page->run();
         $this->wwp_wholesale_payments_page->run();
         $this->wwp_help_page->run();

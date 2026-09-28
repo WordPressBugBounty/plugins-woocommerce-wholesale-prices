@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Model that houses the logic of Wholesale Prices For Non Wholesale Customers feature.
  *
  * @since 1.15.0
+ * @since 2.3.0 Expose the 'wwp_non_wholesale_price_markup' filter so integrations can supply
+ *              popover markup for product types WWP cannot price itself (e.g. WWPP composites).
  */
 class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
 
@@ -104,12 +106,46 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
     }
 
     /**
+     * Resolve the wholesale role options enabled for the "show wholesale prices to non-wholesale
+     * customers" feature.
+     *
+     * Applies the 'wwp_non_wholesale_roles_options' filter so an integration can narrow the enabled
+     * roles for a product (e.g. WWPP's WC Vendors integration narrows the role set per-vendor).
+     *
+     * @since 2.3.0
+     * @access public
+     *
+     * @param array $wholesale_roles All registered wholesale roles, keyed by role slug.
+     * @param int   $product_id      Product ID.
+     * @return array Enabled wholesale role keys.
+     */
+    public function _get_enabled_non_wholesale_role_options( $wholesale_roles, $product_id ) {
+        if ( WWP_Helper_Functions::is_wwpp_active() ) {
+            $wholesale_role_options = get_option( 'wwp_non_wholesale_wholesale_role_select2' );
+        } else {
+            $wholesale_role_options = array_keys( $wholesale_roles );
+        }
+
+        /**
+         * Allow to filter non wholesale role options
+         *
+         * @param array $wholesale_role_options The current wholesale role options.
+         * @param int $product_id The product ID.
+         *
+         * @return array
+         */
+        return apply_filters( 'wwp_non_wholesale_roles_options', $wholesale_role_options, $product_id );
+    }
+
+    /**
      * This function is responsible for the prices of wholesale roles if each products, this is triggered by "Click to See Wholesale Prices"
      *
      * @since 1.15.0
      * @since 1.15.1 Removing function of getting ajax request, we dont need it anymore, since data is now encoded using base64 utf8 and added to html data attribute for fetching later on in js script for faster and better user experience.
      *               Rename function from get_product_wholesale_prices_ajax to get_product_wholesale_prices.
      * @since 2.1.6  Remove API usage.
+     * @since 2.3.0  Expose the 'wwp_non_wholesale_price_markup' filter so an integration can supply
+     *               popover markup for product types WWP cannot price itself (e.g. WWPP composites).
      *
      * @access public
      * @return string|void html
@@ -130,38 +166,49 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
         $wholesale_price_title_text = trim( apply_filters( 'wwp_filter_wholesale_price_title_text', __( 'Wholesale Price:', 'woocommerce-wholesale-prices' ) ) );
         $html_result                = '';
 
-        if ( WWP_Helper_Functions::is_wwpp_active() ) {
-            $wholesale_role_options = get_option( 'wwp_non_wholesale_wholesale_role_select2' );
-        } else {
-            $wholesale_role_options = array_keys( $wholesale_roles );
-        }
-
-        /**
-         * Allow to filter non wholesale role options
-         *
-         * @param array $wholesale_role_options The current wholesale role options.
-         * @param int $product_id The product ID.
-         *
-         * @return array
-         */
-        $wholesale_role_options = apply_filters(
-            'wwp_non_wholesale_roles_options',
-            $wholesale_role_options,
-            $product_id
-        );
+        $wholesale_role_options = $this->_get_enabled_non_wholesale_role_options( $wholesale_roles, $product_id );
 
         foreach ( $wholesale_roles as $wholesale_role => $data ) {
             if ( in_array( $wholesale_role, $wholesale_role_options, true ) ) {
+                $product_type   = WWP_Helper_Functions::wwp_get_product_type( $product_object );
                 $wwp_price_html = $this->_wwp_wholesale_prices->wholesale_price_html_filter( 1, $product_object, array( $wholesale_role ), true );
+                $role_markup    = '';
 
-                if ( is_string( $wwp_price_html ) && str_contains( $wwp_price_html, $wholesale_price_title_text ) ) {
-                    if ( in_array( WWP_Helper_Functions::wwp_get_product_type( $product_object ), array( 'simple', 'variation', 'variable' ), true ) ) {
-
-                        $html_result .= $this->_process_product_wholesale_price( $wwp_price_html, $data['roleName'] );
-
-                    }
+                if (
+                    is_string( $wwp_price_html )
+                    && str_contains( $wwp_price_html, $wholesale_price_title_text )
+                    && in_array( $product_type, array( 'simple', 'variation', 'variable' ), true )
+                ) {
+                    $role_markup = $this->_process_product_wholesale_price( $wwp_price_html, $data['roleName'] );
                 }
+
+                /**
+                 * Filter the "See wholesale prices" popover markup for a single wholesale role.
+                 *
+                 * Lets an integration supply the markup for product types WWP cannot price itself
+                 * (e.g. WWPP composite products, whose price is the sum of their priced-individually
+                 * components). For WWP's own product types $role_markup already holds the built markup;
+                 * for other types it is an empty string an integration can fill.
+                 *
+                 * @since 2.3.0
+                 *
+                 * @param string     $role_markup    The price markup for this role, or '' when WWP cannot build it.
+                 * @param WC_Product  $product_object The product being displayed.
+                 * @param string      $wholesale_role The wholesale role key.
+                 * @param array       $data           The wholesale role data (includes 'roleName').
+                 */
+                $html_result .= apply_filters( 'wwp_non_wholesale_price_markup', $role_markup, $product_object, $wholesale_role, $data );
             }
+        }
+
+        // A link was clicked but no wholesale price could be resolved for any role - the link gate and
+        // this popover gate have diverged (the failure mode of the "See wholesale prices" feature). The
+        // JS backstop hides the empty popover, so log it here to keep the divergence detectable.
+        if ( '' === trim( $html_result ) && function_exists( 'wc_get_logger' ) ) {
+            wc_get_logger()->debug(
+                sprintf( 'See wholesale prices: no wholesale price resolved for product #%d despite a rendered link.', $product_id ),
+                array( 'source' => 'wwp-non-wholesale-prices' )
+            );
         }
 
         if ( ! empty( $wholesale_roles ) ) {
@@ -243,17 +290,25 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
      *
      * @since  1.15.0
      * @since  1.15.1 added function get_product_wholesale_prices
+     * @since  2.3.0  Add $force_eligible so an integration can offer the link for a product whose
+     *                wholesale price is resolved outside WWP's parent-level meta (e.g. WWPP composites).
      * @access public
      *
-     * @param  WC_Product $product Product object.
+     * @param  WC_Product $product        Product object.
+     * @param  bool       $force_eligible Optional. When true, skip the parent-level meta eligibility
+     *                                    check below and treat the product as eligible. Used by
+     *                                    integrations whose wholesale price is resolved separately
+     *                                    (e.g. WWPP composite products). Default false.
      * @return string|void     $message containing html string
      */
-    public function display_replacement_message_to_non_wholesale( $product = null ) {
+    public function display_replacement_message_to_non_wholesale( $product = null, $force_eligible = false ) {
         if ( is_null( $product ) ) {
             return;
         }
 
-        $show_wholesale_prices_text      = false;
+        // A caller can force eligibility for products whose wholesale price is resolved outside
+        // the parent-level meta loop below (composites resolve theirs via WWPP).
+        $show_wholesale_prices_text      = $force_eligible;
         $product_id                      = $product->get_id();
         $is_wwpp_active                  = WWP_Helper_Functions::is_wwpp_active();
         $replacement_text                = get_option( 'wwp_see_wholesale_prices_replacement_text' );
@@ -368,7 +423,7 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
      *
      * @param  string     $price   Price html.
      * @param  WC_Product $product Product object.
-     * @return html content
+     * @return string Price html, with the "See wholesale prices" link appended when applicable.
      */
     public function add_click_wholesale_price_for_non_wholesale_customers( $price, $product ) {
         // Do not show "see wholesale price" text in admin dashboard.
@@ -382,7 +437,9 @@ class WWP_Wholesale_Prices_For_Non_Wholesale_Customers {
 
             if ( $product_id && 'yes' === $show_wholesale_prices && ( ! is_user_logged_in() || current_user_can( 'manage_woocommerce' ) || empty( $user_wholesale_role ) ) && ( is_shop() || is_product() ) ) {
 
-                if ( in_array( WWP_Helper_Functions::wwp_get_product_type( $product ), array( 'simple', 'variable' ), true ) ) {
+                $product_type = WWP_Helper_Functions::wwp_get_product_type( $product );
+
+                if ( in_array( $product_type, array( 'simple', 'variable' ), true ) ) {
 
                     $price .= $this->display_replacement_message_to_non_wholesale( $product );
 

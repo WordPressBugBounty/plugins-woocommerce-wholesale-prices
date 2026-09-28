@@ -68,28 +68,6 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
         }
 
         /**
-         * Check if theme is active.
-         *
-         * @since  2.2.8
-         *
-         * @param string $theme_slug The theme slug.
-         * @return boolean
-         */
-        public static function is_theme_active( $theme_slug ) {
-            $theme_slug = strtolower( $theme_slug );
-            $stylesheet = strtolower( (string) get_option( 'stylesheet' ) );
-            $template   = strtolower( (string) get_option( 'template' ) );
-
-            if ( $stylesheet === $theme_slug || $template === $theme_slug ) {
-                return true;
-            }
-
-            // Match child theme variants (e.g. "divi-child") but not infixes (e.g. "subdivision").
-            return str_starts_with( $stylesheet, $theme_slug . '-' )
-                || str_starts_with( $template, $theme_slug . '-' );
-        }
-
-        /**
          * WWOF is active.
          *
          * @since  1.14
@@ -692,6 +670,115 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
         }
 
         /**
+         * Normalise the currency symbol of a pre-rendered price HTML string to the active WPML/WCML client currency.
+         *
+         * Under WPML WooCommerce Multicurrency in independent mode the retail *amount* is converted to the client
+         * currency by WCML's price filters (which run regardless of request context), but the *symbol* baked into a
+         * pre-rendered get_price_html() string can still be the store's base-currency symbol — notably in a REST
+         * context, where the display-currency selection that swaps the symbol on the storefront is not applied. WWP
+         * formats the wholesale price through wwp_formatted_price() (which routes through the WCML price filter), so the
+         * wholesale half already shows the client symbol; this helper brings the accompanying original/retail symbol in
+         * line so both halves match. Only the symbol is rewritten — the already-converted amount is left intact (and a
+         * pre-rendered amount cannot be re-converted). The reported defect (#352) is a symbol-only mismatch, consistent
+         * with this amount-converted / symbol-lagging split.
+         *
+         * @since 2.3.0
+         * @access public
+         *
+         * @param string $price_html Pre-rendered price HTML (for example, the output of WC_Product::get_price_html()).
+         *
+         * @return string Price HTML with the currency symbol normalised to the client currency, or the input unchanged
+         *                when WCML independent multicurrency is not active or the client currency matches the base currency.
+         */
+        public static function wwp_correct_price_html_currency_symbol( $price_html ) {
+
+            if ( '' === trim( (string) $price_html ) ) {
+                return $price_html;
+            }
+
+            $client_currency = self::wwp_get_wcml_independent_client_currency();
+
+            if ( null === $client_currency ) {
+                return $price_html;
+            }
+
+            // Source the symbol from the same path the wholesale price is formatted through (wwp_formatted_price() ->
+            // wcml_formatted_price) so both halves match even when the merchant has customised the currency symbol in
+            // WCML. Fall back to WooCommerce's default symbol for the currency if the probe yields no symbol span.
+            $client_symbol = get_woocommerce_currency_symbol( $client_currency );
+
+            if ( preg_match( '/<span class="woocommerce-Price-currencySymbol"[^>]*>(.*?)<\/span>/', (string) apply_filters( 'wcml_formatted_price', 0 ), $probe ) ) {
+                $client_symbol = $probe[1];
+            }
+
+            return self::wwp_replace_price_html_currency_symbol( $price_html, $client_symbol );
+        }
+
+        /**
+         * Resolve the active WPML/WCML client currency when independent multicurrency is in effect.
+         *
+         * Extracted from wwp_correct_price_html_currency_symbol() so the guard (plugin-active check, constants
+         * include, mode comparison and base-vs-client comparison) can be unit-tested and reused. Note:
+         * wwp_formatted_price() still carries an independent copy of the same guard and has NOT been migrated to
+         * this helper — that consolidation is deferred to a later pass, so a WCML-internals change (constant
+         * renamed, constants.php relocated) must be applied to both copies until then.
+         *
+         * @since 2.3.0
+         * @access private
+         *
+         * @return string|null The client currency code when WCML independent multicurrency is active and the client
+         *                     currency differs from the store base currency; null otherwise.
+         */
+        private static function wwp_get_wcml_independent_client_currency() {
+
+            if ( ! self::is_plugin_active( 'woocommerce-multilingual/wpml-woocommerce.php' ) ) {
+                return null;
+            }
+
+            global $woocommerce_wpml;
+
+            if ( ! defined( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) ) {
+                include_once WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'wpml-woocommerce' . DIRECTORY_SEPARATOR . 'inc' . DIRECTORY_SEPARATOR . 'constants.php';
+            }
+
+            if ( ! isset( $woocommerce_wpml->multi_currency, $woocommerce_wpml->settings['enable_multi_currency'] ) || WCML_MULTI_CURRENCIES_INDEPENDENT !== $woocommerce_wpml->settings['enable_multi_currency'] ) {
+                return null;
+            }
+
+            $client_currency = $woocommerce_wpml->multi_currency->get_client_currency();
+
+            return get_option( 'woocommerce_currency' ) !== $client_currency ? $client_currency : null;
+        }
+
+        /**
+         * Replace the symbol inside every WooCommerce currency-symbol span of a price HTML string.
+         *
+         * Pure string transform (no WCML/WordPress state), extracted so the rewrite can be unit-tested in isolation.
+         * Only the currency-symbol span content is replaced; surrounding markup and the amount are left intact. The
+         * opening tag may carry extra attributes (for example, translate="no") depending on the WooCommerce version, so
+         * any attributes are allowed, and a callback inserts the symbol verbatim so a replacement metacharacter (for
+         * example, "$") is not interpreted.
+         *
+         * @since 2.3.0
+         * @access private
+         *
+         * @param string $price_html    Pre-rendered price HTML, possibly containing more than one symbol span (a range).
+         * @param string $client_symbol The currency symbol to stamp into each symbol span.
+         *
+         * @return string The price HTML with every currency-symbol span's content replaced by $client_symbol.
+         */
+        private static function wwp_replace_price_html_currency_symbol( $price_html, $client_symbol ) {
+
+            return preg_replace_callback(
+                '/(<span class="woocommerce-Price-currencySymbol"[^>]*>).*?(<\/span>)/',
+                static function ( $matches ) use ( $client_symbol ) {
+                    return $matches[1] . $client_symbol . $matches[2];
+                },
+                $price_html
+            );
+        }
+
+        /**
          * Return price.
          * WPML compatible. Converts price accordingly.
          *
@@ -1035,16 +1122,61 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
         }
 
         /**
+         * Convenience function to fetch WPAY version.
+         *
+         * WPAY does not expose a version constant or a global object with a
+         * VERSION property, so the version is read from the plugin header.
+         *
+         * @since  2.3.0 Added to report the correct WPAY version in usage tracking.
+         * @access public
+         *
+         * @return string WPAY version, or an empty string when WPAY is inactive.
+         */
+        public static function get_wpay_version() {
+
+            if ( self::is_wpay_active() ) {
+                $data = self::get_plugin_data(
+                    'woocommerce-wholesale-payments/woocommerce-wholesale-payments.php'
+                );
+
+                return ( is_array( $data ) && ! empty( $data['Version'] ) ) ? $data['Version'] : '';
+            } else {
+                return '';
+            }
+        }
+
+        /**
+         * Convenience function to fetch WWQ version.
+         *
+         * WWQ exposes its version through the `WWS_WQ_VERSION` constant, defined
+         * on load by its main plugin file.
+         *
+         * @since  2.3.0 Added to report the WWQ version in the usage check-in.
+         * @access public
+         *
+         * @return string WWQ version, or an empty string when WWQ is inactive.
+         */
+        public static function get_wwq_version() {
+
+            if ( self::is_wwq_active() && defined( 'WWS_WQ_VERSION' ) ) {
+                return WWS_WQ_VERSION;
+            }
+
+            return '';
+        }
+
+        /**
          * Check to see if any paid plugin by Wholesale Suite is active
          *
          * @since  1.14
+         * @since  2.3.0 Treat Wholesale Quotes (WWQ) as a paid plugin so a WWP+WWQ-only site checks in.
          * @access public
          *
-         * @return bool If a paid plugin (WWPP, WWOF, WWLC, or WPAY) is active or not
+         * @return bool If a paid plugin (WWPP, WWOF, WWLC, WPAY, or WWQ) is active or not
          */
         public static function has_paid_plugin_active() {
 
-            return ( self::is_wwpp_active() || self::is_wwof_active() || self::is_wwlc_active() || self::is_wpay_active() );
+            return ( self::is_wwpp_active() || self::is_wwof_active() || self::is_wwlc_active() || self::is_wpay_active() || self::is_wwq_active() );
         }
 
         /**
@@ -1118,6 +1250,7 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
          * Retrieve all premium plugin license data if present
          *
          * @since  1.14
+         * @since  2.3.0 Added Wholesale Quotes (WWQ) license data.
          * @access public
          *
          * @return array Array containing license data (if present, otherwise this will be empty)
@@ -1153,6 +1286,13 @@ if ( ! class_exists( 'WWP_Helper_Functions' ) ) {
             if ( self::is_wpay_active() ) {
                 $license_data['wpay_license_key']   = is_multisite() ? get_site_option( 'wpay_license_key', null ) : get_option( 'wpay_license_key', null );
                 $license_data['wpay_license_email'] = is_multisite() ? get_site_option( 'wpay_license_email', null ) : get_option( 'wpay_license_email', null );
+            }
+
+            if ( self::is_wwq_active() ) {
+                // WWQ stores its license through the network-wide option API, so it is read the
+                // same way here to stay correct on both single-site and multisite installs.
+                $license_data['wwq_license_email'] = get_site_option( 'wws_wq_license_account_email', '' );
+                $license_data['wwq_license_key']   = get_site_option( 'wws_wq_license_key', '' );
             }
 
             return $license_data;

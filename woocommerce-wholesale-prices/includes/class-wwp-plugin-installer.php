@@ -77,21 +77,29 @@ if ( ! class_exists( 'WWP_Plugin_Installer' ) ) {
         /**
          * Activate plugin via ajax
          *
+         * @since 2.2.1
+         * @since 2.3.0 Check the activate_plugins capability, allow only the allowed plugins, and report activation errors.
+         *
          * @return void
          */
         public function activate_plugin() {
-            if ( ! check_ajax_referer( 'wwp_activate_plugin', 'nonce', false ) ) {
-                wp_die();
+            if ( ! check_ajax_referer( 'wwp_activate_plugin', 'nonce', false ) || ! current_user_can( 'activate_plugins' ) ) {
+                wp_send_json_error( __( 'You do not have permission to activate plugins.', 'woocommerce-wholesale-prices' ), 403 );
             }
 
             $plugin_file = isset( $_REQUEST['plugin_file'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['plugin_file'] ) ) : '';
-            $result      = $this->_activate_plugin( $plugin_file );
 
-            if ( is_wp_error( $plugin_file ) ) {
-                wp_send_json_error( $result->get_error_message() );
-            } else {
-                wp_send_json_success();
+            if ( ! in_array( $plugin_file, $this->get_allowed_plugins(), true ) ) {
+                wp_send_json_error( __( 'This plugin cannot be activated here.', 'woocommerce-wholesale-prices' ), 400 );
             }
+
+            $result = $this->_activate_plugin( $plugin_file );
+
+            if ( is_wp_error( $result ) ) {
+                wp_send_json_error( $result->get_error_message() );
+            }
+
+            wp_send_json_success();
         }
 
         /**
@@ -185,6 +193,7 @@ if ( ! class_exists( 'WWP_Plugin_Installer' ) ) {
          * @param string $plugin_slug The plugin slug.
          *
          * @since 2.2.1
+         * @since 2.3.0 Write StoreAgent's source to `storeagentai_installed_by`, the key StoreAgent reads.
          * @access private
          *
          * @return void
@@ -192,7 +201,7 @@ if ( ! class_exists( 'WWP_Plugin_Installer' ) ) {
         private function _update_plugin_install_information( $plugin_slug ) {
             // Update StoreAgent AI source option when StoreAgent AI is installed.
             if ( 'storeagent-ai-for-woocommerce' === $plugin_slug ) {
-                update_option( 'storeagent_installed_by', 'wwp' );
+                update_option( 'storeagentai_installed_by', 'wwp' );
             }
 
             // Update Advanced Coupons source option when Advanced Coupons is installed.

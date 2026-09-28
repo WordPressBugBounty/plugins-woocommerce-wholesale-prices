@@ -24,6 +24,14 @@ a.wwp_show_wholesale_prices_link:focus {
     margin-bottom: 20px;
 }
 
+/*
+ * Composite products render their add-to-cart form as a positioned element. A floated link is out of flow,
+ * so the form would be laid out on top of it and swallow the click. Keep the link in normal flow instead.
+ */
+.product-type-composite .wwp_show_wholesale_prices_text {
+    float: none;
+}
+
 /* Fix Woostify */
 .woostify-container .wwp_show_wholesale_prices_text {
     margin-top: -10px;

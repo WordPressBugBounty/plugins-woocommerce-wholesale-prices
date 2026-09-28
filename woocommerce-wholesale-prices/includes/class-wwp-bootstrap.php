@@ -393,6 +393,10 @@ if ( ! class_exists( 'WWP_Bootstrap' ) ) {
                                 <?php esc_html_e( 'Read the Getting Started guide', 'woocommerce-wholesale-prices' ); ?>
                                 <span class="dashicons dashicons-arrow-right-alt"></span>
                             </a>
+                            <a class="wwp-getting-started-onboarding-link" href="<?php echo esc_url( admin_url( 'admin.php?page=wholesale-suite' ) ); ?>">
+                                <?php esc_html_e( 'Finish setup on your dashboard', 'woocommerce-wholesale-prices' ); ?>
+                                <span class="dashicons dashicons-arrow-right-alt"></span>
+                            </a>
                             <a class="notice-dismiss-link" href="#">
                                 <span><?php esc_html_e( 'Dismiss', 'woocommerce-wholesale-prices' ); ?></span>
                             </a>

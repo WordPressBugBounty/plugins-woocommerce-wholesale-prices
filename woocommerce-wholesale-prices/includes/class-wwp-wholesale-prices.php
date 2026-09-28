@@ -35,6 +35,21 @@ class WWP_Wholesale_Prices {
     private static $printed_notices = array();
 
     /**
+     * Product IDs whose variable attribute selectors have already been rendered this request,
+     * keyed by product ID (issue #318). Marked from the woocommerce_before_variations_form seam
+     * so a dispatcher that renders the variation form BEFORE woocommerce_single_product_summary
+     * priority 30 (e.g. the woocommerce/add-to-cart-form block) suppresses this class's own
+     * render for the same product. A dispatcher that runs AFTER priority 30 is outside that call
+     * path and is not deduplicated — see display_variable_product_attribute_selectors() for the
+     * full boundary.
+     *
+     * @since 2.3.0
+     * @access private
+     * @var array
+     */
+    private static $rendered_variation_form_product_ids = array();
+
+    /**
      * Model that houses the logic of retrieving information relating to wholesale role/s of a user.
      *
      * @since  1.5.0
@@ -643,6 +658,8 @@ class WWP_Wholesale_Prices {
      * @since  1.6.0 Refactor codebase.
      * @since  2.2.9 Prime the post, term, and meta caches for all variations in bulk before the
      *               price-range loop to avoid a per-variation query (N+1) when the caches are cold.
+     * @since  2.3.0 Normalise the original/retail price currency symbol to the active WCML client currency
+     *               so it matches the wholesale price under WPML Multicurrency.
      * @access public
      *
      * @return string Product price with wholesale applied if necessary.
@@ -822,7 +839,15 @@ class WWP_Wholesale_Prices {
                     return $wholesale_price_html;
                 }
 
-                $wholesale_price_html = apply_filters( 'wwp_product_original_price', '<del class="original-computed-price">' . $price . '</del>', $wholesale_price, $price, $product, $user_wholesale_role ) . $wholesale_price_html;
+                // Normalise the original/retail price symbol to the active WCML client currency so it matches the
+                // wholesale price (which is already formatted via wwp_formatted_price()); a no-op outside WCML multicurrency.
+                $original_price = WWP_Helper_Functions::wwp_correct_price_html_currency_symbol( $price );
+
+                // Pass the corrected markup as the 3rd argument too. Listeners such as
+                // filter_product_original_price_visibility() rebuild the visible markup from that argument
+                // (e.g. when a regular-price title text is set), so passing the raw $price there would discard
+                // the symbol correction and reintroduce the mismatch under WCML multicurrency.
+                $wholesale_price_html = apply_filters( 'wwp_product_original_price', '<del class="original-computed-price">' . $original_price . '</del>', $wholesale_price, $original_price, $product, $user_wholesale_role ) . $wholesale_price_html;
 
                 /**
                  * Filter wholesale price html.
@@ -1321,6 +1346,37 @@ class WWP_Wholesale_Prices {
     }
 
     /**
+     * Reapply wholesale pricing when the cart is loaded from the session, for the classic cart only.
+     *
+     * WooCommerce rebuilds the cart contents from the session on every page load with fresh,
+     * plain-priced product instances and only re-runs calculate_totals() when the cart changed
+     * or no totals are cached yet. On a plain reload of an unchanged cart, neither condition
+     * holds, so the classic Cart page's row Price and Subtotal columns (which read the product
+     * price live at render time) fall back to the undiscounted price while the cached Cart Totals
+     * box stays correct. Re-applying the wholesale price here keeps them consistent.
+     *
+     * The block-based cart is skipped because it updates through the Store API and reverts
+     * minimum-order-quantity pricing on its own; re-applying here would leave stale prices in it.
+     *
+     * @since 2.2.9
+     *
+     * @param WC_Cart $cart_object The cart object.
+     *
+     * @return void
+     */
+    public function reapply_wholesale_price_on_classic_cart( $cart_object ) {
+
+        // Detect the block cart by passing the cart page id explicitly: this hook fires on
+        // wp_loaded, before the main query sets the global post, so the page-less has_block()
+        // helper cannot be used reliably here.
+        if ( has_block( 'woocommerce/cart', wc_get_page_id( 'cart' ) ) ) {
+            return;
+        }
+
+        $this->apply_product_wholesale_price_to_cart( $cart_object );
+    }
+
+    /**
      * Recalculate cart totals.
      * We need to do this on loading widget cart to properly sync the cart item prices.
      * If we don't do this, the cart item line price will not be sync with what's on the cart.
@@ -1725,6 +1781,10 @@ class WWP_Wholesale_Prices {
      *
      * @since  1.13
      * @since  2.2.9 Use the shared should_hide_price_and_add_to_cart_button() helper.
+     * @since  2.3.0 Keep variable products' attribute/variation dropdowns visible (issue #318): stop removing
+     *         woocommerce_variable_add_to_cart, re-dispatch it type-scoped via
+     *         display_variable_product_attribute_selectors(), and blank per-variation price/stock output
+     *         instead of removing the variation form outright.
      * @access public
      */
     public function hide_price_and_add_to_cart_button() {
@@ -1734,12 +1794,51 @@ class WWP_Wholesale_Prices {
         if ( $hide_price_and_add_to_cart_button ) {
             remove_action( 'woocommerce_simple_add_to_cart', 'woocommerce_simple_add_to_cart', 30 );
             remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
-            remove_action( 'woocommerce_variable_add_to_cart', 'woocommerce_variable_add_to_cart', 30 );
             remove_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart', 30 );
             remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
             remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
             remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
             remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
+
+            /**
+             * The woocommerce_template_single_add_to_cart hook is a type-agnostic dispatcher that would
+             * re-add the add-to-cart form for every product type (subscription, bundle, composite, etc.)
+             * if left in place, so it stays removed above. Variable products need their attribute
+             * dropdowns back (issue #318), so re-dispatch woocommerce_variable_add_to_cart() ourselves,
+             * scoped to the variable product type only, via display_variable_product_attribute_selectors().
+             */
+            add_action( 'woocommerce_single_product_summary', array( $this, 'display_variable_product_attribute_selectors' ), 30 );
+
+            /**
+             * WooCommerce's own variable-product template fires woocommerce_before_variations_form on
+             * every path that renders the variation form, regardless of which dispatcher triggered it
+             * (our own call above, or the woocommerce/add-to-cart-form block). Mark the product as
+             * rendered there so display_variable_product_attribute_selectors()'s once-per-product guard
+             * also covers a dispatcher that runs BEFORE woocommerce_single_product_summary priority 30
+             * in the same request. A dispatcher that runs AFTER priority 30 (e.g. a page-builder widget
+             * calling woocommerce_template_single_add_to_cart() directly later in the request) is outside
+             * this method's own call path and is not deduplicated by this guard.
+             */
+            add_action( 'woocommerce_before_variations_form', array( $this, 'mark_variation_form_rendered' ), 10 );
+
+            /**
+             * Remove the qty input, Add to cart button, and variation_id/add-to-cart hidden inputs for the
+             * selected variation, while keeping the priority 10 empty container that
+             * wc-add-to-cart-variation.js needs to render into.
+             */
+            remove_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
+
+            /**
+             * Skip WooCommerce's per-variation get_price_html() build entirely; together with the
+             * blanking filter below this guarantees no variation .price element is ever rendered.
+             */
+            add_filter( 'woocommerce_show_variation_price', '__return_false' );
+
+            /**
+             * Blank the per-variation price and stock-availability data returned to the variation form's
+             * JS, at a late priority so no other integration re-populates it afterwards.
+             */
+            add_filter( 'woocommerce_available_variation', array( $this, 'blank_hidden_variation_data' ), 999, 3 );
 
             /**
              * This small line of code will render the product unpurchasable and do it in a pretty simple way,
@@ -1765,7 +1864,139 @@ class WWP_Wholesale_Prices {
              * Empty prices for other theme compatibility, some themes have custom hooks
              */
             add_filter( 'woocommerce_get_price_html', array( $this, 'remove_product_prices' ), 10, 2 );
+
+            /**
+             * The template-layer removals above leave two machine-readable copies of the price in place
+             * for the same guest: the Product JSON-LD WooCommerce prints in the footer, and the raw
+             * `prices` fields of the Store API product routes (which the All Products block, product
+             * filters, and any anonymous request read). Strip both at a late priority so nothing
+             * re-populates them afterwards.
+             */
+            add_filter( 'woocommerce_structured_data_product', array( $this, 'remove_hidden_structured_data_offers' ), 999, 2 );
+            add_filter( 'rest_request_after_callbacks', array( $this, 'blank_hidden_store_api_prices' ), 999, 3 );
         }
+    }
+
+    /**
+     * Re-dispatch WooCommerce's variable product attribute/variation dropdowns when the "Hide Price and Add
+     * to Cart button" option hides pricing for the current visitor (issue #318).
+     *
+     * The woocommerce_template_single_add_to_cart hook is removed above because it is a type-agnostic
+     * dispatcher (removing it also blocks non-variable, non-price-bearing add-to-cart forms such as
+     * subscription or bundle products from leaking through). This method allowlists ONLY the variable
+     * product type and calls WooCommerce's own woocommerce_variable_add_to_cart() directly, so the
+     * attribute selectors still render while the variation price/stock/add-to-cart button stay hidden
+     * via the sibling hooks below.
+     *
+     * Covers the classic single-product template (woocommerce_single_product_summary) and the block-based
+     * "Add to Cart Form" block (woocommerce/add-to-cart-form), which also fires
+     * woocommerce_variable_add_to_cart() internally. The block-based "Add to Cart with Options" block
+     * (woocommerce/add-to-cart-with-options) does not use this action and is a declared degradation
+     * boundary: it is not covered by this method and falls back to WooCommerce's own default rendering.
+     *
+     * A dispatcher that runs BEFORE this method in the same request (e.g. the woocommerce/add-to-cart-form
+     * block rendering ahead of woocommerce_single_product_summary) also renders WooCommerce's
+     * variable-product template, which fires woocommerce_before_variations_form once per rendered form.
+     * mark_variation_form_rendered() marks the product as rendered there, so this method's guard also
+     * covers that earlier dispatch and skips its own render. A dispatcher that runs AFTER this method in
+     * the same request (e.g. a page-builder widget calling woocommerce_template_single_add_to_cart()
+     * directly later in the page) is outside this method's own call path and is not deduplicated — it
+     * would render a second variation form.
+     *
+     * Known, deliberate degradation boundary: WooCommerce's variable-product template also fires
+     * woocommerce_before_add_to_cart_form, woocommerce_after_add_to_cart_form,
+     * woocommerce_before_single_variation, and woocommerce_after_single_variation unconditionally around
+     * the form, and this method does not suppress them. A theme or plugin that attaches a purchase-intent
+     * widget there (e.g. an express-checkout "Buy now" button) can render it to a guest whose pricing is
+     * hidden, even though the underlying purchase is already blocked server-side
+     * (woocommerce_is_purchasable is forced false). Blanket-removing third-party callbacks on these
+     * widely-used extension points was considered and rejected: it would also strip unrelated,
+     * purchase-unrelated widgets (share buttons, trust badges, size guides, etc.) that legitimately rely
+     * on the same hooks, an unbounded blast radius this method cannot safely take on generically. If a
+     * specific integration is found to leak a purchase control this way, target it by name in a follow-up.
+     *
+     * @since 2.3.0
+     * @access public
+     *
+     * @return void
+     */
+    public function display_variable_product_attribute_selectors() {
+
+        global $product;
+
+        if ( ! ( $product instanceof WC_Product ) || ! $product->is_type( 'variable' ) ) {
+            return;
+        }
+
+        if ( isset( self::$rendered_variation_form_product_ids[ $product->get_id() ] ) ) {
+            return;
+        }
+
+        woocommerce_variable_add_to_cart();
+    }
+
+    /**
+     * Mark the current global product as having had its variation form rendered this request
+     * (issue #318). Hooked to woocommerce_before_variations_form, which WooCommerce's own
+     * variable-product template fires on every path that renders the form — this is the seam
+     * display_variable_product_attribute_selectors()'s once-per-product guard relies on to cover
+     * a separate add-to-cart surface dispatched outside the product summary hook.
+     *
+     * @since 2.3.0
+     * @access public
+     *
+     * @return void
+     */
+    public function mark_variation_form_rendered() {
+
+        global $product;
+
+        if ( $product instanceof WC_Product ) {
+            self::$rendered_variation_form_product_ids[ $product->get_id() ] = true;
+        }
+    }
+
+    /**
+     * Blank the per-variation price and stock data sent to the variation form's JS when the
+     * "Hide Price and Add to Cart button" option hides pricing for the current visitor (issue #318).
+     *
+     * Blanks the fields the variation template renders (price_html, display_price, display_regular_price,
+     * availability_html) plus max_qty, which carries the raw stock quantity of a managed-stock variation.
+     * Also unsets the raw wholesale-price fields add_wholesale_price_to_variation_data() writes into the
+     * same payload at priority 10 on this filter: that method only bails for a visitor with no wholesale
+     * role, so a logged-in wholesale-role visitor for whom the hide gate is filtered true (e.g. via
+     * wwp_hide_price_and_add_to_cart_button) would otherwise still receive their raw wholesale prices in
+     * data-product_variations even though price_html/display_price are blank. The remaining payload
+     * (is_in_stock, sku, weight, dimensions, images) is ordinary public catalog data and is left as
+     * WooCommerce sends it. woocommerce_get_stock_html and woocommerce_ajax_variation_threshold are
+     * intentionally left untouched so stock display elsewhere and the >30-variation AJAX threshold are
+     * unaffected site-wide.
+     *
+     * @param array                $variation_data Data for a single variation, sent to the variation form's JS.
+     * @param WC_Product_Variable  $product        The parent variable product.
+     * @param WC_Product_Variation $variation      The variation product.
+     *
+     * @since 2.3.0
+     * @access public
+     *
+     * @return array
+     */
+    public function blank_hidden_variation_data( $variation_data, $product, $variation ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+
+        $variation_data['price_html']            = '';
+        $variation_data['display_price']         = '';
+        $variation_data['display_regular_price'] = '';
+        $variation_data['availability_html']     = '';
+        $variation_data['max_qty']               = '';
+
+        unset(
+            $variation_data['wholesale_price'],
+            $variation_data['wholesale_price_raw'],
+            $variation_data['wholesale_price_with_no_tax'],
+            $variation_data['wholesale_price_with_tax']
+        );
+
+        return $variation_data;
     }
 
     /**
@@ -1781,6 +2012,118 @@ class WWP_Wholesale_Prices {
      */
     public function remove_product_prices( $prices, $product ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
         return '';
+    }
+
+    /**
+     * Drop the `offers` node from WooCommerce's Product JSON-LD while "Hide Price and Add to Cart button"
+     * hides pricing for the current visitor, so the structured data in the page footer does not disclose
+     * the price the template just hid.
+     *
+     * Registered on woocommerce_structured_data_product only from within the hide branch of
+     * hide_price_and_add_to_cart_button(), so it never runs for visitors who can see prices.
+     *
+     * @since 2.3.0
+     * @access public
+     *
+     * @param array      $markup  Product structured data markup.
+     * @param WC_Product $product Product the markup describes.
+     *
+     * @return array Markup without the `offers` node.
+     */
+    public function remove_hidden_structured_data_offers( $markup, $product ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+
+        unset( $markup['offers'] );
+
+        return $markup;
+    }
+
+    /**
+     * Blank the price fields of Store API product responses while "Hide Price and Add to Cart button"
+     * hides pricing for the current visitor.
+     *
+     * The Store API product schema reads raw product prices and exposes no filter of its own, so the
+     * response is edited after the route callback. The route guard matches any `wc/store[/vN]/products`
+     * route, but the method only rewrites responses that actually carry price data: a single product
+     * (`products/{id}`), the product collection (`wc/store/v1/products`), and the price-range aggregate
+     * (`products/collection-data`, used by price filters). Sibling `products/*` sub-routes such as
+     * `reviews`, `attributes`, `categories`, `tags`, and `brands` carry no `prices`/`price_range` key,
+     * so they fall through untouched — a no-op, not an edit. `price_html` is already blank via the
+     * woocommerce_get_price_html filter. Registered on rest_request_after_callbacks only from within the
+     * hide branch of hide_price_and_add_to_cart_button().
+     *
+     * @since 2.3.0
+     * @access public
+     *
+     * @param WP_REST_Response|WP_HTTP_Response|WP_Error|mixed $response Result to send to the client.
+     * @param array                                            $handler  Route handler used for the request.
+     * @param WP_REST_Request                                  $request  Request used to generate the response.
+     *
+     * @return WP_REST_Response|WP_HTTP_Response|WP_Error|mixed The response, with price fields blanked on Store API product routes.
+     */
+    public function blank_hidden_store_api_prices( $response, $handler, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+
+        if ( ! ( $response instanceof WP_REST_Response ) || ! ( $request instanceof WP_REST_Request ) ) {
+            return $response;
+        }
+
+        if ( ! preg_match( '#^/wc/store(?:/v\d+)?/products(?:/|$)#', $request->get_route() ) ) {
+            return $response;
+        }
+
+        $data = $response->get_data();
+
+        if ( ! is_array( $data ) ) {
+            return $response;
+        }
+
+        if ( isset( $data['prices'] ) ) {
+            // Single product.
+            $data = $this->blank_store_api_product_prices( $data );
+        } elseif ( isset( $data['price_range'] ) ) {
+            // products/collection-data aggregate.
+            $data['price_range'] = null;
+        } else {
+            // Product collection.
+            foreach ( $data as $key => $item ) {
+                if ( is_array( $item ) && isset( $item['prices'] ) ) {
+                    $data[ $key ] = $this->blank_store_api_product_prices( $item );
+                }
+            }
+        }
+
+        $response->set_data( $data );
+
+        return $response;
+    }
+
+    /**
+     * Blank the `prices` fields of one Store API product item, keeping the currency metadata the
+     * schema requires.
+     *
+     * @since 2.3.0
+     * @access private
+     *
+     * @param array $item Store API product item.
+     *
+     * @return array The item with `price`, `regular_price`, and `sale_price` emptied and `price_range` nulled.
+     */
+    private function blank_store_api_product_prices( $item ) {
+
+        $prices = (array) $item['prices'];
+
+        foreach ( array( 'price', 'regular_price', 'sale_price' ) as $field ) {
+            if ( array_key_exists( $field, $prices ) ) {
+                $prices[ $field ] = '';
+            }
+        }
+
+        if ( array_key_exists( 'price_range', $prices ) ) {
+            $prices['price_range'] = null;
+        }
+
+        $item['prices'] = (object) $prices;
+
+        return $item;
     }
 
     /**
@@ -2547,11 +2890,15 @@ CSS;
      */
     private function get_wholesale_price_range_value( $role_key, $aggregate ) {
 
+        // The key itself stays stable across invalidations (see clear_wholesale_price_range_cache()) —
+        // only the epoch STAMPED INSIDE the cached entry changes, so a cache bump orphans the entry's
+        // value by making the stamp stop matching, rather than growing a new transient row per bump.
         $cache_key = 'wwp_price_range_' . $role_key . '_' . strtolower( $aggregate );
+        $epoch     = self::get_price_range_cache_epoch();
         $cached    = get_transient( $cache_key );
 
-        if ( false !== $cached ) {
-            return $cached;
+        if ( is_array( $cached ) && isset( $cached['epoch'], $cached['value'] ) && $epoch === (int) $cached['epoch'] ) {
+            return $cached['value'];
         }
 
         global $wpdb;
@@ -2627,30 +2974,96 @@ CSS;
 
         $result = 'MIN' === $aggregate ? min( $prices ) : max( $prices );
 
-        set_transient( $cache_key, $result, HOUR_IN_SECONDS );
+        // Mark the cache as populated (see get_price_range_cache_epoch()) BEFORE writing the
+        // transient, so clear_wholesale_price_range_cache() knows there is now something to
+        // invalidate. Stamp the entry with the epoch already read above rather than re-reading
+        // the option a second time.
+        self::ensure_price_range_cache_epoch( $epoch );
+        set_transient(
+            $cache_key,
+            array(
+                'epoch' => $epoch,
+                'value' => $result,
+            ),
+            HOUR_IN_SECONDS
+        );
 
         return $result;
     }
 
     /**
-     * Clear cached wholesale price range transients.
+     * Get the current price-range cache epoch, defaulting to 1 when none has ever been set.
      *
-     * Called when products are saved or wholesale prices are updated,
-     * ensuring the price filter widget reflects current data.
+     * Read-only: unlike ensure_price_range_cache_epoch(), this never creates the option, so a
+     * request that only reads (and misses) the cache does not itself mark the cache "ever set".
+     *
+     * @since 2.3.0
+     *
+     * @return int
+     */
+    private static function get_price_range_cache_epoch() {
+
+        $epoch = get_option( WWP_OPTIONS_PRICE_RANGE_CACHE_EPOCH, false );
+
+        return false === $epoch ? 1 : (int) $epoch;
+    }
+
+    /**
+     * Ensure the price-range cache epoch option exists, creating it on first write.
+     *
+     * @since 2.3.0
+     *
+     * @param int $current_epoch The epoch to seed the option with if it does not exist yet.
+     * @return void
+     */
+    private static function ensure_price_range_cache_epoch( $current_epoch ) {
+
+        // add_option() is itself a no-op when the option already exists, so this never
+        // overwrites a live epoch that may have advanced since the caller read $current_epoch.
+        add_option( WWP_OPTIONS_PRICE_RANGE_CACHE_EPOCH, $current_epoch, '', false );
+    }
+
+    /**
+     * Invalidate the per-role wholesale price range cache used by the price filter widget.
+     *
+     * Hooked on every `woocommerce_update_product` (and on the general-discount mapping option
+     * update), so it must stay O(1) regardless of how many wholesale roles are registered.
+     *
+     * Bumps a single versioned "epoch" option instead of enumerating registered roles and
+     * deleting each role's min/max transient:
+     * - Bails immediately, with no write, when the epoch option has never been created — i.e. no
+     *   price-range transient has ever been set (get_wholesale_price_range_value() is the only
+     *   writer, via ensure_price_range_cache_epoch()).
+     * - Otherwise a single `update_option()` bumps the epoch. Every transient cached under the
+     *   previous epoch (for every role — including a role that has since been renamed or
+     *   unregistered, which the old per-role loop could never reach) fails the epoch-stamp check
+     *   in get_wholesale_price_range_value() on its next read, because that stamp no longer
+     *   matches the CURRENT epoch, so it recomputes instead of serving the stale value.
+     * - Once the epoch option exists, this also makes invalidation immune to a slow concurrent
+     *   read: a request that started computing under epoch N writes its result stamped with
+     *   epoch N, which is already stale by the time it lands if a bump happened meanwhile,
+     *   instead of overwriting the live value with pre-change data as a plain delete-then-
+     *   recompute race could. (Before the option exists, a bump is deliberately suppressed above,
+     *   so a compute that races the very first population can still cache pre-save data until the
+     *   transient expires — the same window the previous delete-based implementation had.)
      *
      * @since 2.2.7
+     * @since 2.3.0 Replace the per-role delete_transient() loop with a single versioned-epoch
+     *              bump so the cost no longer scales with registered role count and leftover
+     *              keys for deregistered roles are correctly orphaned (issue #1021).
      *
      * @return void
      */
     public static function clear_wholesale_price_range_cache() {
 
-        $wholesale_roles = WWP_Wholesale_Roles::getInstance();
-        $all_roles       = $wholesale_roles->getAllRegisteredWholesaleRoles();
+        $epoch = get_option( WWP_OPTIONS_PRICE_RANGE_CACHE_EPOCH, false );
 
-        foreach ( array_keys( $all_roles ) as $role_key ) {
-            delete_transient( 'wwp_price_range_' . $role_key . '_min' );
-            delete_transient( 'wwp_price_range_' . $role_key . '_max' );
+        // Nothing has ever been cached — nothing to invalidate.
+        if ( false === $epoch ) {
+            return;
         }
+
+        update_option( WWP_OPTIONS_PRICE_RANGE_CACHE_EPOCH, ( (int) $epoch ) + 1 );
     }
 
     /**
@@ -2823,6 +3236,9 @@ CSS;
      * @since  1.5.0
      * @since  2.2.9 Register the Elementor Product Price widget replacement-message filter;
      *               skip wholesale price HTML filter on pure admin screens (#951).
+     * @since  2.2.9 Reapply wholesale pricing on woocommerce_cart_loaded_from_session for every
+     *               classic (non-block) cart, replacing the previous Divi-only registration, so the
+     *               classic Cart page row matches the totals box and Checkout on a plain reload.
      * @access public
      */
     public function run() {
@@ -2865,13 +3281,12 @@ CSS;
             0
         );
 
-        $is_divi = WWP_Helper_Functions::is_theme_active( 'divi' )
-            || WWP_Helper_Functions::is_plugin_active( 'divi-builder/divi-builder.php' );
-
-        if ( $is_divi ) { // run this only for divi related themes, child themes, or the standalone Divi Builder plugin (issue #768).
-            // this is called when cart/cart.php is called anywhere(this solves the divi theme builder issue-#768).
-            add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'apply_product_wholesale_price_to_cart' ), 10, 1 );
-        }
+        // Reapply wholesale pricing right after the cart is rebuilt from the session so the
+        // classic Cart page's row Price and Subtotal columns match the Cart Totals box and
+        // Checkout, even on a plain reload where the cart is unchanged and calculate_totals()
+        // (the trigger that normally re-applies the price) is skipped. The block-based cart
+        // manages its own pricing through the Store API, so it is excluded inside the handler.
+        add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'reapply_wholesale_price_on_classic_cart' ), 10, 1 );
 
         // We need to recalculate cart on loading widget cart to properly sync the cart item prices.
         add_action( 'woocommerce_before_mini_cart', array( $this, 'recalculate_cart_totals' ) );

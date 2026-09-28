@@ -10,6 +10,7 @@ if ( ! class_exists( 'WWP_REST_API' ) ) {
      * Model that houses the logic of WWPP API.
      *
      * @since 1.12
+     * @since 2.2.9 Resolve the wholesale role from the authenticated user for wholesale/v1 reads.
      */
     class WWP_REST_API {
 
@@ -73,6 +74,7 @@ if ( ! class_exists( 'WWP_REST_API' ) ) {
          * Load WWP API.
          *
          * @since 1.16.0
+         * @since 2.2.9 Pin the request wholesale_role to the authenticated user's real role for wholesale/v1 reads.
          * @access public
          */
         public function load_wwp_api() {
@@ -81,6 +83,9 @@ if ( ! class_exists( 'WWP_REST_API' ) ) {
 
             // Authenticate users if api keys are provided.
             add_action( 'woocommerce_rest_is_request_to_rest_api', array( $this, 'authenticate_user' ) );
+
+            // Resolve the wholesale role from the authenticated user, ignoring a tampered request param.
+            add_filter( 'rest_pre_dispatch', array( $this, 'resolve_wholesale_role_from_authenticated_user' ), 10, 3 );
         }
 
         /**
@@ -135,6 +140,72 @@ if ( ! class_exists( 'WWP_REST_API' ) ) {
             }
 
             return $rest_request;
+        }
+
+        /**
+         * Pin a mismatched wholesale_role request param to the authenticated user's real role.
+         *
+         * On wholesale/v1 read requests the wholesale role is the source of truth for both
+         * authorization and which per-role prices/variations are returned. When the request
+         * carries a wholesale_role that does not match the authenticated wholesale user's
+         * actual role, the server overrides it with the user's real role so a tampered or
+         * mismatched param can neither trigger a 403 for a legitimate wholesale user nor
+         * expose another role's data. Requests without a wholesale_role param, and users
+         * who have no wholesale role (guests, admins, shop managers, plain customers), are
+         * left untouched so their existing capability-based authorization is preserved.
+         *
+         * Hooked on rest_pre_dispatch so the correction lands on the shared WP_REST_Request
+         * before the route's permission callback and query run.
+         *
+         * @since 2.2.9
+         * @access public
+         *
+         * @param mixed           $result  Response to replace the requested version with, or null to continue.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         * @return mixed The unmodified $result.
+         */
+        public function resolve_wholesale_role_from_authenticated_user( $result, $server, $request ) {
+            // Never interfere when another handler already short-circuited the dispatch.
+            if ( is_wp_error( $result ) || ! ( $request instanceof WP_REST_Request ) ) {
+                return $result;
+            }
+
+            // Only wholesale/v1 read requests resolve a role.
+            if ( 'GET' !== $request->get_method() || ! str_contains( $request->get_route(), 'wholesale/v1' ) ) {
+                return $result;
+            }
+
+            $supplied_role = $request->get_param( 'wholesale_role' );
+
+            // Only act when the client supplied a wholesale_role. An absent param keeps the
+            // request untouched so the no-role authorization path is unchanged.
+            if ( ! is_string( $supplied_role ) || '' === $supplied_role ) {
+                return $result;
+            }
+
+            global $wc_wholesale_prices;
+
+            if ( ! is_object( $wc_wholesale_prices ) || ! isset( $wc_wholesale_prices->wwp_wholesale_roles ) ) {
+                return $result;
+            }
+
+            $user_roles = array_values( array_filter( (array) $wc_wholesale_prices->wwp_wholesale_roles->getUserWholesaleRole() ) );
+
+            // Non-wholesale users (guests, admins, shop managers, plain customers) authorize via
+            // their capabilities, so leave their request param as-is.
+            if ( empty( $user_roles ) ) {
+                return $result;
+            }
+
+            // Server is the source of truth: when the supplied role is not one the user actually
+            // holds, replace it with the user's real role (the first, as only one is supported).
+            // A param that already matches one of the user's roles is left untouched.
+            if ( ! in_array( sanitize_text_field( $supplied_role ), $user_roles, true ) ) {
+                $request->set_param( 'wholesale_role', $user_roles[0] );
+            }
+
+            return $result;
         }
     }
 

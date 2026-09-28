@@ -6,8 +6,9 @@ jQuery(document).ready(function ($) {
 
     /**
      * Initialize Tippy tooltips.
-     * 
+     *
      * @since 2.1.6.1
+     * @since 2.3.0 Hide the popover instead of rendering it when the AJAX response is empty.
      */
     tippy('.wwp_show_wholesale_prices_link', {
         content: '<span class="spinner"></span>',
@@ -47,7 +48,17 @@ jQuery(document).ready(function ($) {
                     }
                 },
                 success: function( response ){
-                    instance.setContent(popover_title + '<div class="tippy-inner-content">' + response + '</div>');
+                    // Backstop: an empty response means the server had no wholesale price to show
+                    // (e.g. a composite whose components resolve to no wholesale saving), so hide
+                    // the popover instead of showing an empty box.
+                    var content = $.trim( response );
+
+                    if ( ! content ) {
+                        instance.hide();
+                        return;
+                    }
+
+                    instance.setContent(popover_title + '<div class="tippy-inner-content">' + content + '</div>');
                 }
             });
         },

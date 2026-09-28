@@ -179,10 +179,38 @@ if ( ! class_exists( 'WWP_Dashboard' ) ) {
                     'rest_url'                             => rest_url(),
                     'dashboard_nonce'                      => wp_create_nonce( 'wp_rest' ),
                     'dashboard_ajax_base_url'              => admin_url( 'admin-ajax.php' ),
-                    'dashboard_ajax_nonce_install_plugin'  => wp_create_nonce( 'wwp_install_plugin' ),
-                    'dashboard_ajax_nonce_activate_plugin' => wp_create_nonce( 'wwp_activate_plugin' ),
+                    'dashboard_ajax_nonce_install_plugin'  => current_user_can( 'install_plugins' ) ? wp_create_nonce( 'wwp_install_plugin' ) : '',
+                    'dashboard_ajax_nonce_activate_plugin' => current_user_can( 'activate_plugins' ) ? wp_create_nonce( 'wwp_activate_plugin' ) : '',
+                    'onboarding'                           => $this->get_onboarding_payload(),
 				),
             );
+        }
+
+        /**
+         * Assemble the onboarding checklist payload for the card's initial inline paint.
+         *
+         * Anchors the install/first-seen timestamp on first render (onboarding telemetry measures
+         * time-to-activation from here) and returns the same envelope the `wwp/v1/onboarding` REST
+         * route serves, so the card paints instantly with no request. Returns an empty envelope if
+         * the onboarding module is unavailable, so the dashboard never breaks.
+         *
+         * @since 2.3.0
+         * @access private
+         *
+         * @return array{dismissed:bool,sections:array} The assembled onboarding envelope.
+         */
+        private function get_onboarding_payload() {
+            if ( ! class_exists( 'WWP_Onboarding_Data_Contract' ) || ! class_exists( 'WWP_Onboarding_State' ) ) {
+                return array(
+                    'dismissed' => false,
+                    'sections'  => array(),
+                );
+            }
+
+            // Anchor the first-seen timestamp on first card render.
+            WWP_Onboarding_State::instance()->get_install_ts();
+
+            return WWP_Onboarding_Data_Contract::instance()->assemble( get_current_user_id() );
         }
 
         /**
